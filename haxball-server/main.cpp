@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
   MainWindow w;
   w.show();
 
-  Server server(QHostAddress::LocalHost, 3333);
+  Server server(QHostAddress::LocalHost, 3334);
 
   server.start();
 

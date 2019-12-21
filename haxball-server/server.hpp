@@ -22,7 +22,8 @@ signals:
 public slots:
 
 protected:
-  void handle_connection(int handle);
+  void incomingConnection(int handle);
+
 
 private:
 

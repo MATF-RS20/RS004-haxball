@@ -20,7 +20,7 @@ void Server::start()
     }
 }
 
-void Server::handle_connection(int handle)
+void Server::incomingConnection(int handle)
 {
   qDebug() << "CLient handler id: " << handle << " is connecting...";
 
