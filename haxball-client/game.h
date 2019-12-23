@@ -22,7 +22,19 @@ public:
 private:
     Ui::Game *ui;
     QGraphicsScene* scene;
+<<<<<<< HEAD
+    QGraphicsRectItem* rect1;
+    QGraphicsRectItem* rect2;
+    QGraphicsRectItem* rect3;
+    QGraphicsRectItem* rect4;
+    QGraphicsEllipseItem* circle1;
+    QGraphicsEllipseItem* circle2;
+    QGraphicsEllipseItem* circle3;
+    QGraphicsEllipseItem* circle4;
+    QGraphicsEllipseItem* circle5;
+=======
     QSet<int> pressedKeys;
+>>>>>>> 78641175af99aa7ce7e40448b8280fbdc3412811
 
 };
 
