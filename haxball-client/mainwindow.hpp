@@ -2,6 +2,7 @@
 #define MAINWINDOW_HPP
 
 #include "game.h"
+#include "settings.h"
 
 #include <QMainWindow>
 
@@ -15,16 +16,19 @@ class MainWindow : public QMainWindow
   Q_OBJECT
 
 public:
-  MainWindow(QWidget *parent = nullptr);
-  ~MainWindow();
+    MainWindow(QWidget *parent = nullptr);
+    ~MainWindow();
+    // TODO SIGNAL - Connect to server
 
 private slots:
-  void on_exitButton_clicked();
+    void on_exitButton_clicked();
+    void on_createButton_clicked();
 
-  void on_createButton_clicked();
+    void on_settingsButton_clicked();
 
 private:
   Ui::MainWindow *ui;
   Game* game;
+  Settings* settings;
 };
 #endif // MAINWINDOW_HPP

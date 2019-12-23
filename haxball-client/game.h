@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QGraphicsScene>
+#include <QSet>
 
 namespace Ui {
 class Game;
@@ -16,10 +17,12 @@ public:
     explicit Game(QWidget *parent = nullptr);
     ~Game();
     QGraphicsScene* getScene() const;
+    bool eventFilter(QObject * obj, QEvent * event);
 
 private:
     Ui::Game *ui;
     QGraphicsScene* scene;
+    QSet<int> pressedKeys;
 
 };
 
