@@ -3,6 +3,7 @@
 
 #include "game.h"
 #include "settings.h"
+#include "clientsocket.hpp"
 
 #include <QMainWindow>
 
@@ -27,8 +28,9 @@ private slots:
     void on_settingsButton_clicked();
 
 private:
-  Ui::MainWindow *ui;
-  Game* game;
-  Settings* settings;
+    Ui::MainWindow *ui;
+    Game* game;
+    Settings* settings;
+    ClientSocket* clientsocket;
 };
 #endif // MAINWINDOW_HPP

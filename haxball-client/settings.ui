@@ -544,6 +544,9 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="lineWidth">
+           <number>1</number>
+          </property>
           <property name="lineWrapMode">
            <enum>QTextEdit::WidgetWidth</enum>
           </property>
@@ -569,7 +572,7 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
            <rect>
             <x>20</x>
             <y>20</y>
-            <width>22</width>
+            <width>41</width>
             <height>16</height>
            </rect>
           </property>
@@ -588,7 +591,7 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
            <rect>
             <x>20</x>
             <y>80</y>
-            <width>20</width>
+            <width>41</width>
             <height>16</height>
            </rect>
           </property>

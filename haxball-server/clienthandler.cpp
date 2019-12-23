@@ -17,7 +17,7 @@ void ClientHandler::run()
         return;
     }
 
-    connect(socket, SIGNAL(ready_read()), this, SLOT(ready_read()), Qt::DirectConnection);
+    connect(socket, SIGNAL(readyRead()), this, SLOT(readyRead()), Qt::DirectConnection);
     connect(socket, SIGNAL(disconnected()), this, SLOT(disconnected()), Qt::DirectConnection);
 
     qDebug() << socket_descriptor << " is connected to server...";
@@ -25,7 +25,7 @@ void ClientHandler::run()
     exec();
 }
 
-void ClientHandler::ready_read()
+void ClientHandler::readyRead()
 {
     QByteArray data = socket->readAll();
 

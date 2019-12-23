@@ -12,10 +12,10 @@ bool ClientSocket::connectToServer(QHostAddress host, quint16 port)
   m_socket = new QTcpSocket();
 
   //Connect signal and slots
-  connect(m_socket, SIGNAL(onConnected()),this, SLOT(onConnected()));
-  connect(m_socket, SIGNAL(onDisconnected()),this, SLOT(onDisconnected()));
-  connect(m_socket, SIGNAL(onBytesWritten(qint16 bytes)),this, SLOT(onBytesWritten(qint16 bytes)));
-  connect(m_socket, SIGNAL(onReadyRead()),this, SLOT(onReadyRead()));
+  connect(m_socket, SIGNAL(connected()),this, SLOT(connected()));
+  connect(m_socket, SIGNAL(disconnected()),this, SLOT(disconnected()));
+  //connect(m_socket, SIGNAL(bytesWritten(qint64 bytes)),this, SLOT(bytesWritten(qint64 bytes)));
+  connect(m_socket, SIGNAL(readyRead()),this, SLOT(readyRead()));
 
 
   bool success = true;
@@ -34,30 +34,30 @@ bool ClientSocket::connectToServer(QHostAddress host, quint16 port)
 
 }
 
-void ClientSocket::onConnected()
+void ClientSocket::connected()
 {
-  qDebug() << "onConnected to server...";
+  qDebug() << "Connected to server...";
 
 
 }
 
-void ClientSocket::onDisconnected()
+void ClientSocket::disconnected()
 {
-  qDebug() << "onDisconnected to server...";
+  qDebug() << "Disconnected to server...";
 }
 
 
-void ClientSocket::onBytesWritten(qint16 bytes)
+void ClientSocket::bytesWritten(qint64 bytes)
 {
-  qDebug() << "onBytesWritten...";
+  qDebug() << "BytesWritten...";
 
   qDebug() << "Written data: " << bytes;
 
 }
 
-void ClientSocket::onReadyRead()
+void ClientSocket::readyRead()
 {
-  qDebug() << "onReadyRead...";
+  qDebug() << "ReadyRead...";
 
   qDebug() << "Read data: " << m_socket->readAll();
 

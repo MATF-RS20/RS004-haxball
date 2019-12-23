@@ -2,13 +2,16 @@
 #include "ui_mainwindow.h"
 #include "game.h"
 
+#include <QHostAddress>
+
 MainWindow::MainWindow(QWidget *parent)
   : QMainWindow(parent)
   , ui(new Ui::MainWindow)
 {
   ui->setupUi(this);
 
-  // TODO Connect to server
+  clientsocket = new ClientSocket(QHostAddress::LocalHost, 3334);
+  clientsocket->connectToServer(QHostAddress::LocalHost, 3334);
 }
 
 MainWindow::~MainWindow()
