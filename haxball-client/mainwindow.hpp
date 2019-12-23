@@ -1,7 +1,10 @@
 #ifndef MAINWINDOW_HPP
 #define MAINWINDOW_HPP
 
+#include "game.h"
+
 #include <QMainWindow>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -18,7 +21,10 @@ public:
 private slots:
   void on_exitButton_clicked();
 
+  void on_createButton_clicked();
+
 private:
   Ui::MainWindow *ui;
+  Game* game;
 };
 #endif // MAINWINDOW_HPP

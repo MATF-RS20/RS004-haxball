@@ -512,6 +512,9 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
          </item>
          <item>
           <widget class="QPushButton" name="joinButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="text">
             <string>Join Room</string>
            </property>
@@ -574,7 +577,11 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
         </layout>
        </item>
        <item row="2" column="1">
-        <widget class="QPlainTextEdit" name="roomsTextEdit"/>
+        <widget class="QPlainTextEdit" name="roomsTextEdit">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
