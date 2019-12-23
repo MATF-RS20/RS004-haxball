@@ -547,6 +547,12 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
           <property name="lineWidth">
            <number>1</number>
           </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
           <property name="lineWrapMode">
            <enum>QTextEdit::WidgetWidth</enum>
           </property>
@@ -565,6 +571,12 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
           </property>
          </widget>
          <widget class="QLabel" name="hostLabel">
