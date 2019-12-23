@@ -8,14 +8,17 @@
 #include <QHostAddress>
 
 
+
 class ClientSocket : public QObject
 {
 
   Q_OBJECT
 
 public:
-  explicit ClientSocket(QHostAddress host, quint16 port, QObject* parent = nullptr);
-  bool connectToServer(QHostAddress host, quint16 port);
+    explicit ClientSocket(QHostAddress host, quint16 port, QObject* parent = nullptr);
+    bool connectToServer(QHostAddress host, quint16 port);
+    void setHost(QHostAddress host);
+    void setPort(quint16 port);
 
 signals:
 

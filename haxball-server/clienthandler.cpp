@@ -19,6 +19,8 @@ void ClientHandler::run()
 
     connect(socket, SIGNAL(readyRead()), this, SLOT(readyRead()), Qt::DirectConnection);
     connect(socket, SIGNAL(disconnected()), this, SLOT(disconnected()), Qt::DirectConnection);
+    connect(socket, SIGNAL(connected()), this, SLOT(connected()), Qt::DirectConnection);
+
 
     qDebug() << socket_descriptor << " is connected to server...";
 
@@ -32,6 +34,11 @@ void ClientHandler::readyRead()
     qDebug() << socket_descriptor << " Data in: " << data;
 
     socket->write(data);
+}
+
+void ClientHandler::connected()
+{
+    qDebug() << socket_descriptor << " is connected to server...";
 }
 
 void ClientHandler::disconnected()

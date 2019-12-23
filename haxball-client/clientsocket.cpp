@@ -1,5 +1,5 @@
 #include "clientsocket.hpp"
-
+#include "settings.h"
 
 ClientSocket::ClientSocket(QHostAddress host, quint16 port, QObject* parent)
   : m_host(host), m_port(port), QObject(parent)
@@ -32,6 +32,16 @@ bool ClientSocket::connectToServer(QHostAddress host, quint16 port)
 
   return success;
 
+}
+
+void ClientSocket::setHost(QHostAddress host)
+{
+    m_host = host;
+}
+
+void ClientSocket::setPort(quint16 port)
+{
+    m_port = port;
 }
 
 void ClientSocket::connected()

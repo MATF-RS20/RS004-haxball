@@ -16,7 +16,12 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-  delete ui;
+    delete ui;
+}
+
+ClientSocket *MainWindow::getClientSocket() const
+{
+    return clientsocket;
 }
 
 

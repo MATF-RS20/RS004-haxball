@@ -19,12 +19,11 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    // TODO SIGNAL - Connect to server
+    ClientSocket* getClientSocket() const;
 
 private slots:
     void on_exitButton_clicked();
     void on_createButton_clicked();
-
     void on_settingsButton_clicked();
 
 private:

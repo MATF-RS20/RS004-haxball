@@ -21,6 +21,8 @@ private slots:
 
     void on_savePushButton_clicked();
 
+    void on_testButton_clicked();
+
 private:
     Ui::Settings *ui;
 };

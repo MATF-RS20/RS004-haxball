@@ -22,6 +22,7 @@ signals:
 
 public slots:
     void readyRead();
+    void connected();
     void disconnected();
 
 public slots:
