@@ -7,6 +7,8 @@ MainWindow::MainWindow(QWidget *parent)
   , ui(new Ui::MainWindow)
 {
   ui->setupUi(this);
+
+  // TODO Connect to server
 }
 
 MainWindow::~MainWindow()
@@ -25,4 +27,10 @@ void MainWindow::on_createButton_clicked()
     hide();
     game = new Game(this);
     game->show();
+}
+
+void MainWindow::on_settingsButton_clicked()
+{
+    settings = new Settings(this);
+    settings->show();
 }
