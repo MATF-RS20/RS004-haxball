@@ -44,7 +44,6 @@ void ClientSocket::onConnected()
 void ClientSocket::onDisconnected()
 {
   qDebug() << "onDisconnected to server...";
-
 }
 
 
@@ -52,10 +51,14 @@ void ClientSocket::onBytesWritten(qint16 bytes)
 {
   qDebug() << "onBytesWritten...";
 
+  qDebug() << "Written data: " << bytes;
+
 }
 
 void ClientSocket::onReadyRead()
 {
   qDebug() << "onReadyRead...";
+
+  qDebug() << "Read data: " << m_socket->readAll();
 
 }
