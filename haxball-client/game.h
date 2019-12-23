@@ -20,6 +20,15 @@ public:
 private:
     Ui::Game *ui;
     QGraphicsScene* scene;
+    QGraphicsRectItem* rect1;
+    QGraphicsRectItem* rect2;
+    QGraphicsRectItem* rect3;
+    QGraphicsRectItem* rect4;
+    QGraphicsEllipseItem* circle1;
+    QGraphicsEllipseItem* circle2;
+    QGraphicsEllipseItem* circle3;
+    QGraphicsEllipseItem* circle4;
+    QGraphicsEllipseItem* circle5;
 
 };
 
