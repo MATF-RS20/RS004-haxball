@@ -1,6 +1,8 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
+#include <memory>
+
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QHostAddress>
@@ -9,13 +11,22 @@
 class Server : public QTcpServer
 {
 
+  //server class should be implemented as singleton class
+
   Q_OBJECT
 
 public:
 
-  explicit Server(QHostAddress host, quint16 port, QObject* parent = nullptr);
+  explicit Server(const QHostAddress address, const quint16 port, QObject* parent = nullptr);
 
   void start();
+
+  void port(quint16 port);
+  void hostAddress(QHostAddress address);
+
+  quint16 port() const;
+
+  QHostAddress hostAddress() const;
 
 signals:
 
@@ -27,7 +38,7 @@ protected:
 
 private:
 
-  QHostAddress m_host;
+  QHostAddress m_host_address;
   quint16 m_port;
 
 };

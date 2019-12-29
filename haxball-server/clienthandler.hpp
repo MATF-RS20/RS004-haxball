@@ -28,8 +28,8 @@ public slots:
 public slots:
 
 private:
-    QTcpSocket *socket;
-    int socket_descriptor;
+    QTcpSocket *m_socket;
+    int m_socket_descriptor;
 
 };
 

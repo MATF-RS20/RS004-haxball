@@ -14,7 +14,7 @@ bool ClientSocket::connectToServer(QHostAddress host, quint16 port)
   //Connect signal and slots
   connect(m_socket, SIGNAL(connected()),this, SLOT(connected()));
   connect(m_socket, SIGNAL(disconnected()),this, SLOT(disconnected()));
-  //connect(m_socket, SIGNAL(bytesWritten(qint64 bytes)),this, SLOT(bytesWritten(qint64 bytes)));
+  connect(m_socket, SIGNAL(bytesWritten(qint64 bytes)),this, SLOT(bytesWritten(qint64 bytes)));
   connect(m_socket, SIGNAL(readyRead()),this, SLOT(readyRead()));
 
 
