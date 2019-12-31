@@ -2,6 +2,9 @@
 #define MAINWINDOW_HPP
 
 #include <QMainWindow>
+#include <server.hpp>
+
+#include "dialogsettings.hpp"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -15,16 +18,26 @@ public:
   MainWindow(QWidget *parent = nullptr);
   ~MainWindow();
 
+  std::shared_ptr<Server> server();
+
 private slots:
-  void on_startButton_clicked();
 
-  void on_stopButton_clicked();
+  /******************************************************************************
+   *
+   * TCP Server
+   *
+   ******************************************************************************/
+  void logger(const std::string & s);
+  std::string logger() const;
 
-  void on_restartButton_clicked();
 
-  void on_exitButton_clicked();
+  void on_actionSettings_triggered();
 
 private:
   Ui::MainWindow *ui;
+  DialogSettings *ui_dialog;
+
+  std::shared_ptr<Server> m_server;
+  std::string m_logger;
 };
 #endif // MAINWINDOW_HPP

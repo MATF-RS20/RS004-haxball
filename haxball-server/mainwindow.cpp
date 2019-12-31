@@ -1,41 +1,42 @@
 #include "mainwindow.hpp"
 #include "ui_mainwindow.h"
 
+#include <QHostAddress>
+
 MainWindow::MainWindow(QWidget *parent)
   : QMainWindow(parent)
   , ui(new Ui::MainWindow)
 {
   ui->setupUi(this);
+
+  //create and start server object that can be shared between components
+  m_server = std::make_shared<Server>(QHostAddress::LocalHost, 3333);
+  m_server->start();
+
+  //set up settings dialog
+  ui_dialog = new DialogSettings(m_server);
 }
 
 MainWindow::~MainWindow()
 {
   delete ui;
+  delete ui_dialog;
 }
 
 
-void MainWindow::on_startButton_clicked()
+void MainWindow::on_actionSettings_triggered()
 {
-  //start server
-
+  ui_dialog->show();
 }
 
-
-void MainWindow::on_stopButton_clicked()
+//data logger
+void MainWindow::logger(const std::string & s)
 {
-  //stop server
-
+  m_logger.append(s);
 }
 
-void MainWindow::on_restartButton_clicked()
+std::string MainWindow::logger() const
 {
-  //restart server
-
+  return m_logger;
 }
 
-void MainWindow::on_exitButton_clicked()
-{
-  //close app
-  this->close();
-
-}
