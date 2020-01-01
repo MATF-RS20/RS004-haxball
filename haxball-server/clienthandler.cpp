@@ -10,7 +10,8 @@ ClientHandler::ClientHandler(qintptr id, QObject *parent)
 
 void ClientHandler::run()
 {
-    qDebug() << m_socket_descriptor << "Client handler thread is running...";
+    //qDebug() << m_socket_descriptor << "Client handler thread is running...";
+
     m_socket = new QTcpSocket();
     if(!m_socket->setSocketDescriptor(this->m_socket_descriptor))
     {
@@ -22,7 +23,7 @@ void ClientHandler::run()
     connect(m_socket, SIGNAL(disconnected()), this, SLOT(disconnected()), Qt::DirectConnection);
     connect(m_socket, SIGNAL(connected()), this, SLOT(connected()), Qt::DirectConnection);
 
-    //qDebug() << "Socket descriptor: " << m_socket_descriptor << " is connected to server...";
+    qDebug() << "Socket descriptor: " << m_socket_descriptor << " is connected to server...";
 
     exec();
 }

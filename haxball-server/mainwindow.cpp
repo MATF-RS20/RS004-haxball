@@ -3,6 +3,7 @@
 
 #include <QHostAddress>
 
+
 MainWindow::MainWindow(QWidget *parent)
   : QMainWindow(parent)
   , ui(new Ui::MainWindow)
@@ -10,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
   ui->setupUi(this);
 
   //create and start server object that can be shared between components
-  m_server = std::make_shared<Server>(QHostAddress::LocalHost, 3334, this);
+  m_server = std::make_shared<Server>(QHostAddress::LocalHost, 3333, this);
   m_server->start();
 
   //set up settings dialog
@@ -29,14 +30,28 @@ void MainWindow::on_actionSettings_triggered()
   ui_dialog->show();
 }
 
-//data logger
-void MainWindow::logger(const std::string & s)
+void MainWindow::previewLogData(QString & new_data)
 {
-  m_logger.append(s);
+  ui->logTextEdit->append(new_data);
+  return;
 }
 
-std::string MainWindow::logger() const
+void MainWindow::on_startButton_clicked()
 {
-  return m_logger;
+    m_server->start();
 }
 
+void MainWindow::on_stopButton_clicked()
+{
+    m_server->stop();
+}
+
+void MainWindow::on_restartButton_clicked()
+{
+    m_server->restart();
+}
+
+void MainWindow::on_exitButton_clicked()
+{
+  this->close();
+}

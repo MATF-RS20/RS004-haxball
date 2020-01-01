@@ -3,36 +3,65 @@
 
 #include <string>
 
+
 Server::Server(QObject* parent)
   :QTcpServer(parent)
-{}
+{
+  m_log = QString();
+}
 
 Server::Server(QHostAddress address, quint16 port, QObject* parent)
   :QTcpServer(parent), m_host_address(address), m_port(port)
-{}
+{
+  m_log = QString();
+}
 
 void Server::start()
 {
-  qDebug() << "Server is starting at " << m_host_address << ":" << m_port << "...";
+  //all listeners will be connect
+  setUpListeners();
+
+
+  //write to log
+  QString s;
+  s.append("Server is starting at ").append(m_host_address.toString()).append(" : ").append(QString::number(m_port));
+  writeToLog(s);
 
   if(!this->listen(m_host_address, m_port))
     {
-      qDebug() << "Server could not be started...";
+//      s.clear();
+//      s.append("Server could not be started...");
+//      writeToLog(s);
     }
   else
     {
-      qDebug() << "Server is listening at " << m_host_address << ":" << m_port << "...";
+//      s.append("Server is listening at ").append(m_host_address.toString()).append(":").append(QString::number(m_port)).append("...");
+//      writeToLog(s);
     }
+
 }
 
 void Server::stop()
 {
-  qDebug() << "Server is stoped...";
+//  //write to log
+//  QString s;
+//  s.append("Server is stoped...");
+//  writeToLog(s);
+
+  this->close();
 }
 
 void Server::restart()
 {
-  qDebug() << "Server is restarted...";
+
+  //write to log
+  QString s;
+  s.append("Server is restarted...");
+  writeToLog(s);
+
+  this->stop();
+  this->start();
+
 }
 
 void Server::port(quint16 port)
@@ -43,6 +72,15 @@ void Server::port(quint16 port)
 void Server::hostAddress(QHostAddress address)
 {
   m_host_address = address;
+}
+
+void Server::writeToLog(QString & s)
+{
+  QString & curr_log = readFromLog();
+  curr_log.append(s);
+
+  //notify about logging
+  emit newLogData(s);
 }
 
 
@@ -57,10 +95,19 @@ QHostAddress Server::hostAddress() const
 }
 
 
+QString & Server::readFromLog()
+{
+  return m_log;
+}
+
 
 void Server::incomingConnection(qintptr handle)
 {
-  qDebug() << "Client with connection ID: " << handle << " is connecting...";
+
+  //write to log
+  QString s;
+  s.append("Client with connection ID: ").append(QString::number(handle)).append(" is connecting...");
+  writeToLog(s);
 
   ClientHandler *thread = new ClientHandler(handle, this);
   connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
@@ -68,3 +115,15 @@ void Server::incomingConnection(qintptr handle)
 
   return;
 }
+
+
+void Server::setUpListeners()
+{
+  //setup listener for data logging
+  connect(this, SIGNAL(newLogData(QString &)), parent(), SLOT(previewLogData(QString &)));
+
+
+
+}
+
+

@@ -13,7 +13,7 @@ Settings::Settings(QWidget *parent) :
     setWindowFlag(Qt::FramelessWindowHint);
 
     ui->hostTextEdit->setText("127.0.0.1");
-    ui->portTextEdit->setText("3334");
+    ui->portTextEdit->setText("3333");
 
 }
 

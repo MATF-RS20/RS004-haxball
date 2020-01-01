@@ -20,18 +20,17 @@ public:
 
   std::shared_ptr<Server> server();
 
+  void setUpListeners();
+
+public slots:
+  void previewLogData(QString & new_data);
+
 private slots:
-
-  /******************************************************************************
-   *
-   * TCP Server
-   *
-   ******************************************************************************/
-  void logger(const std::string & s);
-  std::string logger() const;
-
-
   void on_actionSettings_triggered();
+  void on_startButton_clicked();
+  void on_stopButton_clicked();
+  void on_restartButton_clicked();
+  void on_exitButton_clicked();
 
 private:
   Ui::MainWindow *ui;
@@ -39,5 +38,6 @@ private:
 
   std::shared_ptr<Server> m_server;
   std::string m_logger;
+
 };
 #endif // MAINWINDOW_HPP

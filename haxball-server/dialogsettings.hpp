@@ -25,7 +25,6 @@ private:
   Ui::DialogSettings *ui;
 
   std::shared_ptr<Server> m_server_ptr;
-
   QHostAddress m_host_address;
   quint16 m_port;
 
