@@ -1,7 +1,7 @@
 #include "clienthandler.hpp"
 
 
-ClientHandler::ClientHandler(int id, QObject *parent)
+ClientHandler::ClientHandler(qintptr id, QObject *parent)
   : QThread(parent)
 {
     this->m_socket_descriptor = id;

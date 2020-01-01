@@ -58,7 +58,7 @@ QHostAddress Server::hostAddress() const
 
 
 
-void Server::incomingConnection(int handle)
+void Server::incomingConnection(qintptr handle)
 {
   qDebug() << "Client with connection ID: " << handle << " is connecting...";
 

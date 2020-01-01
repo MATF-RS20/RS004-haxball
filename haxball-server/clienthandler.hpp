@@ -13,7 +13,7 @@ class ClientHandler : public QThread
 
 public:
 
-  explicit ClientHandler(int id, QObject* parent = nullptr);
+  explicit ClientHandler(qintptr id, QObject* parent = nullptr);
 
   void run();
 
@@ -29,7 +29,7 @@ public slots:
 
 private:
     QTcpSocket *m_socket;
-    int m_socket_descriptor;
+    qintptr m_socket_descriptor;
 
 };
 
