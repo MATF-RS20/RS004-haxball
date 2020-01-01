@@ -1,14 +1,14 @@
 #include "clienthandler.hpp"
 
 
-ClientHandler::ClientHandler(qintptr id, QObject *parent)
+PlayerHandler::PlayerHandler(qintptr id, QObject *parent)
   : QThread(parent)
 {
     this->m_socket_descriptor = id;
     qDebug() << "Created socket descriptor: " << m_socket_descriptor;
 }
 
-void ClientHandler::run()
+void PlayerHandler::run()
 {
     //qDebug() << m_socket_descriptor << "Client handler thread is running...";
 
@@ -28,7 +28,7 @@ void ClientHandler::run()
     exec();
 }
 
-void ClientHandler::readyRead()
+void PlayerHandler::readyRead()
 {
     QByteArray data = m_socket->readAll();
 
@@ -37,12 +37,12 @@ void ClientHandler::readyRead()
     m_socket->write(data);
 }
 
-void ClientHandler::connected()
+void PlayerHandler::connected()
 {
     qDebug() << "Socket descriptor: "  << m_socket_descriptor << " is connected to server...";
 }
 
-void ClientHandler::disconnected()
+void PlayerHandler::disconnected()
 {
     qDebug() << "Socket descriptor: "  << m_socket_descriptor << " is disconnected from server...";
     m_socket->deleteLater();

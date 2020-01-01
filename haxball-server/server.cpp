@@ -8,12 +8,14 @@ Server::Server(QObject* parent)
   :QTcpServer(parent)
 {
   m_log = QString();
+  initData();
 }
 
 Server::Server(QHostAddress address, quint16 port, QObject* parent)
   :QTcpServer(parent), m_host_address(address), m_port(port)
 {
   m_log = QString();
+  initData();
 }
 
 void Server::start()
@@ -109,7 +111,7 @@ void Server::incomingConnection(qintptr handle)
   s.append("Client with connection ID: ").append(QString::number(handle)).append(" is connecting...");
   writeToLog(s);
 
-  ClientHandler *thread = new ClientHandler(handle, this);
+  PlayerHandler *thread = new PlayerHandler(handle, this);
   connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
   thread->start();
 
@@ -126,4 +128,22 @@ void Server::setUpListeners()
 
 }
 
+bool Server::registerPlayer(qintptr player_id)
+{
 
+  m_player_game_data[player_id] = nullptr;
+  return true;
+}
+
+
+void Server::initData()
+{
+
+  //init players-games hash map
+  for(auto iter = std::begin(m_player_game_data); iter != m_player_game_data.end(); iter++)
+  {
+     iter->second = nullptr;
+  }
+
+
+}

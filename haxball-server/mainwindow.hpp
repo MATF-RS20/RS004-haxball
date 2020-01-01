@@ -18,6 +18,7 @@ public:
   MainWindow(QWidget *parent = nullptr);
   ~MainWindow();
 
+  //getters
   std::shared_ptr<Server> server();
 
   void setUpListeners();
@@ -33,11 +34,14 @@ private slots:
   void on_exitButton_clicked();
 
 private:
+  //fields
   Ui::MainWindow *ui;
   DialogSettings *ui_dialog;
 
   std::shared_ptr<Server> m_server;
   std::string m_logger;
+
+  //methods
 
 };
 #endif // MAINWINDOW_HPP

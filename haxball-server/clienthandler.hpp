@@ -6,14 +6,14 @@
 #include <QDebug>
 
 
-class ClientHandler : public QThread
+class PlayerHandler : public QThread
 {
 
   Q_OBJECT
 
 public:
 
-  explicit ClientHandler(qintptr id, QObject* parent = nullptr);
+  explicit PlayerHandler(qintptr id, QObject* parent = nullptr);
 
   void run();
 
@@ -28,8 +28,12 @@ public slots:
 public slots:
 
 private:
+    //fields
     QTcpSocket *m_socket;
     qintptr m_socket_descriptor;
+
+    //methods
+
 
 };
 

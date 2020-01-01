@@ -6,6 +6,14 @@
 #include <QHostAddress>
 
 #include <memory>
+#include <map>
+
+#include <ctime>
+
+#include "player.hpp"
+#include "game.hpp"
+
+#include <memory>
 
 
 class Server : public QTcpServer
@@ -42,11 +50,15 @@ protected:
 private:
   //methodes
   void setUpListeners();
+  bool registerPlayer(qintptr player_id);
+  void initData();
 
   //fields
   QHostAddress m_host_address;
   quint16 m_port;
   QString m_log;
+
+  std::map<qintptr, std::shared_ptr<Game>> m_player_game_data;
 
 };
 
