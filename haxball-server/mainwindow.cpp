@@ -10,11 +10,11 @@ MainWindow::MainWindow(QWidget *parent)
   ui->setupUi(this);
 
   //create and start server object that can be shared between components
-  m_server = std::make_shared<Server>(QHostAddress::LocalHost, 3333);
+  m_server = std::make_shared<Server>(QHostAddress::LocalHost, 3334, this);
   m_server->start();
 
   //set up settings dialog
-  ui_dialog = new DialogSettings(m_server);
+  ui_dialog = new DialogSettings(m_server, this);
 }
 
 MainWindow::~MainWindow()
