@@ -4,7 +4,7 @@ QT       += network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += c++17
+CONFIG += c++14
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
@@ -22,13 +22,15 @@ SOURCES += \
     game.cpp \
     main.cpp \
     mainwindow.cpp \
-    settings.cpp
+    settings.cpp \
+    player.cpp
 
 HEADERS += \
     clientsocket.hpp \
     game.h \
     mainwindow.hpp \
-    settings.h
+    settings.h \
+    player.h
 
 FORMS += \
     game.ui \
