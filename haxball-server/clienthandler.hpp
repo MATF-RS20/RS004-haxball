@@ -5,6 +5,9 @@
 #include <QTcpSocket>
 #include <QDebug>
 
+#include <memory>
+
+#include <server.hpp>
 
 class PlayerHandler : public QThread
 {
@@ -31,6 +34,7 @@ private:
     //fields
     QTcpSocket *m_socket;
     qintptr m_socket_descriptor;
+    std::shared_ptr<Server> m_server;
 
     //methods
 

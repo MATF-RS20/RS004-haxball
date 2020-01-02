@@ -22,6 +22,7 @@ public:
   std::shared_ptr<Server> server();
 
   void setUpListeners();
+  void setUpLoggingPreview();
 
 public slots:
   void previewLogData(QString & new_data);

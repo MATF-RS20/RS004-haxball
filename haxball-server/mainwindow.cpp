@@ -10,6 +10,9 @@ MainWindow::MainWindow(QWidget *parent)
 {
   ui->setupUi(this);
 
+  //set up logging text style
+  setUpLoggingPreview();
+
   //create and start server object that can be shared between components
   m_server = std::make_shared<Server>(QHostAddress::LocalHost, 3333, this);
   m_server->start();
@@ -54,4 +57,14 @@ void MainWindow::on_restartButton_clicked()
 void MainWindow::on_exitButton_clicked()
 {
   this->close();
+}
+
+
+void MainWindow::setUpLoggingPreview()
+{
+  ui->logTextEdit->setReadOnly(true);
+  QPalette p = ui->logTextEdit->palette();
+  p.setColor(QPalette::Base, Qt::black);
+  p.setColor(QPalette::Text, Qt::white);
+  ui->logTextEdit->setPalette(p);
 }

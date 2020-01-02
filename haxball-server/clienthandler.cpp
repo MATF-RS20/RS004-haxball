@@ -1,5 +1,6 @@
 #include "clienthandler.hpp"
 
+#include "server.hpp"
 
 PlayerHandler::PlayerHandler(qintptr id, QObject *parent)
   : QThread(parent)
