@@ -5,11 +5,12 @@
 
 DialogSettings::DialogSettings(std::shared_ptr<Server> server_ptr, QWidget *parent) :
   QDialog(parent),
-  ui(new Ui::DialogSettings),
-  m_server_ptr(server_ptr)
+  ui(new Ui::DialogSettings)
 {
   ui->setupUi(this);
 
+  //get singleton server instance
+  m_server_ptr =  Server::instance(QHostAddress::LocalHost, 3333, this);
 
   //setup current host addres and port
   auto address = server_ptr->hostAddress().toString();

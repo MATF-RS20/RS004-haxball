@@ -13,12 +13,12 @@ MainWindow::MainWindow(QWidget *parent)
   //set up logging text style
   setUpLoggingPreview();
 
-  //create and start server object that can be shared between components
-  m_server = std::make_shared<Server>(QHostAddress::LocalHost, 3333, this);
-  m_server->start();
+  //get singleton server instance shared between components
+  m_server_ptr = Server::instance(QHostAddress::LocalHost, 3333, this);
+  m_server_ptr->start();
 
   //set up settings dialog
-  ui_dialog = new DialogSettings(m_server, this);
+  ui_dialog = new DialogSettings(m_server_ptr, this);
 }
 
 MainWindow::~MainWindow()
@@ -41,17 +41,17 @@ void MainWindow::previewLogData(QString & new_data)
 
 void MainWindow::on_startButton_clicked()
 {
-    m_server->start();
+    m_server_ptr->start();
 }
 
 void MainWindow::on_stopButton_clicked()
 {
-    m_server->stop();
+    m_server_ptr->stop();
 }
 
 void MainWindow::on_restartButton_clicked()
 {
-    m_server->restart();
+    m_server_ptr->restart();
 }
 
 void MainWindow::on_exitButton_clicked()

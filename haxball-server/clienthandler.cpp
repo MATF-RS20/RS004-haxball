@@ -1,12 +1,17 @@
 #include "clienthandler.hpp"
 
+#include <memory>
+
 #include "server.hpp"
 
 PlayerHandler::PlayerHandler(qintptr id, QObject *parent)
   : QThread(parent)
 {
-    this->m_socket_descriptor = id;
+    m_socket_descriptor = id;
     qDebug() << "Created socket descriptor: " << m_socket_descriptor;
+
+    //get singleton server instance
+    m_server_ptr = Server::instance(QHostAddress::LocalHost, 3333, this);
 }
 
 void PlayerHandler::run()
