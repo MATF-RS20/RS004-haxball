@@ -19,6 +19,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     clienthandler.cpp \
     game.cpp \
+    player.cpp  \
     main.cpp \
     mainwindow.cpp \
     server.cpp  \
@@ -27,6 +28,7 @@ SOURCES += \
 HEADERS += \
     clienthandler.hpp \
     game.hpp \
+    player.hpp  \
     mainwindow.hpp \
     server.hpp  \
     dialogsettings.hpp
