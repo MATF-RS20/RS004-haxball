@@ -5,6 +5,16 @@
 #include <QTcpSocket>
 #include <QHostAddress>
 
+#include <memory>
+#include <map>
+
+#include <ctime>
+
+#include "player.hpp"
+#include "game.hpp"
+
+#include <memory>
+
 
 class Server : public QTcpServer
 {
@@ -13,22 +23,42 @@ class Server : public QTcpServer
 
 public:
 
-  explicit Server(QHostAddress host, quint16 port, QObject* parent = nullptr);
+  explicit Server(QObject* parent = nullptr);
+  explicit Server(const QHostAddress address, const quint16 port, QObject* parent = nullptr);
 
+  //server api
   void start();
+  void stop();
+  void restart();
+
+  //setters
+  void port(quint16 port);
+  void hostAddress(QHostAddress address);
+  void writeToLog(QString & s);
+
+  //getters
+  quint16 port() const;
+  QHostAddress hostAddress() const;
+  QString & readFromLog();
 
 signals:
-
-public slots:
+  void newLogData(QString & new_data);
 
 protected:
-  void incomingConnection(int handle);
-
+  void incomingConnection(qintptr handle);
 
 private:
+  //methodes
+  void setUpListeners();
+  bool registerPlayer(qintptr player_id);
+  void initData();
 
-  QHostAddress m_host;
+  //fields
+  QHostAddress m_host_address;
   quint16 m_port;
+  QString m_log;
+
+  std::map<qintptr, std::shared_ptr<Game>> m_player_game_data;
 
 };
 

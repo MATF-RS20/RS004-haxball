@@ -1,50 +1,52 @@
 #include "clienthandler.hpp"
 
+#include "server.hpp"
 
-ClientHandler::ClientHandler(int id, QObject *parent)
+PlayerHandler::PlayerHandler(qintptr id, QObject *parent)
   : QThread(parent)
 {
-    this->socket_descriptor = id;
+    this->m_socket_descriptor = id;
+    qDebug() << "Created socket descriptor: " << m_socket_descriptor;
 }
 
-void ClientHandler::run()
+void PlayerHandler::run()
 {
-    qDebug() << socket_descriptor << "Client handler thread is running...";
-    socket = new QTcpSocket();
-    if(!socket->setSocketDescriptor(this->socket_descriptor))
+    //qDebug() << m_socket_descriptor << "Client handler thread is running...";
+
+    m_socket = new QTcpSocket();
+    if(!m_socket->setSocketDescriptor(this->m_socket_descriptor))
     {
-        emit error(socket->error());
+        emit error(m_socket->error());
         return;
     }
 
-    connect(socket, SIGNAL(readyRead()), this, SLOT(readyRead()), Qt::DirectConnection);
-    connect(socket, SIGNAL(disconnected()), this, SLOT(disconnected()), Qt::DirectConnection);
-    connect(socket, SIGNAL(connected()), this, SLOT(connected()), Qt::DirectConnection);
+    connect(m_socket, SIGNAL(readyRead()), this, SLOT(readyRead()), Qt::DirectConnection);
+    connect(m_socket, SIGNAL(disconnected()), this, SLOT(disconnected()), Qt::DirectConnection);
+    connect(m_socket, SIGNAL(connected()), this, SLOT(connected()), Qt::DirectConnection);
 
-
-    qDebug() << socket_descriptor << " is connected to server...";
+    qDebug() << "Socket descriptor: " << m_socket_descriptor << " is connected to server...";
 
     exec();
 }
 
-void ClientHandler::readyRead()
+void PlayerHandler::readyRead()
 {
-    QByteArray data = socket->readAll();
+    QByteArray data = m_socket->readAll();
 
-    qDebug() << socket_descriptor << " Data in: " << data;
+    qDebug() << "Socket descriptor: " << m_socket_descriptor << " Data read: " << data;
 
-    socket->write(data);
+    m_socket->write(data);
 }
 
-void ClientHandler::connected()
+void PlayerHandler::connected()
 {
-    qDebug() << socket_descriptor << " is connected to server...";
+    qDebug() << "Socket descriptor: "  << m_socket_descriptor << " is connected to server...";
 }
 
-void ClientHandler::disconnected()
+void PlayerHandler::disconnected()
 {
-    qDebug() << socket_descriptor << " is disconnected from server...";
-    socket->deleteLater();
+    qDebug() << "Socket descriptor: "  << m_socket_descriptor << " is disconnected from server...";
+    m_socket->deleteLater();
     exit(0);
 }
 

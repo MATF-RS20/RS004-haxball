@@ -5,15 +5,18 @@
 #include <QTcpSocket>
 #include <QDebug>
 
+#include <memory>
 
-class ClientHandler : public QThread
+#include <server.hpp>
+
+class PlayerHandler : public QThread
 {
 
   Q_OBJECT
 
 public:
 
-  explicit ClientHandler(int id, QObject* parent = nullptr);
+  explicit PlayerHandler(qintptr id, QObject* parent = nullptr);
 
   void run();
 
@@ -28,8 +31,13 @@ public slots:
 public slots:
 
 private:
-    QTcpSocket *socket;
-    int socket_descriptor;
+    //fields
+    QTcpSocket *m_socket;
+    qintptr m_socket_descriptor;
+    std::shared_ptr<Server> m_server;
+
+    //methods
+
 
 };
 

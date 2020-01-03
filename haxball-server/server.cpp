@@ -1,32 +1,149 @@
 #include "server.hpp"
 #include "clienthandler.hpp"
 
+#include <string>
 
-Server::Server(QHostAddress host, quint16 port, QObject* parent)
-  :QTcpServer(parent), m_host(host), m_port(port)
-{}
+
+Server::Server(QObject* parent)
+  :QTcpServer(parent)
+{
+  m_log = QString();
+  initData();
+}
+
+Server::Server(QHostAddress address, quint16 port, QObject* parent)
+  :QTcpServer(parent), m_host_address(address), m_port(port)
+{
+  m_log = QString();
+  initData();
+}
 
 void Server::start()
 {
-  qDebug() << "Server is starting at " << m_host << ":" << m_port << "...";
+  //all listeners will be connect
+  setUpListeners();
 
-  if(!this->listen(m_host, m_port))
+
+  //write to log
+  QString s;
+  s.append("Server is starting at ").append(m_host_address.toString()).append(" : ").append(QString::number(m_port));
+  writeToLog(s);
+
+  if(!this->listen(m_host_address, m_port))
     {
-      qDebug() << "Server could not be started...";
+//      s.clear();
+//      s.append("Server could not be started...");
+//      writeToLog(s);
     }
   else
     {
-      qDebug() << "Server is listening at " << m_host << ":" << m_port << "...";
+//      s.append("Server is listening at ").append(m_host_address.toString()).append(":").append(QString::number(m_port)).append("...");
+//      writeToLog(s);
     }
+
 }
 
-void Server::incomingConnection(int handle)
+void Server::stop()
 {
-  qDebug() << "CLient handler id: " << handle << " is connecting...";
+//  //write to log
+//  QString s;
+//  s.append("Server is stoped...");
+//  writeToLog(s);
 
-  ClientHandler *thread = new ClientHandler(handle, this);
+  this->close();
+}
+
+void Server::restart()
+{
+
+  //write to log
+  QString s;
+  s.append("Server is restarted...");
+  writeToLog(s);
+
+  this->stop();
+  this->start();
+
+}
+
+void Server::port(quint16 port)
+{
+  m_port = port;
+}
+
+void Server::hostAddress(QHostAddress address)
+{
+  m_host_address = address;
+}
+
+void Server::writeToLog(QString & s)
+{
+  QString & curr_log = readFromLog();
+  curr_log.append(s);
+
+  //notify about logging
+  emit newLogData(s);
+}
+
+
+quint16 Server::port() const
+{
+  return m_port;
+}
+
+QHostAddress Server::hostAddress() const
+{
+  return m_host_address;
+}
+
+
+QString & Server::readFromLog()
+{
+  return m_log;
+}
+
+
+void Server::incomingConnection(qintptr handle)
+{
+
+  //write to log
+  QString s;
+  s.append("Client with connection ID: ").append(QString::number(handle)).append(" is connecting...");
+  writeToLog(s);
+
+  PlayerHandler *thread = new PlayerHandler(handle, this);
   connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
   thread->start();
 
   return;
+}
+
+
+void Server::setUpListeners()
+{
+  //setup listener for data logging
+  connect(this, SIGNAL(newLogData(QString &)), parent(), SLOT(previewLogData(QString &)));
+
+
+
+}
+
+bool Server::registerPlayer(qintptr player_id)
+{
+
+  m_player_game_data[player_id] = nullptr;
+  return true;
+}
+
+
+void Server::initData()
+{
+
+  //init players-games hash map
+  for(auto iter = std::begin(m_player_game_data); iter != m_player_game_data.end(); iter++)
+  {
+     iter->second = nullptr;
+  }
+
+
 }
