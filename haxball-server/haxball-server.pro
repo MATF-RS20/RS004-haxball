@@ -21,13 +21,15 @@ SOURCES += \
     game.cpp \
     main.cpp \
     mainwindow.cpp \
-    server.cpp
+    server.cpp  \
+    dialogsettings.cpp
 
 HEADERS += \
     clienthandler.hpp \
     game.hpp \
     mainwindow.hpp \
-    server.hpp
+    server.hpp  \
+    dialogsettings.hpp
 
 FORMS += \
     mainwindow.ui
