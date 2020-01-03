@@ -49,7 +49,6 @@ void DialogSettings::on_buttonBox_accepted()
       QHostAddress qa(host_addr);
       quint16 port = host_port.toShort();
 
-
       m_server_ptr->hostAddress(qa);
       m_server_ptr->port(port);
       m_server_ptr->start();

@@ -91,15 +91,9 @@ QHostAddress Server::hostAddress() const
 }
 
 
-void Server::addPlayers(Player player)
+void Server::addGames(std::shared_ptr<Game> game_ptr)
 {
-  m_current_players.push_back(player);
-}
-
-
-void Server::addGames(Game game)
-{
-  m_current_games.push_back(game);
+  m_created_games.push_back(game_ptr);
 }
 
 
@@ -115,15 +109,9 @@ std::map<qintptr, std::shared_ptr<Game>> & Server::player_game_data()
 }
 
 
-std::vector<Player> Server::currentPlayers() const
+std::vector<std::shared_ptr<Game>> Server::createdGames() const
 {
-  return m_current_players;
-}
-
-
-std::vector<Game> Server::currentGames() const
-{
-  return m_current_games;
+  return m_created_games;
 }
 
 
@@ -148,8 +136,6 @@ void Server::setUpListeners()
   //setup listener for data logging
   connect(this, SIGNAL(newLogData(QString &)), parent(), SLOT(previewLogData(QString &)));
 
-
-
 }
 
 bool Server::registerPlayer(qintptr player_id)
@@ -167,6 +153,15 @@ void Server::initData()
   {
      iter->second = nullptr;
   }
+
+
+  //add games for test
+  auto game_ptr = std::make_shared<Game>();
+  m_created_games.push_back(game_ptr);
+  QThread::sleep(2);
+  auto game_ptr2 = std::make_shared<Game>();
+  m_created_games.push_back(game_ptr2);
+
 
 }
 

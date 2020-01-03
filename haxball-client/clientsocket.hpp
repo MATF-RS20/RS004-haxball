@@ -7,6 +7,7 @@
 #include <QAbstractSocket>
 #include <QHostAddress>
 
+#include <QByteArray>
 
 
 class ClientSocket : public QObject
@@ -34,6 +35,8 @@ private:
   QTcpSocket* m_socket;
   QHostAddress m_host;
   quint16 m_port;
+
+  QByteArray m_data;
 
 };
 

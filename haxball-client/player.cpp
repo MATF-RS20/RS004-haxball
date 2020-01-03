@@ -8,10 +8,7 @@ Player::Player()
 void Player::keyPressEvent(QKeyEvent *event){
 
     if (event->key() == Qt::Key_Left){
-        if(x() > -player_x)
-        {
-            setPos(x()-5, y());
-        }
+
     }
     else if (event->key() == Qt::Key_Right){
         if(x() < 960-player_x)

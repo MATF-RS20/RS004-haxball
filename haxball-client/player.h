@@ -3,7 +3,10 @@
 
 #include <QGraphicsRectItem>
 #include <QPen>
+
+
 class Player: public QGraphicsEllipseItem{
+
 public:
     Player();
     void keyPressEvent(QKeyEvent * event);

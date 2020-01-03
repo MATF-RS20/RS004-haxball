@@ -46,8 +46,10 @@ void ClientSocket::setPort(quint16 port)
 
 void ClientSocket::onConnected()
 {
-  qDebug() << "Connected to server...";
+  qDebug() << "Connected to server! Getting all created games...";
 
+  m_data = m_socket->readAll();
+  qDebug() << m_data;
 
 }
 

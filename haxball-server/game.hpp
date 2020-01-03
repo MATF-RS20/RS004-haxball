@@ -9,6 +9,8 @@
 
 #include <ctime>
 
+#include <iostream>
+
 #include "player.hpp"
 
 class Game
@@ -16,8 +18,12 @@ class Game
 
 public:
   explicit Game(unsigned players_number = 10,
-             time_t id = time(nullptr),
+                time_t id = time(nullptr),
              std::pair<unsigned, unsigned> result = std::make_pair<unsigned, unsigned>(0,0));
+
+  void addPlayer(Player & player);
+
+  std::string toString() const;
 
 private:
   time_t m_id;
@@ -26,5 +32,6 @@ private:
   std::vector<Player> m_players;
 
 };
+
 
 #endif // GAME_HPP

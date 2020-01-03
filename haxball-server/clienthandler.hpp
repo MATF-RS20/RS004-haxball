@@ -21,6 +21,8 @@ public:
   void run();
 
   bool checkIsPlayerRegistred(qintptr id);
+  QByteArray data();
+
 
 signals:
     void error(QTcpSocket::SocketError socketerror);
@@ -37,8 +39,10 @@ private:
     QTcpSocket *m_socket;
     qintptr m_socket_descriptor;
     std::shared_ptr<Server> m_server_ptr;
+    QByteArray m_data;
 
     //methods
+    void setUpListeners();
 
 };
 

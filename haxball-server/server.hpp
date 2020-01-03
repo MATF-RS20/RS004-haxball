@@ -43,20 +43,19 @@ public:
   void port(quint16 port);
   void hostAddress(QHostAddress address);
 
-  void addPlayers(Player player);
-  void addGames(Game game);
+  void addGames(std::shared_ptr<Game> game);
   void writeToLog(QString & s);
 
 
   //getters
   quint16 port() const;
   QHostAddress hostAddress() const;
-  std::vector<Player> currentPlayers() const;
-  std::vector<Game> currentGames() const;
+  std::vector<std::shared_ptr<Game>> createdGames() const;
 
   QString & readFromLog();
 
   std::map<qintptr, std::shared_ptr<Game>> & player_game_data();
+
 
 signals:
   void newLogData(QString & new_data);
@@ -75,8 +74,7 @@ private:
   quint16 m_port;
   QString m_log;
 
-  std::vector<Player> m_current_players;
-  std::vector<Game> m_current_games;
+  std::vector<std::shared_ptr<Game>> m_created_games;
 
   std::map<qintptr, std::shared_ptr<Game>> m_player_game_data;
 
