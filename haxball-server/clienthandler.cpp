@@ -81,13 +81,13 @@ void PlayerHandler::run()
 
 void PlayerHandler::onReadyRead()
 {
-    //QByteArray data = m_socket->readAll();
-    QByteArray data;
-    data.append("test123 bla bla blaaaa");
+    QByteArray data = m_socket->readAll();
+    //QByteArray data;
+    //data.append("test123 bla bla blaaaa");
 
     qDebug() << "Data for writting: " << data;
 
-    m_socket->write(data);
+    //m_socket->write(data);
 }
 
 void PlayerHandler::onConnected()

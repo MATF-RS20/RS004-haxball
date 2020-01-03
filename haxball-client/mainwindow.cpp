@@ -10,18 +10,13 @@ MainWindow::MainWindow(QWidget *parent)
 {
   ui->setupUi(this);
 
-  clientsocket = new ClientSocket(QHostAddress::LocalHost, 3333);
-  clientsocket->connectToServer(QHostAddress::LocalHost, 3333);
+  clientsocket = ClientSocket::instance(QHostAddress::LocalHost, 3333);
+  clientsocket->connectToServer();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-ClientSocket *MainWindow::getClientSocket() const
-{
-    return clientsocket;
 }
 
 

@@ -10,6 +10,7 @@
 #include <QObject>
 #include <vector>
 #include <utility>
+#include "clientsocket.hpp"
 
 Game::Game(QWidget *parent) :
     QDialog(parent),

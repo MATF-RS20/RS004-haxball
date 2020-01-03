@@ -19,7 +19,6 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    ClientSocket* getClientSocket() const;
 
 private slots:
     void on_exitButton_clicked();
@@ -30,6 +29,6 @@ private:
     Ui::MainWindow *ui;
     Game* game;
     Settings* settings;
-    ClientSocket* clientsocket;
+    std::shared_ptr<ClientSocket> clientsocket;
 };
 #endif // MAINWINDOW_HPP

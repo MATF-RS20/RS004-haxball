@@ -4,6 +4,7 @@
 #include <QGraphicsRectItem>
 #include <QPen>
 
+#include <QTcpSocket>
 
 class Player: public QGraphicsEllipseItem{
 
@@ -13,6 +14,7 @@ public:
     Player* drawPlayer(int x, int y);
     void set_playerX(int x);
     void set_playerY(int y);
+
 private:
     int player_x;
     int player_y;
