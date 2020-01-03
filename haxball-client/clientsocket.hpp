@@ -7,7 +7,7 @@
 #include <QAbstractSocket>
 #include <QHostAddress>
 
-
+#include <memory>
 
 class ClientSocket : public QObject
 {
@@ -16,9 +16,17 @@ class ClientSocket : public QObject
 
 public:
     explicit ClientSocket(QHostAddress host, quint16 port, QObject* parent = nullptr);
-    bool connectToServer(QHostAddress host, quint16 port);
+    bool connectToServer();
     void setHost(QHostAddress host);
     void setPort(quint16 port);
+    QTcpSocket* getSocket();
+
+    //sigleton class method
+    static std::shared_ptr<ClientSocket> instance(QHostAddress address, quint16 port, QObject* parent = nullptr)
+    {
+      static std::shared_ptr<ClientSocket> s (new ClientSocket(address, port, parent));
+      return s;
+    }
 
 signals:
 
@@ -30,7 +38,6 @@ public slots:
   void onReadyRead();
 
 private:
-
   QTcpSocket* m_socket;
   QHostAddress m_host;
   quint16 m_port;

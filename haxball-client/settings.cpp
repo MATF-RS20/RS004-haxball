@@ -36,11 +36,11 @@ void Settings::on_savePushButton_clicked()
     MainWindow *mainWindow = qobject_cast<MainWindow *>(parent());
     if (mainWindow != nullptr) {
 
-        auto clientSocket = mainWindow->getClientSocket();
+        auto clientSocket = ClientSocket::instance(host, port);
         clientSocket->onDisconnected();
         clientSocket->setHost(host);
         clientSocket->setPort(port);
-        clientSocket->connectToServer(host, port);
+        clientSocket->connectToServer();
     }
 
     hide();
@@ -51,8 +51,8 @@ void Settings::on_testButton_clicked()
     auto host = QHostAddress(ui->hostTextEdit->toPlainText().trimmed());
     quint16 port = static_cast<quint16>(ui->portTextEdit->toPlainText().trimmed().toUInt());
 
-    ClientSocket clientSocketTest(host, port);
-    bool connectResult = clientSocketTest.connectToServer(host, port);
+    auto conn = ClientSocket::instance(host, port);
+    bool connectResult = conn->connectToServer();
 
     if(connectResult){
         ui->checkConnLabel->setText("Connection successful");
