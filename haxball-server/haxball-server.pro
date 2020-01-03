@@ -32,7 +32,8 @@ HEADERS += \
     dialogsettings.hpp
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui   \
+    dialogsettings.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
