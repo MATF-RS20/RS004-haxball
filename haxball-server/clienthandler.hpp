@@ -20,13 +20,15 @@ public:
 
   void run();
 
+  bool checkIsPlayerRegistred(qintptr id);
+
 signals:
     void error(QTcpSocket::SocketError socketerror);
 
 public slots:
-    void readyRead();
-    void connected();
-    void disconnected();
+    void onReadyRead();
+    void onConnected();
+    void onDisconnected();
 
 public slots:
 

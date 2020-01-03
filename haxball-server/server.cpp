@@ -2,14 +2,8 @@
 #include "clienthandler.hpp"
 
 #include <string>
+#include <vector>
 
-
-//Server::Server(QObject* parent)
-//  :QTcpServer(parent)
-//{
-//  m_log = QString();
-//  initData();
-//}
 
 Server::Server(QHostAddress address, quint16 port, QObject* parent)
   :QTcpServer(parent), m_host_address(address), m_port(port)
@@ -31,14 +25,14 @@ void Server::start()
 
   if(!this->listen(m_host_address, m_port))
     {
-//      s.clear();
-//      s.append("Server could not be started...");
-//      writeToLog(s);
+      s.clear();
+      s.append("Server could not be started...");
+      writeToLog(s);
     }
   else
     {
-//      s.append("Server is listening at ").append(m_host_address.toString()).append(":").append(QString::number(m_port)).append("...");
-//      writeToLog(s);
+      s.append("Server is listening at ").append(m_host_address.toString()).append(":").append(QString::number(m_port)).append("...");
+      writeToLog(s);
     }
 
 }
@@ -97,9 +91,39 @@ QHostAddress Server::hostAddress() const
 }
 
 
+void Server::addPlayers(Player player)
+{
+  m_current_players.push_back(player);
+}
+
+
+void Server::addGames(Game game)
+{
+  m_current_games.push_back(game);
+}
+
+
 QString & Server::readFromLog()
 {
   return m_log;
+}
+
+
+std::map<qintptr, std::shared_ptr<Game>> & Server::player_game_data()
+{
+  return m_player_game_data;
+}
+
+
+std::vector<Player> Server::currentPlayers() const
+{
+  return m_current_players;
+}
+
+
+std::vector<Game> Server::currentGames() const
+{
+  return m_current_games;
 }
 
 
@@ -138,12 +162,12 @@ bool Server::registerPlayer(qintptr player_id)
 
 void Server::initData()
 {
-
   //init players-games hash map
   for(auto iter = std::begin(m_player_game_data); iter != m_player_game_data.end(); iter++)
   {
      iter->second = nullptr;
   }
 
-
 }
+
+

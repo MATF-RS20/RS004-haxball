@@ -11,15 +11,13 @@
 
 #include "player.hpp"
 
-class Game : public QObject
+class Game
 {
 
-  Q_OBJECT
-
 public:
-
-  Game();
-
+  explicit Game(unsigned players_number = 10,
+             time_t id = time(nullptr),
+             std::pair<unsigned, unsigned> result = std::make_pair<unsigned, unsigned>(0,0));
 
 private:
   time_t m_id;

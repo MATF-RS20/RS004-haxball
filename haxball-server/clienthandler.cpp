@@ -3,12 +3,14 @@
 #include <memory>
 
 #include "server.hpp"
+#include "mainwindow.hpp"
+
 
 PlayerHandler::PlayerHandler(qintptr id, QObject *parent)
   : QThread(parent)
 {
     m_socket_descriptor = id;
-    qDebug() << "Created socket descriptor: " << m_socket_descriptor;
+    qDebug() << "[PlayerHandler()] Created socket descriptor: " << m_socket_descriptor;
 
     //get singleton server instance
     m_server_ptr = Server::instance(QHostAddress::LocalHost, 3333, this);
@@ -21,37 +23,66 @@ void PlayerHandler::run()
     m_socket = new QTcpSocket();
     if(!m_socket->setSocketDescriptor(this->m_socket_descriptor))
     {
+        qDebug() << "[run] Socket descriptor: " << m_socket_descriptor << " is NOT connected to server...";
         emit error(m_socket->error());
         return;
     }
 
-    connect(m_socket, SIGNAL(readyRead()), this, SLOT(readyRead()), Qt::DirectConnection);
-    connect(m_socket, SIGNAL(disconnected()), this, SLOT(disconnected()), Qt::DirectConnection);
-    connect(m_socket, SIGNAL(connected()), this, SLOT(connected()), Qt::DirectConnection);
+    connect(m_socket, SIGNAL(readyRead()), this, SLOT(onReadyRead()), Qt::DirectConnection);
+    connect(m_socket, SIGNAL(disconnected()), this, SLOT(onDisconnected()), Qt::DirectConnection);
+    connect(m_socket, SIGNAL(connected()), this, SLOT(onReadyRead()), Qt::DirectConnection);
 
-    qDebug() << "Socket descriptor: " << m_socket_descriptor << " is connected to server...";
+    qDebug() << "[run] Socket descriptor: " << m_socket_descriptor << " is connected to server...";
+
+    auto player_game_data = m_server_ptr->player_game_data();
+    if(checkIsPlayerRegistred(m_socket_descriptor))
+    {
+        //return player connection ID
+
+    }
+    else
+    {
+        //register current player
+//      auto game_ptr = std::make_shared<Game>();
+//      player_game_data[m_socket_descriptor] = game_ptr;
+
+
+      //return all created games to get one
+
+
+    }
+
 
     exec();
 }
 
-void PlayerHandler::readyRead()
+void PlayerHandler::onReadyRead()
 {
-    QByteArray data = m_socket->readAll();
+    //QByteArray data = m_socket->readAll();
+    QByteArray data;
+    data.append("test123 bla bla blaaaa");
 
-    qDebug() << "Socket descriptor: " << m_socket_descriptor << " Data read: " << data;
+    qDebug() << "Data for writting: " << data;
 
     m_socket->write(data);
 }
 
-void PlayerHandler::connected()
+void PlayerHandler::onConnected()
 {
-    qDebug() << "Socket descriptor: "  << m_socket_descriptor << " is connected to server...";
+    qDebug() << "[onConnected] Socket descriptor: "  << m_socket_descriptor << " is connected to server...";
 }
 
-void PlayerHandler::disconnected()
+void PlayerHandler::onDisconnected()
 {
-    qDebug() << "Socket descriptor: "  << m_socket_descriptor << " is disconnected from server...";
+    qDebug() << "[onDisconnected] Socket descriptor: "  << m_socket_descriptor << " is disconnected from server...";
     m_socket->deleteLater();
     exit(0);
+}
+
+
+bool PlayerHandler::checkIsPlayerRegistred(qintptr id)
+{
+  auto player_game_data = m_server_ptr->player_game_data();
+  return nullptr != player_game_data[id];
 }
 

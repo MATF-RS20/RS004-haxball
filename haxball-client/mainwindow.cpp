@@ -10,8 +10,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
   ui->setupUi(this);
 
-  clientsocket = new ClientSocket(QHostAddress::LocalHost, 3334);
-  clientsocket->connectToServer(QHostAddress::LocalHost, 3334);
+  clientsocket = new ClientSocket(QHostAddress::LocalHost, 3333);
+  clientsocket->connectToServer(QHostAddress::LocalHost, 3333);
 }
 
 MainWindow::~MainWindow()

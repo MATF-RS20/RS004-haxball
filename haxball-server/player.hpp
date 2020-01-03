@@ -4,13 +4,11 @@
 #include <QObject>
 
 
-class Player : public QObject
+class Player
 {
 
-  Q_OBJECT
-
 public:
-  Player();
+  explicit Player();
 
 
 private:

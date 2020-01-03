@@ -14,6 +14,7 @@
 #include "game.hpp"
 
 #include <memory>
+#include <vector>
 
 
 class Server : public QTcpServer
@@ -24,15 +25,14 @@ class Server : public QTcpServer
 public:
 
   //constructors
-  //explicit Server(QObject* parent = nullptr);
   explicit Server(const QHostAddress address, const quint16 port, QObject* parent = nullptr);
 
   //sigleton class method
   static std::shared_ptr<Server> instance(QHostAddress address, quint16 port, QObject* parent = nullptr)
-     {
-         static std::shared_ptr<Server> s (new Server(address, port, parent));
-         return s;
-     }
+  {
+    static std::shared_ptr<Server> s (new Server(address, port, parent));
+    return s;
+  }
 
   //server api
   void start();
@@ -42,12 +42,21 @@ public:
   //setters
   void port(quint16 port);
   void hostAddress(QHostAddress address);
+
+  void addPlayers(Player player);
+  void addGames(Game game);
   void writeToLog(QString & s);
+
 
   //getters
   quint16 port() const;
   QHostAddress hostAddress() const;
+  std::vector<Player> currentPlayers() const;
+  std::vector<Game> currentGames() const;
+
   QString & readFromLog();
+
+  std::map<qintptr, std::shared_ptr<Game>> & player_game_data();
 
 signals:
   void newLogData(QString & new_data);
@@ -65,6 +74,9 @@ private:
   QHostAddress m_host_address;
   quint16 m_port;
   QString m_log;
+
+  std::vector<Player> m_current_players;
+  std::vector<Game> m_current_games;
 
   std::map<qintptr, std::shared_ptr<Game>> m_player_game_data;
 

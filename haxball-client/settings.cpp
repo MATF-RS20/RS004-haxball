@@ -37,7 +37,7 @@ void Settings::on_savePushButton_clicked()
     if (mainWindow != nullptr) {
 
         auto clientSocket = mainWindow->getClientSocket();
-        clientSocket->disconnected();
+        clientSocket->onDisconnected();
         clientSocket->setHost(host);
         clientSocket->setPort(port);
         clientSocket->connectToServer(host, port);

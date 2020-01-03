@@ -24,10 +24,10 @@ signals:
 
 public slots:
 
-  void connected();
-  void disconnected();
-  void bytesWritten(qint64 bytes);
-  void readyRead();
+  void onConnected();
+  void onDisconnected();
+  void onBytesWritten(qint64 bytes);
+  void onReadyRead();
 
 private:
 
