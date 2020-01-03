@@ -4,12 +4,12 @@
 #include <string>
 
 
-Server::Server(QObject* parent)
-  :QTcpServer(parent)
-{
-  m_log = QString();
-  initData();
-}
+//Server::Server(QObject* parent)
+//  :QTcpServer(parent)
+//{
+//  m_log = QString();
+//  initData();
+//}
 
 Server::Server(QHostAddress address, quint16 port, QObject* parent)
   :QTcpServer(parent), m_host_address(address), m_port(port)

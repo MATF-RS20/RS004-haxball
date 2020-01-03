@@ -39,7 +39,7 @@ private:
   Ui::MainWindow *ui;
   DialogSettings *ui_dialog;
 
-  std::shared_ptr<Server> m_server;
+  std::shared_ptr<Server> m_server_ptr;
   std::string m_logger;
 
   //methods

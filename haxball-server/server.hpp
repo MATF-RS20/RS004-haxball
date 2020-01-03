@@ -23,8 +23,16 @@ class Server : public QTcpServer
 
 public:
 
-  explicit Server(QObject* parent = nullptr);
+  //constructors
+  //explicit Server(QObject* parent = nullptr);
   explicit Server(const QHostAddress address, const quint16 port, QObject* parent = nullptr);
+
+  //sigleton class method
+  static std::shared_ptr<Server> instance(QHostAddress address, quint16 port, QObject* parent = nullptr)
+     {
+         static std::shared_ptr<Server> s (new Server(address, port, parent));
+         return s;
+     }
 
   //server api
   void start();
