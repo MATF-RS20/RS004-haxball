@@ -24,11 +24,14 @@ private slots:
     void on_exitButton_clicked();
     void on_createButton_clicked();
     void on_settingsButton_clicked();
+    void on_refreshButton_clicked();
+    void on_joinButton_clicked();
 
 private:
     Ui::MainWindow *ui;
     Game* game;
     Settings* settings;
+    std::string sendMsg;
     std::shared_ptr<ClientSocket> clientsocket;
 };
 #endif // MAINWINDOW_HPP

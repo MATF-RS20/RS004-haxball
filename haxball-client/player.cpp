@@ -7,32 +7,28 @@ Player::Player()
     : player(this)
 {}
 
-//enum Actions {
-//   key_left,
-//   key_right,
-//   key_up,
-//   key_down,
-//   shot
-//};
-
-//const std::string actionToString(Actions a)
-//{
-//    switch (a) {
-//        case key_left: return "key_left";
-//        case key_right: return "key_right";
-//        case key_up: return "key_up";
-//        case key_down: return "key_down";
-//        case shot: return "shot";
-//    }
-//}
+const char* Player::actionToString(Actions a)
+{
+    switch (a) {
+        case key_left: return "key_left";
+        case key_right: return "key_right";
+        case key_up: return "key_up";
+        case key_down: return "key_down";
+        case shot: return "shot";
+    default:
+        throw "Nepoznat taster.";
+    }
+}
 
 void Player::keyPressEvent(QKeyEvent *event){
 
     auto conn = ClientSocket::instance(QHostAddress::LocalHost, 3333);
     auto socket = conn.get()->getSocket();
 
-    if (event->key() == Qt::Key_Left){  
-        socket->write("key_left");
+    const char* str;
+    if (event->key() == Qt::Key_Left){
+        str = actionToString(key_left);
+        socket->write(str);
 
         if(x() > -player_x)
         {
@@ -40,7 +36,8 @@ void Player::keyPressEvent(QKeyEvent *event){
         }
     }
     else if (event->key() == Qt::Key_Right){
-        socket->write("key_right");
+        str = actionToString(key_right);
+        socket->write(str);
 
         if(x() < 960-player_x)
         {
@@ -48,7 +45,8 @@ void Player::keyPressEvent(QKeyEvent *event){
         }
     }
     else if (event->key() == Qt::Key_Up){
-        socket->write("key_up");
+        str = actionToString(key_up);
+        socket->write(str);
 
         if(y() > -player_y)
         {
@@ -56,14 +54,19 @@ void Player::keyPressEvent(QKeyEvent *event){
         }
     }
     else if (event->key() == Qt::Key_Down){
-        socket->write("key_down");
+        str = actionToString(key_down);
+        socket->write(str);
 
         if(y() < 460-player_y)
         {
             setPos(x(), y()+5);
         }
     }
-    emit socket->bytesWritten(100);
+    else if (event->key() == Qt::Key_Space) {
+        str = actionToString(shot);
+        socket->write(str);
+    }
+    emit socket->bytesWritten(sizeof (str));
 }
 
 Player* Player::drawPlayer(int x, int y)

@@ -52,7 +52,7 @@ bool Game::eventFilter(QObject * , QEvent * event){
          //qDebug() << "Key relase!";
     }
 
-    qDebug() << pressedKeys.size();
+    //qDebug() << pressedKeys.size(); beskonacne petlje komsine 0 ...
 
     return false;
 }
@@ -99,9 +99,15 @@ QGraphicsScene* Game::drawPlayers()
         Player* player = new Player();
         player->drawPlayer(e.first, e.second);
         scene->addItem(player);
-        player->setFlag(QGraphicsItem::ItemIsFocusable);
-        player->setFocus();
+        //player->setFlag(QGraphicsItem::ItemIsFocusable);
+        //player->setFocus();
     }
+    Player* player = new Player();
+    player->drawPlayer(300, 200);
+    scene->addItem(player);
+    player->setFlag(QGraphicsItem::ItemIsFocusable);
+    player->setFocus();
+
     return scene;
 }
 
@@ -113,7 +119,7 @@ QGraphicsScene* Game::drawBall()
     player->drawPlayer(480, 230);
     player->setBrush(Qt::white);
     scene->addItem(player);
-    player->setFlag(QGraphicsItem::ItemIsFocusable);
-    player->setFocus();
+    //player->setFlag(QGraphicsItem::ItemIsFocusable);
+    // player->setFocus();
     return scene;
 }

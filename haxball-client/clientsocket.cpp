@@ -1,5 +1,8 @@
 #include "clientsocket.hpp"
 #include "settings.h"
+#include <QString>
+#include <iostream>
+#include "mainwindow.hpp"
 
 ClientSocket::ClientSocket(QHostAddress host, quint16 port, QObject* parent)
   : m_host(host), m_port(port), QObject(parent)
@@ -48,8 +51,8 @@ void ClientSocket::onConnected()
 {
   qDebug() << "Connected to server! Getting all created games...";
 
-  m_data = m_socket->readAll();
-  qDebug() << m_data;
+  //m_data = m_socket->readAll();
+  //qDebug() << m_data;
 
 }
 
@@ -62,20 +65,45 @@ void ClientSocket::onDisconnected()
 void ClientSocket::onBytesWritten(qint64 bytes)
 {
   qDebug() << "BytesWritten...";
-
   qDebug() << "Written data: " << bytes;
 
 }
+
+std::vector<std::string> ClientSocket::split(const std::string& str)
+{
+       std::vector<std::string> reci;
+
+       auto first = str.begin();
+       while (first != str.end()) {
+           first = std::find_if_not(first, str.end(), isspace);
+           auto last = std::find_if(first, str.end(), isspace);
+           if(first != str.end()) {
+               reci.emplace_back(first, last);
+           }
+           first = last;
+       }
+       return reci;
+}
+
 
 void ClientSocket::onReadyRead()
 {
   qDebug() << "ReadyRead...";
 
-  qDebug() << "Read data: " << m_socket->readAll();
+  QByteArray data = m_socket->readAll();
+  QString string_data = QString(data);
+  games = split(string_data.toStdString());
+
+  qDebug() << "Read data: " << string_data;
 
 }
 
 QTcpSocket* ClientSocket::getSocket()
 {
     return m_socket;
+}
+
+std::vector<std::string> ClientSocket::getGames()
+{
+    return games;
 }

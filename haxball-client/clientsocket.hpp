@@ -6,6 +6,9 @@
 #include <QDebug>
 #include <QAbstractSocket>
 #include <QHostAddress>
+#include <vector>
+#include <algorithm>
+#include <iterator>
 
 #include <QByteArray>
 
@@ -22,6 +25,8 @@ public:
     void setHost(QHostAddress host);
     void setPort(quint16 port);
     QTcpSocket* getSocket();
+    std::vector<std::string> split(const std::string& str);
+    std::vector<std::string> getGames();
 
     //sigleton class method
     static std::shared_ptr<ClientSocket> instance(QHostAddress address, quint16 port, QObject* parent = nullptr)
@@ -43,7 +48,7 @@ private:
   QTcpSocket* m_socket;
   QHostAddress m_host;
   quint16 m_port;
-
+  std::vector<std::string> games;
   QByteArray m_data;
 
 };

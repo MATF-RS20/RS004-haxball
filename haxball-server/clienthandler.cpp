@@ -62,7 +62,7 @@ void PlayerHandler::run()
 
         //retrun all game to client
 
-        std::string games_str("playerId: " + std::to_string(m_socket_descriptor));
+        std::string games_str(std::to_string(m_socket_descriptor));
 
         auto games = m_server_ptr->createdGames();
         for(auto iter = std::begin(games); iter != games.end(); iter++)
@@ -93,8 +93,6 @@ void PlayerHandler::onReadyRead()
 void PlayerHandler::onConnected()
 {
     qDebug() << "[onConnected] Socket descriptor: "  << m_socket_descriptor << " is connected to server...";
-
-
 }
 
 void PlayerHandler::onDisconnected()

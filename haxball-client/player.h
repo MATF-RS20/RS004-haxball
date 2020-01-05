@@ -6,6 +6,14 @@
 
 #include <QTcpSocket>
 
+enum Actions{
+   key_left = 1,
+   key_right = 2,
+   key_up = 3,
+   key_down = 4,
+   shot = 5
+};
+
 class Player: public QGraphicsEllipseItem{
 
 public:
@@ -14,6 +22,7 @@ public:
     Player* drawPlayer(int x, int y);
     void set_playerX(int x);
     void set_playerY(int y);
+    const char* actionToString(Actions a);
 
 private:
     int player_x;
