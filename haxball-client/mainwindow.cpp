@@ -65,6 +65,10 @@ void MainWindow::on_joinButton_clicked()
     std::string msg = clientsocket.get()->getGames()[0];
     QString currentRoom = ui->comboBox->currentText();
     sendMsg.append(msg + " " + currentRoom.toStdString()); // saljem serveru idPlayer , idGame
+
     clientsocket->getSocket()->write(QString::fromStdString(sendMsg).toUtf8());
     emit clientsocket->getSocket()->bytesWritten(sendMsg.length());
+    sendMsg = "";
+    clientsocket->getSocket()->flush();
+
 }

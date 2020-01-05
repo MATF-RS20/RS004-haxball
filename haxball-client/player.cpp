@@ -67,6 +67,7 @@ void Player::keyPressEvent(QKeyEvent *event){
         socket->write(str);
     }
     emit socket->bytesWritten(sizeof (str));
+    socket->flush();
 }
 
 Player* Player::drawPlayer(int x, int y)
