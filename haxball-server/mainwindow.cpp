@@ -33,9 +33,9 @@ void MainWindow::on_actionSettings_triggered()
   ui_dialog->show();
 }
 
-void MainWindow::previewLogData(QString & new_data)
+void MainWindow::previewLoggedServerData(std::string & new_data)
 {
-  ui->logTextEdit->append(new_data);
+  ui->logTextEdit->append(QString::fromStdString(new_data));
   return;
 }
 

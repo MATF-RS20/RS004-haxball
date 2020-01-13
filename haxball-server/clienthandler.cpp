@@ -10,7 +10,7 @@ PlayerHandler::PlayerHandler(qintptr id, QObject *parent)
   : QThread(parent)
 {
     m_socket_descriptor = id;
-    qDebug() << "[PlayerHandler()] Created socket descriptor: " << m_socket_descriptor;
+    qDebug() << "[PlayerHandler] Created socket descriptor: " << m_socket_descriptor;
 
     //get singleton server instance
     m_server_ptr = Server::instance(QHostAddress::LocalHost, 3333, this);
@@ -18,7 +18,7 @@ PlayerHandler::PlayerHandler(qintptr id, QObject *parent)
 
 void PlayerHandler::run()
 {
-    //qDebug() << m_socket_descriptor << "Client handler thread is running...";
+    qDebug() << m_socket_descriptor << "[run] Client handler thread is running...";
 
     m_socket = new QTcpSocket();
     if(!m_socket->setSocketDescriptor(this->m_socket_descriptor))
@@ -29,7 +29,6 @@ void PlayerHandler::run()
     }
 
     setUpListeners();
-
 
     qDebug() << "[run] Socket descriptor: " << m_socket_descriptor << " is connected to server...";
 

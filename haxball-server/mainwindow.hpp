@@ -25,7 +25,7 @@ public:
   void setUpLoggingPreview();
 
 public slots:
-  void previewLogData(QString & new_data);
+  void previewLoggedServerData(std::string & new_data);
 
 private slots:
   void on_actionSettings_triggered();

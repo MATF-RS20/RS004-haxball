@@ -44,8 +44,6 @@ public:
   void hostAddress(QHostAddress address);
 
   void addGames(std::shared_ptr<Game> game);
-  void writeToLog(QString & s);
-
 
   //getters
   quint16 port() const;
@@ -56,9 +54,10 @@ public:
 
   std::map<qintptr, std::shared_ptr<Game>> & player_game_data();
 
+  void log_data(const char* str);
 
 signals:
-  void newLogData(QString & new_data);
+  void logServerData(std::string & new_data);
 
 protected:
   void incomingConnection(qintptr handle);
@@ -70,7 +69,6 @@ private:
 
   QHostAddress m_host_address;
   quint16 m_port;
-  QString m_log;
 
   std::vector<std::shared_ptr<Game>> m_created_games;
 

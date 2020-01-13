@@ -4,60 +4,49 @@
 #include <string>
 #include <vector>
 
+#define LOG_DATA(str) (auto s QString::fromStdString(str);   emit logServerData(s))
+
 
 Server::Server(QHostAddress address, quint16 port, QObject* parent)
   :QTcpServer(parent), m_host_address(address), m_port(port)
 {
-  m_log = QString();
   initData();
 }
 
 void Server::start()
 {
+  log_data("[start] Server is starting...");
+
   //all listeners will be connect
   setUpListeners();
 
-
-  //write to log
-  QString s;
-  s.append("Server is starting at ").append(m_host_address.toString()).append(" : ").append(QString::number(m_port));
-  writeToLog(s);
-
   if(!this->listen(m_host_address, m_port))
     {
-      s.clear();
-      s.append("Server could not be started...");
-      writeToLog(s);
+      log_data("[start] Server could not be started...");
     }
   else
     {
-      s.append("Server is listening at ").append(m_host_address.toString()).append(":").append(QString::number(m_port)).append("...");
-      writeToLog(s);
+      log_data("[start] Server is listening at...");
+//      qDebug()  << "[start] Server is listening at " << m_host_address << " : " << m_port << "...";
     }
 
 }
 
 void Server::stop()
 {
-//  //write to log
-//  QString s;
-//  s.append("Server is stoped...");
-//  writeToLog(s);
+  log_data("[stop] Server is stopping...");
 
   this->close();
+
+  log_data("[stop] Server is stoped...");
 }
 
 void Server::restart()
 {
-
-  //write to log
-  QString s;
-  s.append("Server is restarted...");
-  writeToLog(s);
+  log_data("[restart] Server is restarting...");
 
   this->stop();
   this->start();
-
 }
 
 void Server::port(quint16 port)
@@ -69,16 +58,6 @@ void Server::hostAddress(QHostAddress address)
 {
   m_host_address = address;
 }
-
-void Server::writeToLog(QString & s)
-{
-  QString & curr_log = readFromLog();
-  curr_log.append(s);
-
-  //notify about logging
-  emit newLogData(s);
-}
-
 
 quint16 Server::port() const
 {
@@ -97,12 +76,6 @@ void Server::addGames(std::shared_ptr<Game> game_ptr)
 }
 
 
-QString & Server::readFromLog()
-{
-  return m_log;
-}
-
-
 std::map<qintptr, std::shared_ptr<Game>> & Server::player_game_data()
 {
   return m_player_game_data;
@@ -115,13 +88,11 @@ std::vector<std::shared_ptr<Game>> Server::createdGames() const
 }
 
 
+
 void Server::incomingConnection(qintptr handle)
 {
 
-  //write to log
-  QString s;
-  s.append("Client with connection ID: ").append(QString::number(handle)).append(" is connecting...");
-  writeToLog(s);
+  log_data("[incomingConnection] Client  is connecting...");
 
   PlayerHandler *thread = new PlayerHandler(handle, this);
   connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
@@ -134,13 +105,12 @@ void Server::incomingConnection(qintptr handle)
 void Server::setUpListeners()
 {
   //setup listener for data logging
-  connect(this, SIGNAL(newLogData(QString &)), parent(), SLOT(previewLogData(QString &)));
+  connect(this, SIGNAL(logServerData(std::string &)), parent(), SLOT(previewLoggedServerData(std::string &)));
 
 }
 
 bool Server::registerPlayer(qintptr player_id)
 {
-
   m_player_game_data[player_id] = nullptr;
   return true;
 }
@@ -162,7 +132,14 @@ void Server::initData()
   auto game_ptr2 = std::make_shared<Game>();
   m_created_games.push_back(game_ptr2);
 
+}
 
+void Server::log_data(const char* str)
+{
+    std::string s(str);
+    qDebug() << str;
+
+    emit logServerData(s);
 }
 
 
