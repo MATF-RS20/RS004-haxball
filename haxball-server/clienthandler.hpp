@@ -35,13 +35,11 @@ public slots:
 public slots:
 
 private:
-    //fields
     QTcpSocket *m_socket;
     qintptr m_socket_descriptor;
     std::shared_ptr<Server> m_server_ptr;
     QByteArray m_data;
 
-    //methods
     void setUpListeners();
 
 };

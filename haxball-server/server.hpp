@@ -64,12 +64,10 @@ protected:
   void incomingConnection(qintptr handle);
 
 private:
-  //methodes
   void setUpListeners();
   bool registerPlayer(qintptr player_id);
   void initData();
 
-  //fields
   QHostAddress m_host_address;
   quint16 m_port;
   QString m_log;
