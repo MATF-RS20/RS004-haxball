@@ -69,32 +69,38 @@ void ClientSocket::onBytesWritten(qint64 bytes)
 
 }
 
-std::vector<std::string> ClientSocket::split(const std::string& str)
-{
-       std::vector<std::string> reci;
-
-       auto first = str.begin();
-       while (first != str.end()) {
-           first = std::find_if_not(first, str.end(), isspace);
-           auto last = std::find_if(first, str.end(), isspace);
-           if(first != str.end()) {
-               reci.emplace_back(first, last);
-           }
-           first = last;
-       }
-       return reci;
-}
 
 
 void ClientSocket::onReadyRead()
 {
+    m_data = m_socket->readLine();
+    m_optData = QString(m_data).split(" ");
+
+    QString opt = m_optData.takeFirst();
+    if(opt.compare("playerId")){
+        emit onPlayerId(m_optData.first());
+    }
+    if(opt.compare("gameNames")){
+        emit onGameNames(QStringList(m_optData));
+    }
+    else{
+        qDebug() << "Primljena poruka ne podrzava poznate protokole";
+    }
+
+
+
+    /*
   qDebug() << "ReadyRead...";
 
-  QByteArray data = m_socket->readAll();
-  QString string_data = QString(data);
-  games = split(string_data.toStdString());
+  m_data = m_socket->readAll();
+  QString string_data = QString(m_data);
+  QList<QString> splittedData = string_data.split(" ");
+
+  m_playerID = splittedData.takeFirst();
+  m_games = QStringList(splittedData);
 
   qDebug() << "Read data: " << string_data;
+  */
 
 }
 
@@ -103,7 +109,7 @@ QTcpSocket* ClientSocket::getSocket()
     return m_socket;
 }
 
-std::vector<std::string> ClientSocket::getGames()
+QStringList ClientSocket::getGames()
 {
-    return games;
+    return m_games;
 }

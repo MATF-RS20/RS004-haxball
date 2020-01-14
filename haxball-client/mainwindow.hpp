@@ -27,11 +27,21 @@ private slots:
     void on_refreshButton_clicked();
     void on_joinButton_clicked();
 
+    void enableCreateGameButton();
+
 private:
     Ui::MainWindow *ui;
     Game* game;
     Settings* settings;
     std::string sendMsg;
-    std::shared_ptr<ClientSocket> clientsocket;
+
+
+    std::shared_ptr<ClientSocket> m_clientsocket;
+    QString m_playerId;
+    QStringList m_games;
+
+    void setUpListener();
+    void playerIdReady(QString id);
+    void gameNamesReady(QStringList games);
 };
 #endif // MAINWINDOW_HPP

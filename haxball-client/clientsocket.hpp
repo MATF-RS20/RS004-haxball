@@ -25,8 +25,7 @@ public:
     void setHost(QHostAddress host);
     void setPort(quint16 port);
     QTcpSocket* getSocket();
-    std::vector<std::string> split(const std::string& str);
-    std::vector<std::string> getGames();
+    QStringList getGames();
 
     //sigleton class method
     static std::shared_ptr<ClientSocket> instance(QHostAddress address, quint16 port, QObject* parent = nullptr)
@@ -36,6 +35,8 @@ public:
     }
 
 signals:
+    void onPlayerId(QString id);
+    void onGameNames(QStringList games);
 
 public slots:
 
@@ -48,8 +49,12 @@ private:
   QTcpSocket* m_socket;
   QHostAddress m_host;
   quint16 m_port;
-  std::vector<std::string> games;
+
   QByteArray m_data;
+  QList<QString> m_optData;
+
+  QString m_playerID;
+  QStringList m_games;
 
 };
 

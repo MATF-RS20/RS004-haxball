@@ -13,8 +13,10 @@ MainWindow::MainWindow(QWidget *parent)
 {
   ui->setupUi(this);
 
-  clientsocket = ClientSocket::instance(QHostAddress::LocalHost, 3333);
-  clientsocket->connectToServer();
+  m_clientsocket = ClientSocket::instance(QHostAddress::LocalHost, 3333);
+  m_clientsocket->connectToServer();
+
+  setUpListener();
 
 }
 
@@ -31,9 +33,23 @@ void MainWindow::on_exitButton_clicked()
 
 void MainWindow::on_createButton_clicked()
 {
+    QByteArray serverRequest;
+    /*
+    serverRequest.append("createGame ")
+                 .append(ui->playerNameTextEdit->toPlainText().trimmed() + " ")
+                 .append(ui->gameNameTextEdit->toPlainText().trimmed() + " ")
+                 .append()
+                          + ui->PlayerNumberSpinBox->value();
+
+    m_clientsocket->getSocket()->wr
+
+    /*
+
+    /*
     hide();
     game = new Game(this);
     game->show();
+    */
 }
 
 void MainWindow::on_settingsButton_clicked()
@@ -45,23 +61,17 @@ void MainWindow::on_settingsButton_clicked()
 void MainWindow::on_refreshButton_clicked()
 {
 
-    std::vector<std::string> games = clientsocket.get()->getGames();
+    QStringList games = m_clientsocket.get()->getGames();
 
-    if(games.size() != 0)
-    {
-        ui->joinButton->setEnabled(true);
-        for(unsigned iter = 1;  iter < games.size(); iter+=3)
-        {
-            ui->comboBox->addItem(QString::fromStdString(games[iter]));
-        }
-    }
-    else{
-        ui->joinButton->setEnabled(false);
-    }
+    qDebug() << "[on_refreshButton_clicked]: " << games;
+
+    ui->roomsListWidget->clear();
+    ui->roomsListWidget->addItems(games);
 }
 
 void MainWindow::on_joinButton_clicked()
 {
+    /*
     std::string msg = clientsocket.get()->getGames()[0];
     QString currentRoom = ui->comboBox->currentText();
     sendMsg.append(msg + " " + currentRoom.toStdString()); // saljem serveru idPlayer , idGame
@@ -70,5 +80,38 @@ void MainWindow::on_joinButton_clicked()
     emit clientsocket->getSocket()->bytesWritten(sendMsg.length());
     sendMsg = "";
     clientsocket->getSocket()->flush();
+    */
 
 }
+
+void MainWindow::enableCreateGameButton()
+{
+    if(ui->playerNameTextEdit->toPlainText().trimmed().size() != 0 &&
+       ui->gameNameTextEdit->toPlainText().trimmed().size() != 0 &&
+       ui->PlayerNumberSpinBox->value() != 0){
+
+        ui->createButton->setEnabled(true);
+    }
+    else{
+        ui->createButton->setEnabled(false);
+    }
+}
+
+void MainWindow::setUpListener()
+{
+
+    connect(m_clientsocket.get(), SIGNAL(onPlayerId(QString)), this, SLOT(playerIdReady(QString)));
+    connect(m_clientsocket.get(), SIGNAL(onGameNames(QStringList)), this, SLOT(gameNamesReady(QStringList)));
+
+    connect(ui->playerNameTextEdit, SIGNAL(textChanged()), this, SLOT(enableCreateGameButton()));
+    connect(ui->gameNameTextEdit, SIGNAL(textChanged()), this, SLOT(enableCreateGameButton()));
+    connect(ui->PlayerNumberSpinBox, SIGNAL(valueChanged(int)), this, SLOT(enableCreateGameButton()));
+}
+
+void MainWindow::playerIdReady(QString id)
+{
+    m_playerId = id;
+    qDebug() << "playerIdReady(QString id)";
+}
+
+
