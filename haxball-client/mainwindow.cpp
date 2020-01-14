@@ -174,7 +174,7 @@ void MainWindow::gameNamesReady(QStringList games)
         qDebug() << "oneGame: " << oneGame;
         m_games.append(oneGame.join(" "));
     }
-
+    ui->gamesListWidget->clear();
     ui->gamesListWidget->addItems(m_games);
 
     qDebug() << "gameNamesReady(QStringList games)";

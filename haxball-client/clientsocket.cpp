@@ -74,7 +74,9 @@ void ClientSocket::onBytesWritten(qint64 bytes)
 void ClientSocket::onReadyRead()
 {
     m_data = m_socket->readLine();
-    m_optData = QString(m_data).split(" ");
+
+    QRegExp regex("\\s+");
+    m_optData = QString(m_data).split(regex);
 
     qDebug() << "PRIMLJENO: " << m_optData;
 
