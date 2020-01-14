@@ -23,7 +23,7 @@ public:
   bool checkIsPlayerRegistred(qintptr id);
   QByteArray data();
 
-  void joinGame(long clientId, std::string gameId);
+  void joinGame(qintptr clientId, std::string playerName, std::string gameId);
   void createGame(qintptr clientId, std::string playerName, std::string gameName, unsigned playerNumber);
 
 

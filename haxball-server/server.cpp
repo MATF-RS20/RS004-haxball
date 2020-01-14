@@ -82,7 +82,7 @@ std::map<qintptr, std::shared_ptr<Game>> & Server::player_game_data()
 }
 
 
-std::vector<std::shared_ptr<Game>> Server::createdGames() const
+std::vector<std::shared_ptr<Game>> & Server::createdGames()
 {
   return m_created_games;
 }
@@ -124,60 +124,35 @@ void Server::initData()
      iter->second = nullptr;
   }
 
-
-  //HARDCODED: add games for test
-  auto game_ptr = std::make_shared<Game>("Firste Game");
-  m_created_games.push_back(game_ptr);
-  QThread::sleep(2);
-  auto game_ptr2 = std::make_shared<Game>("Scond Game");
-  m_created_games.push_back(game_ptr2);
-
 }
 
-void Server::log_data(const char* str)
+void Server::log_data(const std::string new_data)
 {
-    std::string s(str);
-    qDebug() << str;
+    std::string tmp(new_data);
+    qDebug() << QString::fromStdString(tmp);
 
-    emit logServerData(s);
+    emit logServerData(tmp);
 }
 
 
-bool Server::joinGame(qintptr clientId, std::string gameId)
+bool Server::joinGame(qintptr clientId, std::string playerName, std::string gameId)
 {
-  //FIXME: ....
 
-  Player player(clientId, "Pera");
+  log_data("[joinGame]");
 
-  std::shared_ptr<Game> game_ptr = nullptr;
+  Player player(clientId, playerName);
 
   auto result = findGameById(gameId);
 
   if(!result.first)
     {
-      //game not exists => create game and add player to game by GameID
-      game_ptr = std::make_shared<Game>("GameTest");
-    }
-  else
-    {
-      //just add player to game
-      game_ptr = result.second;
-    }
-
-   m_player_game_data.insert(std::pair<qintptr, std::shared_ptr<Game>>(clientId, game_ptr));
-
-  auto iter = m_player_game_data.find(clientId);
-  if(iter != m_player_game_data.end())
-    {
-      iter->second->addPlayer(player);
-    }
-  else
-    {
-      log_data("Something wrong with add player to created game!");
-      qDebug() <<  "Something wrong with add player to created game!";
+      log_data("Required game not found!");
+      qDebug() <<  "Required game not found!";
 
       return false;
     }
+
+   m_player_game_data.insert(std::pair<qintptr, std::shared_ptr<Game>>(clientId, result.second));
 
   return true;
 }
@@ -187,11 +162,20 @@ bool Server::joinGame(qintptr clientId, std::string gameId)
 bool Server::createGame(qintptr clientId, std::string playerName, std::string gameName, unsigned playerNumber)
 {
 
+  log_data("[createGame]");
+
   Player player(clientId, playerName);
 
   auto game_ptr = std::make_shared<Game>(gameName, playerNumber);
 
+  //add to vector
+  createdGames().push_back(game_ptr);
+
+   qDebug() << "game_ptr: name: " << QString::fromStdString(game_ptr->name())
+            << "playerNumber: " << QString::number(game_ptr->playersNumber());
+
    m_player_game_data.insert(std::pair<qintptr, std::shared_ptr<Game>>(clientId, game_ptr));
+
 
   auto iter = m_player_game_data.find(clientId);
   if(iter != m_player_game_data.end())
@@ -200,10 +184,11 @@ bool Server::createGame(qintptr clientId, std::string playerName, std::string ga
     }
   else
     {
-      log_data("Something wrong with add player to created game!");
+      qDebug() << "Something wrong with add player to created game!";
       return false;
     }
 
+  qDebug() << "iter: first: " << iter->first << "game name: " << QString::fromStdString(iter->second->name());
   return true;
 }
 
@@ -212,6 +197,9 @@ bool Server::createGame(qintptr clientId, std::string playerName, std::string ga
 
 std::pair<bool, std::shared_ptr<Game>> Server::findGameById(std::string gameId)
 {
+
+    log_data("[findGameById]");
+
     for(auto g : m_created_games)
     {
         if(g->gameId() == gameId)

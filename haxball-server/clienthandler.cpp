@@ -18,28 +18,33 @@ PlayerHandler::PlayerHandler(qintptr id, QObject *parent)
 
 void PlayerHandler::run()
 {
-    qDebug() << m_socket_descriptor << "[run] Client handler thread is running...";
+
+    auto log =  "[run] Client handler thread is running...";
+//    auto s = "asdasd" + std::to_string(5);
+    m_server_ptr->log_data(log);
 
     m_socket = new QTcpSocket();
 
     if(!m_socket->setSocketDescriptor(this->m_socket_descriptor))
     {
-        qDebug() << "[run] Socket descriptor: " << m_socket_descriptor << " is NOT connected to server...";
+        auto l = "[run] Socket descriptor: " +  std::to_string(m_socket_descriptor) + " is NOT connected to server...";
+        m_server_ptr->log_data(l.c_str());
+
         emit error(m_socket->error());
         return;
     }
 
     setUpListeners();
 
-    qDebug() << "[run] Socket descriptor: " << m_socket_descriptor << " is connected to server...";
+    auto l = "[run] Socket descriptor: " +  std::to_string(m_socket_descriptor) + " is connected to server...";
+    m_server_ptr->log_data(l.c_str());
 
     auto player_game_data = m_server_ptr->player_game_data();
 
     if(checkIsPlayerRegistred(m_socket_descriptor))
     {
         //TODO: ...
-
-
+        m_server_ptr->log_data("[checkIsPlayerRegistred]");
 
 
 
@@ -64,6 +69,9 @@ void PlayerHandler::run()
         std::string data_str;
         data_str.append("playerId").append(" ");
         data_str.append(std::to_string(m_socket_descriptor));
+
+        m_server_ptr->log_data(data_str.c_str());
+
         m_socket->write(data_str.c_str());
 
       }
@@ -88,18 +96,23 @@ void PlayerHandler::onReadyRead()
       if(ql[0] == "joinGame")
       {
         // PROTOCOL:   "joinGame client_id game_id player_name "
-        qDebug() << "joinGame: clienId: " << ql[1] << " gameId: " << ql[2] << " playerName: " << ql[3] ;
 
-        auto clientId = ql[0].toLong();
-        auto gameId = ql[1].toStdString();
-        joinGame(clientId, gameId);
+        auto l = "joinGame: clienId: " + ql[1] + " gameId: " + ql[2] + " playerName: " + ql[3] ;
+        m_server_ptr->log_data(l.toStdString());
+
+        auto clientId = ql[1].toLong();
+        auto gameId = ql[2].toStdString();
+        auto playerName = ql[3].toStdString();
+
+        joinGame(clientId, playerName, gameId);
 
       }
     else if(ql[0] == "createGame")
       {
         // PROTOCOL:   "createGame client_id player_name game_name player_number"
-        qDebug() << "createGame: clientId: " << ql[1] << " playerName: "
-                 << ql[2] << " gameName: " << ql[3] << " playerNumber: " << ql[4];
+
+        auto l = "createGame: clientId: " + ql[1] + " playerName: " + ql[2] + " gameName: " + ql[3] + " playerNumber: " + ql[4];
+        m_server_ptr->log_data(l.toStdString());
 
         auto clientId = ql[1].toLong();
         auto playerName = ql[2].toStdString();
@@ -115,10 +128,14 @@ void PlayerHandler::onReadyRead()
         std::string games_str("gameNames ");
 
         auto games = m_server_ptr->createdGames();
+
         for(auto iter = std::begin(games); iter != games.end(); iter++)
         {
           games_str.append((*iter)->toString());
         }
+
+//        //log data
+//        m_server_ptr->log_data(games_str.c_str());
 
         //write game data to socket
         m_socket->write(games_str.c_str());
@@ -152,7 +169,7 @@ void PlayerHandler::onDisconnected()
 bool PlayerHandler::checkIsPlayerRegistred(qintptr id)
 {
   auto player_game_data = m_server_ptr->player_game_data();
-  return nullptr != player_game_data[id];
+  return player_game_data.find(id) != player_game_data.end();
 }
 
 QByteArray PlayerHandler::data()
@@ -169,9 +186,9 @@ void PlayerHandler::setUpListeners()
 }
 
 
-void PlayerHandler::joinGame(long clientId, std::string gameId)
+void PlayerHandler::joinGame(qintptr clientId, std::string playerName, std::string gameId)
 {
-  m_server_ptr->joinGame(clientId, gameId);
+  m_server_ptr->joinGame(clientId, playerName, gameId);
 }
 
 void PlayerHandler::createGame(qintptr clientId, std::string playerName, std::string gameName, unsigned playerNumber)

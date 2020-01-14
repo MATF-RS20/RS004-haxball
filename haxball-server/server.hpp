@@ -49,22 +49,22 @@ public:
   //getters
   quint16 port() const;
   QHostAddress hostAddress() const;
-  std::vector<std::shared_ptr<Game>> createdGames() const;
+  std::vector<std::shared_ptr<Game>> & createdGames();
 
   QString & readFromLog();
 
   std::map<qintptr, std::shared_ptr<Game>> & player_game_data();
 
-  void log_data(const char* str);
+  void log_data(const std::string new_data);
 
-  bool joinGame(qintptr clientId, std::string gameId);
+  bool joinGame(qintptr clientId, std::string playerName, std::string gameId);
   bool createGame(qintptr clientId, std::string playerName, std::string gameName, unsigned playerNumber);
 
 
   std::pair<bool, std::shared_ptr<Game>>  findGameById(std::string gameId);
 
 signals:
-  void logServerData(std::string & new_data);
+  void logServerData(const std::string new_data);
 
 protected:
   void incomingConnection(qintptr handle);

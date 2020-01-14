@@ -25,6 +25,10 @@ public:
 
   std::string & gameId() ;
 
+  std::string & name() ;
+
+  unsigned playersNumber() ;
+
   void addPlayer(Player & player);
 
   std::string toString() const;
