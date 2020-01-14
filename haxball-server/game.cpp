@@ -2,7 +2,7 @@
 
 #include <ctime>
 
-Game::Game(std::string name, std::string id, unsigned players_number,  std::pair<unsigned, unsigned> result)
+Game::Game(std::string name, unsigned players_number, std::string id,  std::pair<unsigned, unsigned> result)
   :m_name(name), m_id(id), m_players_number(players_number), m_result(result)
   {}
 

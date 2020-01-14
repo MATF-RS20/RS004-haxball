@@ -57,7 +57,9 @@ public:
 
   void log_data(const char* str);
 
-  bool addPlayerToGame(long clientId, std::string gameId);
+  bool joinGame(qintptr clientId, std::string gameId);
+  bool createGame(qintptr clientId, std::string playerName, std::string gameName, unsigned playerNumber);
+
 
   std::pair<bool, std::shared_ptr<Game>>  findGameById(std::string gameId);
 

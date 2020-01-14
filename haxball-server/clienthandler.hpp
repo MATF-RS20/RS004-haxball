@@ -24,7 +24,7 @@ public:
   QByteArray data();
 
   void joinGame(long clientId, std::string gameId);
-  void createGame(long clientId, std::string gameId, unsigned playerNumber);
+  void createGame(qintptr clientId, std::string playerName, std::string gameName, unsigned playerNumber);
 
 
 signals:

@@ -98,13 +98,14 @@ void PlayerHandler::onReadyRead()
     else if(ql[0] == "createGame")
       {
         // PROTOCOL:   "createGame client_id player_name game_name player_number"
-        qDebug() << "createGame: clienId: " << ql[1] << " playerName: "
+        qDebug() << "createGame: clientId: " << ql[1] << " playerName: "
                  << ql[2] << " gameName: " << ql[3] << " playerNumber: " << ql[4];
 
-        auto clientId = ql[0].toLong();
-        auto gameId = ql[1].toStdString();
-        auto playerNumber = ql[2].toUInt();
-        createGame(clientId, gameId, playerNumber);
+        auto clientId = ql[1].toLong();
+        auto playerName = ql[2].toStdString();
+        auto gameName = ql[3].toStdString();
+        auto playerNumber = ql[4].toUInt();
+        createGame(clientId, playerName, gameName, playerNumber);
 
       }
     else if(ql[0] == "refresh")
@@ -170,12 +171,12 @@ void PlayerHandler::setUpListeners()
 
 void PlayerHandler::joinGame(long clientId, std::string gameId)
 {
-  m_server_ptr->addPlayerToGame(clientId, gameId);
+  m_server_ptr->joinGame(clientId, gameId);
 }
 
-void PlayerHandler::createGame(long clientId, std::string gameId, unsigned playerNumber)
+void PlayerHandler::createGame(qintptr clientId, std::string playerName, std::string gameName, unsigned playerNumber)
 {
-  m_server_ptr->addPlayerToGame(clientId, gameId);
+  m_server_ptr->createGame(clientId, playerName, gameName, playerNumber);
 }
 
 
