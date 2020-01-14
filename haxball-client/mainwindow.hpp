@@ -41,6 +41,9 @@ private:
     std::shared_ptr<ClientSocket> m_clientsocket;
     QString m_playerId;
     QStringList m_games;
+    QString m_playerName;
+    QString m_gameName;
+    QString m_playerNumber;
 
     void setUpListener();
 

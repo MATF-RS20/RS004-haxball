@@ -33,17 +33,22 @@ void MainWindow::on_exitButton_clicked()
 
 void MainWindow::on_createButton_clicked()
 {
+    m_playerName = ui->playerNameTextEdit->toPlainText().trimmed();
+    m_gameName = ui->gameNameTextEdit->toPlainText().trimmed();
+    m_playerNumber = QString(ui->PlayerNumberSpinBox->value());
+
     QByteArray serverRequest;
-    /*
-    serverRequest.append("createGame ")
-                 .append(ui->playerNameTextEdit->toPlainText().trimmed() + " ")
-                 .append(ui->gameNameTextEdit->toPlainText().trimmed() + " ")
-                 .append()
-                          + ui->PlayerNumberSpinBox->value();
+    const QString protocol = "createGame";
 
-    m_clientsocket->getSocket()->wr
+    serverRequest.append(protocol + " ")
+                 .append(m_playerId + " ")
+                 .append(m_playerName + " ")
+                 .append(m_gameName + " ")
+                 .append(m_playerNumber);
 
-    /*
+    m_clientsocket->getSocket()->write(serverRequest);
+
+
 
     /*
     hide();
@@ -70,7 +75,7 @@ void MainWindow::on_refreshButton_clicked()
 }
 
 void MainWindow::on_joinButton_clicked()
-{
+{   
     /*
     std::string msg = clientsocket.get()->getGames()[0];
     QString currentRoom = ui->comboBox->currentText();
