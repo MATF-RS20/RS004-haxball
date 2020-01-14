@@ -16,13 +16,13 @@ std::string  Player::surname() const
 
 std::string Player::toString() const
 {
-  std::string s =  "id:" + std::to_string(m_id) +
-            " name: " + name() +
-            " surname: " + surname() +
-            " x0:" + std::to_string(x0) +
-            " y0:" + std::to_string(y0) +
-            " x1:" + std::to_string(x1) +
-            " y1:" + std::to_string(y1);
+  std::string s =  std::to_string(m_id)
+                  + " " + m_name
+                  + " " + m_surname
+                  + " " + std::to_string(x0)
+                  + " " + std::to_string(y0)
+                  + " " + std::to_string(x1)
+                  + " " + std::to_string(y1);
 
   return s;
 }
