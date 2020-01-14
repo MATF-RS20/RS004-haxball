@@ -71,16 +71,6 @@ void MainWindow::on_refreshButton_clicked()
 
 void MainWindow::on_joinButton_clicked()
 {   
-    /*
-    std::string msg = clientsocket.get()->getGames()[0];
-    QString currentRoom = ui->comboBox->currentText();
-    sendMsg.append(msg + " " + currentRoom.toStdString()); // saljem serveru idPlayer , idGame
-
-    clientsocket->getSocket()->write(QString::fromStdString(sendMsg).toUtf8());
-    emit clientsocket->getSocket()->bytesWritten(sendMsg.length());
-    sendMsg = "";
-    clientsocket->getSocket()->flush();
-    */
 
 }
 
@@ -94,6 +84,16 @@ void MainWindow::enableCreateGameButton()
     }
 }
 
+void MainWindow::enableJoinGameButton()
+{
+    if(checkJoinGame()){
+        ui->joinButton->setEnabled(true);
+    }
+    else{
+        ui->joinButton->setEnabled(false);
+    }
+}
+
 void MainWindow::setUpListener()
 {
 
@@ -103,6 +103,8 @@ void MainWindow::setUpListener()
     connect(ui->playerNameTextEdit, SIGNAL(textChanged()), this, SLOT(enableCreateGameButton()));
     connect(ui->gameNameTextEdit, SIGNAL(textChanged()), this, SLOT(enableCreateGameButton()));
     connect(ui->PlayerNumberSpinBox, SIGNAL(valueChanged(int)), this, SLOT(enableCreateGameButton()));
+
+    connect(ui->gamesListWidget, SIGNAL(itemSelectionChanged()), this, SLOT(enableJoinGameButton()));
 }
 
 bool MainWindow::checkCreateGame()
@@ -140,6 +142,24 @@ bool MainWindow::checkCreateGame()
     return flag;
 }
 
+bool MainWindow::checkJoinGame()
+{
+    m_playerName = ui->playerNameTextEdit->toPlainText().trimmed();
+    m_currentItem = ui->gamesListWidget->currentItem();
+
+    bool flag = true;
+
+    if(m_playerName.size() == 0){
+        ui->messageLabel->setText("Enter player name!");
+        flag = false;
+    }
+    if(m_currentItem == nullptr){
+        ui->messageLabel->setText("Select game room!");
+        flag = false;
+    }
+    return flag;
+}
+
 void MainWindow::playerIdReady(QString id)
 {
     m_playerId = id;
@@ -151,12 +171,24 @@ void MainWindow::gameNamesReady(QStringList games)
 
     for(QStringList::iterator iter = games.begin(); iter != games.end(); iter += 4){
         QStringList oneGame{*iter, *(iter+1), *(iter+2), *(iter+3)};
+        qDebug() << "oneGame: " << oneGame;
         m_games.append(oneGame.join(" "));
     }
 
     ui->gamesListWidget->addItems(m_games);
 
     qDebug() << "gameNamesReady(QStringList games)";
+}
+
+
+
+void MainWindow::on_gamesListWidget_itemSelectionChanged()
+{
+
+    m_currentItem = ui->gamesListWidget->currentItem();
+
+    ui->gameNameTextEdit->setText(m_currentItem->text().split(" ")[0]);
+    ui->PlayerNumberSpinBox->setValue(m_currentItem->text().split(" ")[2].toInt());
 }
 
 

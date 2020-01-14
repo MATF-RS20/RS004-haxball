@@ -124,14 +124,14 @@ void Server::initData()
      iter->second = nullptr;
   }
 
-
+/*
   //HARDCODED: add games for test
-  auto game_ptr = std::make_shared<Game>("Firste Game");
+  auto game_ptr = std::make_shared<Game>("FirsteGame");
   m_created_games.push_back(game_ptr);
   QThread::sleep(2);
-  auto game_ptr2 = std::make_shared<Game>("Scond Game");
+  auto game_ptr2 = std::make_shared<Game>("SecondGame");
   m_created_games.push_back(game_ptr2);
-
+*/
 }
 
 void Server::log_data(const char* str)
