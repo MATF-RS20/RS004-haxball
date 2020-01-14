@@ -75,9 +75,9 @@ void PlayerHandler::run()
 void PlayerHandler::onReadyRead()
 {
 
-  QByteArray data = m_socket->readLine();
+  QByteArray data;
 
-  while(!data.isEmpty())
+  while(!(data = m_socket->readLine()).isEmpty())
   {
 
     QString str_r_data(data);
