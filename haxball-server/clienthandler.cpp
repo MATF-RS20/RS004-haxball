@@ -74,17 +74,20 @@ void PlayerHandler::run()
 
 void PlayerHandler::onReadyRead()
 {
-    QByteArray data = m_socket->readAll();
+
+  QByteArray data = m_socket->readLine();
+
+  while(!data.isEmpty())
+  {
 
     QString str_r_data(data);
     QStringList ql = str_r_data.split(" ");
 
     qDebug() << str_r_data;
 
-
-    if(ql[0] == "joinGame")
+      if(ql[0] == "joinGame")
       {
-        //    "joinGame client_id game_id player_name "
+        // PROTOCOL:   "joinGame client_id game_id player_name "
         qDebug() << "joinGame: clienId: " << ql[1] << " gameId: " << ql[2] << " playerName: " << ql[3] ;
 
         auto clientId = ql[0].toLong();
@@ -94,7 +97,7 @@ void PlayerHandler::onReadyRead()
       }
     else if(ql[0] == "createGame")
       {
-        //    "createGame client_id player_name game_name player_number"
+        // PROTOCOL:   "createGame client_id player_name game_name player_number"
         qDebug() << "createGame: clienId: " << ql[1] << " playerName: "
                  << ql[2] << " gameName: " << ql[3] << " playerNumber: " << ql[4];
 
@@ -104,9 +107,32 @@ void PlayerHandler::onReadyRead()
         createGame(clientId, gameId, playerNumber);
 
       }
+    else if(ql[0] == "refresh")
+      {
+        // PROTOCOL:   "refresh"
 
+        std::string games_str("gameNames ");
+
+        auto games = m_server_ptr->createdGames();
+        for(auto iter = std::begin(games); iter != games.end(); iter++)
+        {
+          games_str.append((*iter)->toString());
+        }
+
+        //write game data to socket
+        m_socket->write(games_str.c_str());
+
+        emit m_socket->bytesWritten(games_str.length());
+
+      }
+
+      //end while
+      m_socket->readLine();
 
     //m_socket->write(data);
+
+    }
+
 }
 
 void PlayerHandler::onConnected()

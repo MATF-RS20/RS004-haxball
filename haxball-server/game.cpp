@@ -23,8 +23,7 @@ std::string Game::toString() const
     std::string s =   " " + m_name
                     + " " + m_id
                     + " " + std::to_string(m_players_number)
-                    + " " + std::to_string(m_result.first) + ":" + std::to_string(m_result.second)
-                    + " ";
+                    + " " + std::to_string(m_result.first) + ":" + std::to_string(m_result.second);
 
   std::string players;
   for(auto iter = std::begin(m_players); iter != m_players.end(); iter++)
