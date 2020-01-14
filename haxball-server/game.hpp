@@ -17,20 +17,26 @@ class Game
 {
 
 public:
-  explicit Game(unsigned players_number = 10,
-                time_t id = time(nullptr),
-             std::pair<unsigned, unsigned> result = std::make_pair<unsigned, unsigned>(0,0));
+
+  Game() = default;
+
+  explicit Game(std::string name, std::string id = std::to_string(time(nullptr)),
+                unsigned players_number = 10,
+                std::pair<unsigned, unsigned> result = std::make_pair<unsigned, unsigned>(0,0));
+
+  std::string & gameId() ;
 
   void addPlayer(Player & player);
 
   std::string toString() const;
 
 private:
-  time_t m_id;
-  std::pair<unsigned, unsigned> m_result;
+  std::string m_name;
+  std::string m_id;
   unsigned m_players_number;
-  std::vector<Player> m_players;
+  std::pair<unsigned, unsigned> m_result;
 
+  std::vector<Player> m_players;
 };
 
 

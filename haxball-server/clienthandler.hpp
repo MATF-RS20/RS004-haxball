@@ -23,6 +23,9 @@ public:
   bool checkIsPlayerRegistred(qintptr id);
   QByteArray data();
 
+  void joinGame(long clientId, std::string gameId);
+  void createGame(long clientId, std::string gameId, unsigned playerNumber);
+
 
 signals:
     void error(QTcpSocket::SocketError socketerror);

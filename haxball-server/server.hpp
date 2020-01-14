@@ -15,6 +15,7 @@
 
 #include <memory>
 #include <vector>
+#include <set>
 
 
 class Server : public QTcpServer
@@ -56,6 +57,10 @@ public:
 
   void log_data(const char* str);
 
+  bool addPlayerToGame(long clientId, std::string gameId);
+
+  std::pair<bool, std::shared_ptr<Game>>  findGameById(std::string gameId);
+
 signals:
   void logServerData(std::string & new_data);
 
@@ -75,5 +80,6 @@ private:
   std::map<qintptr, std::shared_ptr<Game>> m_player_game_data;
 
 };
+
 
 #endif // SERVER_HPP

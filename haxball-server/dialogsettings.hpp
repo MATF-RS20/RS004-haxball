@@ -29,8 +29,6 @@ private:
   QHostAddress m_host_address;
   quint16 m_port;
 
-
-
 };
 
 #endif // DIALOGSETTINGS_HPP

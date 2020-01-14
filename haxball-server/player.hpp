@@ -8,6 +8,9 @@ class Player
 {
 
 public:
+
+  Player() = default;
+
   explicit Player(qintptr id, std::string name, std::string surname, float x0 = 0, float y0 = 0, float x1 = 0, float y1 = 0);
 
   std::string toString() const;
