@@ -35,7 +35,7 @@ void MainWindow::on_createButton_clicked()
 {
     m_playerName = ui->playerNameTextEdit->toPlainText().trimmed();
     m_gameName = ui->gameNameTextEdit->toPlainText().trimmed();
-    m_playerNumber = QString(ui->PlayerNumberSpinBox->value());
+    m_playerNumber = QString::number(ui->PlayerNumberSpinBox->value());
 
     QByteArray serverRequest;
     const QString protocol = "createGame";
@@ -44,7 +44,7 @@ void MainWindow::on_createButton_clicked()
                  .append(m_playerId + " ")
                  .append(m_playerName + " ")
                  .append(m_gameName + " ")
-                 .append(m_playerNumber);
+                 .append(m_playerNumber + "\n");
 
     m_clientsocket->getSocket()->write(serverRequest);
 
