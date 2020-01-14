@@ -143,10 +143,11 @@ void Server::log_data(const char* str)
 }
 
 
-bool Server::addPlayerToGame(long clientId, std::string gameId)
+bool Server::joinGame(qintptr clientId, std::string gameId)
 {
+  //FIXME: ....
 
-  Player player(clientId, "Pera", "Peric");
+  Player player(clientId, "Pera");
 
   std::shared_ptr<Game> game_ptr = nullptr;
 
@@ -180,6 +181,34 @@ bool Server::addPlayerToGame(long clientId, std::string gameId)
 
   return true;
 }
+
+
+
+bool Server::createGame(qintptr clientId, std::string playerName, std::string gameName, unsigned playerNumber)
+{
+
+  Player player(clientId, playerName);
+
+  auto game_ptr = std::make_shared<Game>(gameName, playerNumber);
+
+   m_player_game_data.insert(std::pair<qintptr, std::shared_ptr<Game>>(clientId, game_ptr));
+
+  auto iter = m_player_game_data.find(clientId);
+  if(iter != m_player_game_data.end())
+    {
+      iter->second->addPlayer(player);
+    }
+  else
+    {
+      log_data("Something wrong with add player to created game!");
+      return false;
+    }
+
+  return true;
+}
+
+
+
 
 std::pair<bool, std::shared_ptr<Game>> Server::findGameById(std::string gameId)
 {
