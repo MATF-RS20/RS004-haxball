@@ -571,6 +571,19 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
             </widget>
            </item>
            <item>
+            <widget class="QLabel" name="messageLabel">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item>
             <spacer name="playerHorizontalSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>

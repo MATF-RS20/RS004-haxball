@@ -43,9 +43,10 @@ private:
     QStringList m_games;
     QString m_playerName;
     QString m_gameName;
-    QString m_playerNumber;
+    int m_playerNumber;
 
     void setUpListener();
+    bool checkCreateGame();
 
 };
 #endif // MAINWINDOW_HPP

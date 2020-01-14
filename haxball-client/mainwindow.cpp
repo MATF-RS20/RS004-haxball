@@ -33,22 +33,18 @@ void MainWindow::on_exitButton_clicked()
 
 void MainWindow::on_createButton_clicked()
 {
-    m_playerName = ui->playerNameTextEdit->toPlainText().trimmed();
-    m_gameName = ui->gameNameTextEdit->toPlainText().trimmed();
-    m_playerNumber = QString::number(ui->PlayerNumberSpinBox->value());
+    if(checkCreateGame()){
+        QByteArray serverRequest;
+        const QString protocol = "createGame";
 
-    QByteArray serverRequest;
-    const QString protocol = "createGame";
+        serverRequest.append(protocol + " ")
+                     .append(m_playerId + " ")
+                     .append(m_playerName + " ")
+                     .append(m_gameName + " ")
+                     .append(m_playerNumber + "\n");
 
-    serverRequest.append(protocol + " ")
-                 .append(m_playerId + " ")
-                 .append(m_playerName + " ")
-                 .append(m_gameName + " ")
-                 .append(m_playerNumber + "\n");
-
-    m_clientsocket->getSocket()->write(serverRequest);
-
-
+        m_clientsocket->getSocket()->write(serverRequest);
+    }
 
     /*
     hide();
@@ -91,10 +87,7 @@ void MainWindow::on_joinButton_clicked()
 
 void MainWindow::enableCreateGameButton()
 {
-    if(ui->playerNameTextEdit->toPlainText().trimmed().size() != 0 &&
-       ui->gameNameTextEdit->toPlainText().trimmed().size() != 0 &&
-       ui->PlayerNumberSpinBox->value() != 0){
-
+    if(checkCreateGame()){
         ui->createButton->setEnabled(true);
     }
     else{
@@ -111,6 +104,40 @@ void MainWindow::setUpListener()
     connect(ui->playerNameTextEdit, SIGNAL(textChanged()), this, SLOT(enableCreateGameButton()));
     connect(ui->gameNameTextEdit, SIGNAL(textChanged()), this, SLOT(enableCreateGameButton()));
     connect(ui->PlayerNumberSpinBox, SIGNAL(valueChanged(int)), this, SLOT(enableCreateGameButton()));
+}
+
+bool MainWindow::checkCreateGame()
+{
+    m_playerName = ui->playerNameTextEdit->toPlainText().trimmed();
+    m_gameName = ui->gameNameTextEdit->toPlainText().trimmed();
+    m_playerNumber = ui->PlayerNumberSpinBox->value();
+
+    bool flag = true;
+
+    if(m_playerName.size() == 0){
+        ui->messageLabel->setText("Enter player name!");
+        flag = false;
+    }
+    else if(m_gameName.size() == 0){
+        ui->messageLabel->setText("Enter game name!");
+        flag = false;
+    }
+    else if(m_playerNumber == 0){
+        ui->messageLabel->setText("Set player number!");
+        flag = false;
+    }
+    else if(m_playerName.split(" ").size() > 1){
+        ui->messageLabel->setText("Player name must be one word!");
+        flag = false;
+    }
+    else if(m_gameName.split(" ").size() > 1){
+        ui->messageLabel->setText("Game name must be one word!");
+        flag = false;
+    }
+    else{
+        ui->messageLabel->setText("");
+    }
+    return flag;
 }
 
 void MainWindow::playerIdReady(QString id)
