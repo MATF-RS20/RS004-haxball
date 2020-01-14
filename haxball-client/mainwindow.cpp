@@ -135,6 +135,7 @@ bool MainWindow::checkCreateGame()
     }
     else{
         ui->messageLabel->setText("");
+        ui->messageLabel->setText("");
     }
     return flag;
 }
