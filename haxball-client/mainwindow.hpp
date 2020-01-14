@@ -4,6 +4,7 @@
 #include "game.h"
 #include "settings.h"
 #include "clientsocket.hpp"
+#include <QListWidgetItem>
 
 #include <QMainWindow>
 
@@ -28,8 +29,13 @@ private slots:
     void on_joinButton_clicked();
 
     void enableCreateGameButton();
+    void enableJoinGameButton();
+
+
     void playerIdReady(QString id);
     void gameNamesReady(QStringList games);
+
+    void on_gamesListWidget_itemSelectionChanged();
 
 private:
     Ui::MainWindow *ui;
@@ -44,9 +50,11 @@ private:
     QString m_playerName;
     QString m_gameName;
     int m_playerNumber;
+    QListWidgetItem* m_currentItem = nullptr;
 
     void setUpListener();
     bool checkCreateGame();
+    bool checkJoinGame();
 
 };
 #endif // MAINWINDOW_HPP
