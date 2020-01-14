@@ -79,10 +79,13 @@ void PlayerHandler::onReadyRead()
     QString str_r_data(data);
     QStringList ql = str_r_data.split(" ");
 
+    qDebug() << str_r_data;
+
+
     if(ql[0] == "joinGame")
       {
         //    "joinGame client_id game_id player_name "
-        qDebug() << "joinGame: clienId: " << ql[0] << " gameId: " << ql[1] ;
+        qDebug() << "joinGame: clienId: " << ql[1] << " gameId: " << ql[2] << " playerName: " << ql[3] ;
 
         auto clientId = ql[0].toLong();
         auto gameId = ql[1].toStdString();
@@ -92,7 +95,8 @@ void PlayerHandler::onReadyRead()
     else if(ql[0] == "createGame")
       {
         //    "createGame client_id player_name game_name player_number"
-        qDebug() << "createRoom: clienId: " << ql[0] << " gameId: " << ql[1] << " player_number: " << ql[2];
+        qDebug() << "createGame: clienId: " << ql[1] << " playerName: "
+                 << ql[2] << " gameName: " << ql[3] << " playerNumber: " << ql[4];
 
         auto clientId = ql[0].toLong();
         auto gameId = ql[1].toStdString();
@@ -117,7 +121,7 @@ void PlayerHandler::onDisconnected()
     exit(0);
 }
 
-
+//FIXME: ...
 bool PlayerHandler::checkIsPlayerRegistred(qintptr id)
 {
   auto player_game_data = m_server_ptr->player_game_data();
