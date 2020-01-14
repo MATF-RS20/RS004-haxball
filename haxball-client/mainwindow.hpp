@@ -28,6 +28,8 @@ private slots:
     void on_joinButton_clicked();
 
     void enableCreateGameButton();
+    void playerIdReady(QString id);
+    void gameNamesReady(QStringList games);
 
 private:
     Ui::MainWindow *ui;
@@ -41,7 +43,6 @@ private:
     QStringList m_games;
 
     void setUpListener();
-    void playerIdReady(QString id);
-    void gameNamesReady(QStringList games);
+
 };
 #endif // MAINWINDOW_HPP

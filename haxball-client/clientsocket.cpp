@@ -77,10 +77,11 @@ void ClientSocket::onReadyRead()
     m_optData = QString(m_data).split(" ");
 
     QString opt = m_optData.takeFirst();
-    if(opt.compare("playerId")){
+
+    if(!opt.compare("playerId")){
         emit onPlayerId(m_optData.first());
     }
-    if(opt.compare("gameNames")){
+    else if(!opt.compare("gameNames")){
         emit onGameNames(QStringList(m_optData));
     }
     else{

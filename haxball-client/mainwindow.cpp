@@ -111,7 +111,12 @@ void MainWindow::setUpListener()
 void MainWindow::playerIdReady(QString id)
 {
     m_playerId = id;
-    qDebug() << "playerIdReady(QString id)";
+    qDebug() << "playerId: " << id;
+}
+
+void MainWindow::gameNamesReady(QStringList games)
+{
+    qDebug() << "gameNamesReady(QStringList games)";
 }
 
 
