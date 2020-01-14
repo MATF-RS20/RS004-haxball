@@ -41,7 +41,7 @@ void MainWindow::on_createButton_clicked()
                      .append(m_playerId + " ")
                      .append(m_playerName + " ")
                      .append(m_gameName + " ")
-                     .append(m_playerNumber + "\n");
+                     .append(QString::number(m_playerNumber) + "\n");
 
         m_clientsocket->getSocket()->write(serverRequest);
     }
@@ -61,13 +61,12 @@ void MainWindow::on_settingsButton_clicked()
 
 void MainWindow::on_refreshButton_clicked()
 {
+    QByteArray serverRequest;
+    const QString protocol = "refresh";
 
-    QStringList games = m_clientsocket.get()->getGames();
+    serverRequest.append(protocol);
 
-    qDebug() << "[on_refreshButton_clicked]: " << games;
-
-    ui->roomsListWidget->clear();
-    ui->roomsListWidget->addItems(games);
+    m_clientsocket->getSocket()->write(serverRequest);
 }
 
 void MainWindow::on_joinButton_clicked()
@@ -148,6 +147,14 @@ void MainWindow::playerIdReady(QString id)
 
 void MainWindow::gameNamesReady(QStringList games)
 {
+
+    for(QStringList::iterator iter = games.begin(); iter != games.end(); iter += 4){
+        QStringList oneGame{*iter, *(iter+1), *(iter+2), *(iter+3)};
+        m_games.append(oneGame.join(" "));
+    }
+
+    ui->gamesListWidget->addItems(m_games);
+
     qDebug() << "gameNamesReady(QStringList games)";
 }
 

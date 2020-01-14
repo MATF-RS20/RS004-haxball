@@ -675,7 +675,7 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
           </layout>
          </item>
          <item>
-          <widget class="QListWidget" name="roomsListWidget">
+          <widget class="QListWidget" name="gamesListWidget">
            <property name="autoFillBackground">
             <bool>false</bool>
            </property>
