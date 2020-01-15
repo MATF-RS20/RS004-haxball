@@ -75,8 +75,7 @@ void ClientSocket::onReadyRead()
 {
     m_data = m_socket->readLine();
 
-    QRegExp regex("\\s+");
-    m_optData = QString(m_data).split(regex);
+    m_optData = QString(m_data).split(MainWindow::regex);
 
     qDebug() << "PRIMLJENO: " << m_optData;
 
@@ -89,6 +88,9 @@ void ClientSocket::onReadyRead()
     else if(!opt.compare("gameNames")){
         qDebug() << "emit onGameNames: " << m_optData;
         emit onGameNames(QStringList(m_optData));
+    }
+    else if(!opt.compare("coords")){
+        emit onCoords(QStringList(m_optData));
     }
     else{
         qDebug() << "Primljena poruka ne podrzava poznate protokole";

@@ -18,10 +18,9 @@ MainWindow::MainWindow(QWidget *parent)
   m_clientsocket = ClientSocket::instance(QHostAddress::LocalHost, 3333);
   m_clientsocket->connectToServer();
 
-
-
   setUpListener();
 
+  m_game->setSocket(m_clientsocket);
 }
 
 MainWindow::~MainWindow()
