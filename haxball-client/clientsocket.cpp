@@ -96,18 +96,7 @@ void ClientSocket::onReadyRead()
 
 
 
-    /*
-  qDebug() << "ReadyRead...";
 
-  m_data = m_socket->readAll();
-  QString string_data = QString(m_data);
-  QList<QString> splittedData = string_data.split(" ");
-
-  m_playerID = splittedData.takeFirst();
-  m_games = QStringList(splittedData);
-
-  qDebug() << "Read data: " << string_data;
-  */
 
 }
 

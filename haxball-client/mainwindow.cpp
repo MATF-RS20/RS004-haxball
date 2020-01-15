@@ -180,12 +180,15 @@ void MainWindow::playerIdReady(QString id)
 
 void MainWindow::gameNamesReady(QStringList games)
 {
-
+    QStringList new_games;
     for(QStringList::iterator iter = games.begin(); iter != games.end(); iter += 4){
         QStringList oneGame{*iter, *(iter+1), *(iter+2), *(iter+3)};
         qDebug() << "oneGame: " << oneGame;
-        m_games.append(oneGame.join(" "));
+        new_games.append(oneGame.join(" "));
     }
+
+    m_games = std::move(new_games);
+
     ui->gamesListWidget->clear();
     ui->gamesListWidget->addItems(m_games);
 

@@ -22,6 +22,8 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    static const QRegExp regex;
+
 private slots:
     void on_exitButton_clicked();
     void on_createButton_clicked();
@@ -37,9 +39,6 @@ private slots:
     void gameNamesReady(QStringList games);
 
     void on_gamesListWidget_itemSelectionChanged();
-
-
-    static const QRegExp regex;
 
 private:
     Ui::MainWindow *ui;
