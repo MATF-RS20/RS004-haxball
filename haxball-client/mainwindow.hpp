@@ -5,6 +5,7 @@
 #include "settings.h"
 #include "clientsocket.hpp"
 #include <QListWidgetItem>
+#include <QRegExp>
 
 #include <QMainWindow>
 
@@ -36,6 +37,9 @@ private slots:
     void gameNamesReady(QStringList games);
 
     void on_gamesListWidget_itemSelectionChanged();
+
+
+    static const QRegExp regex;
 
 private:
     Ui::MainWindow *ui;
