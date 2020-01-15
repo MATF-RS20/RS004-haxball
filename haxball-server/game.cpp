@@ -47,4 +47,9 @@ std::string Game::toString() const
   return s;
 }
 
+std::vector<Player> & Game::players()
+{
+  return m_players;
+}
+
 

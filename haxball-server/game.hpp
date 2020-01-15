@@ -33,6 +33,8 @@ public:
 
   std::string toString() const;
 
+   std::vector<Player> & players();
+
 private:
   std::string m_name;
   std::string m_id;

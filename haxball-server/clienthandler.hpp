@@ -20,7 +20,7 @@ public:
 
   void run();
 
-  bool checkIsPlayerRegistred(qintptr id);
+//  bool checkIsPlayerRegistred(qintptr id);
   QByteArray data();
 
   void joinGame(qintptr clientId, std::string playerName, std::string gameId);
@@ -42,8 +42,11 @@ private:
     qintptr m_socket_descriptor;
     std::shared_ptr<Server> m_server_ptr;
     QByteArray m_data;
+    bool isRegistred;
 
     void setUpListeners();
+
+
 
 };
 
