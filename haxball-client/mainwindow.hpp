@@ -7,12 +7,15 @@
 #include <QListWidgetItem>
 #include <QRegExp>
 
+
 #include <QMainWindow>
 
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
+
+class Game;
 
 class MainWindow : public QMainWindow
 {
@@ -21,7 +24,6 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-
     static const QRegExp regex;
 
 private slots:
@@ -42,10 +44,8 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    Game* game;
+    Game* m_game;
     Settings* settings;
-    std::string sendMsg;
-
 
     std::shared_ptr<ClientSocket> m_clientsocket;
     QString m_playerId;

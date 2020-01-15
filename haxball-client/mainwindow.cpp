@@ -6,15 +6,19 @@
 #include <vector>
 #include <QString>
 #include <iostream>
+#include <QGraphicsView>
 
 MainWindow::MainWindow(QWidget *parent)
   : QMainWindow(parent)
   , ui(new Ui::MainWindow)
+  , m_game(new Game(this))
 {
   ui->setupUi(this);
 
   m_clientsocket = ClientSocket::instance(QHostAddress::LocalHost, 3333);
   m_clientsocket->connectToServer();
+
+
 
   setUpListener();
 
@@ -46,11 +50,13 @@ void MainWindow::on_createButton_clicked()
         m_clientsocket->getSocket()->write(serverRequest);
     }
 
+
+
     /*
-    hide();
-    game = new Game(this);
-    game->show();
+    this->hide();
+    m_game->show();
     */
+
 }
 
 void MainWindow::on_settingsButton_clicked()
