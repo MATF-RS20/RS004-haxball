@@ -171,8 +171,8 @@ bool Server::createGame(qintptr clientId, std::string playerName, std::string ga
   //add to vector
   createdGames().push_back(game_ptr);
 
-   qDebug() << "game_ptr: name: " << QString::fromStdString(game_ptr->name())
-            << "playerNumber: " << QString::number(game_ptr->playersNumber());
+//   qDebug() << "game_ptr: name: " << QString::fromStdString(game_ptr->name())
+//            << "playerNumber: " << QString::number(game_ptr->playersNumber());
 
    m_player_game_data.insert(std::pair<qintptr, std::shared_ptr<Game>>(clientId, game_ptr));
 
@@ -188,7 +188,7 @@ bool Server::createGame(qintptr clientId, std::string playerName, std::string ga
       return false;
     }
 
-  qDebug() << "iter: first: " << iter->first << "game name: " << QString::fromStdString(iter->second->name());
+//  qDebug() << "iter: first: " << iter->first << "game name: " << QString::fromStdString(iter->second->name());
   return true;
 }
 

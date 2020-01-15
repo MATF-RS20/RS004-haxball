@@ -89,7 +89,7 @@ void PlayerHandler::onReadyRead()
   {
 
     QString str_r_data(data);
-    QStringList ql = str_r_data.split(" ");
+    QStringList ql = str_r_data.split(QRegExp("\\s+"));
 
     qDebug() << str_r_data;
 
@@ -188,7 +188,14 @@ void PlayerHandler::setUpListeners()
 
 void PlayerHandler::joinGame(qintptr clientId, std::string playerName, std::string gameId)
 {
-  m_server_ptr->joinGame(clientId, playerName, gameId);
+  if(m_server_ptr->joinGame(clientId, playerName, gameId))
+    {
+      qDebug() <<"Game could not start!";
+    }
+  else
+    {
+
+    }
 }
 
 void PlayerHandler::createGame(qintptr clientId, std::string playerName, std::string gameName, unsigned playerNumber)
