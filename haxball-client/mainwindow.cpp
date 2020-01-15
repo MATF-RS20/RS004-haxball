@@ -71,7 +71,19 @@ void MainWindow::on_refreshButton_clicked()
 
 void MainWindow::on_joinButton_clicked()
 {   
+    if(checkJoinGame()){
+        QByteArray serverRequest;
+        const QString protocol = "joinGame";
+        QString gameId = m_currentItem->text().split(MainWindow::regex)[1];
 
+
+        serverRequest.append(protocol + " ")
+                     .append(m_playerId + " ")
+                     .append(gameId + " ")
+                     .append(m_playerName + " ");
+
+        m_clientsocket->getSocket()->write(serverRequest);
+    }
 }
 
 void MainWindow::enableCreateGameButton()
@@ -127,11 +139,11 @@ bool MainWindow::checkCreateGame()
         ui->messageLabel->setText("Set player number!");
         flag = false;
     }
-    else if(m_playerName.split(" ").size() > 1){
+    else if(m_playerName.split(MainWindow::regex).size() > 1){
         ui->messageLabel->setText("Player name must be one word!");
         flag = false;
     }
-    else if(m_gameName.split(" ").size() > 1){
+    else if(m_gameName.split(MainWindow::regex).size() > 1){
         ui->messageLabel->setText("Game name must be one word!");
         flag = false;
     }
@@ -187,8 +199,9 @@ void MainWindow::on_gamesListWidget_itemSelectionChanged()
 
     m_currentItem = ui->gamesListWidget->currentItem();
 
-    ui->gameNameTextEdit->setText(m_currentItem->text().split(" ")[0]);
-    ui->PlayerNumberSpinBox->setValue(m_currentItem->text().split(" ")[2].toInt());
+    ui->gameNameTextEdit->setText(m_currentItem->text().split(MainWindow::regex)[0]);
+    ui->PlayerNumberSpinBox->setValue(m_currentItem->text().split(MainWindow::regex)[2].toInt());
 }
 
+const QRegExp MainWindow::regex("\\s+");
 
