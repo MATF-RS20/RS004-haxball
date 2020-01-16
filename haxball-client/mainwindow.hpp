@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_HPP
 #define MAINWINDOW_HPP
 
-#include "game.h"
+#include "game.hpp"
 #include "settings.h"
 #include "clientsocket.hpp"
 #include <QListWidgetItem>

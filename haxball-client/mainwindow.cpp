@@ -1,6 +1,6 @@
 #include "mainwindow.hpp"
 #include "ui_mainwindow.h"
-#include "game.h"
+#include "game.hpp"
 #include "clientsocket.hpp"
 #include <QHostAddress>
 #include <vector>
@@ -51,10 +51,10 @@ void MainWindow::on_createButton_clicked()
 
 
 
-    /*
+
     this->hide();
     m_game->show();
-    */
+
 
 }
 

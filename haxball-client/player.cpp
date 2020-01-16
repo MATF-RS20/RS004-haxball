@@ -1,14 +1,29 @@
-#include "player.h"
+#include "player.hpp"
 #include <QKeyEvent>
 #include "clientsocket.hpp"
 #include <iostream>
 
-Player::Player()
-    : player(this)
-{}
+Player::Player(const qreal x, const qreal y, const qreal diameter, const QColor& circleColor, const QColor& circularColor, const int circularWidth)
+    : QGraphicsEllipseItem(x, y, diameter, diameter)
+{
+    setBrush(circleColor);
+    setPen(QPen(circularColor, circularWidth, Qt::SolidLine));
+}
+
+
+
+void Player::draw(QGraphicsScene *scene)
+{
+    scene->addItem(this);
+}
+
+
+
+/* ============================= KOMSA =============================
 
 const char* Player::actionToString(Actions a)
 {
+
     switch (a) {
         case key_left: return "key_left";
         case key_right: return "key_right";
@@ -22,6 +37,7 @@ const char* Player::actionToString(Actions a)
 
 void Player::keyPressEvent(QKeyEvent *event){
 
+
     auto conn = ClientSocket::instance(QHostAddress::LocalHost, 3333);
     auto socket = conn.get()->getSocket();
 
@@ -30,7 +46,7 @@ void Player::keyPressEvent(QKeyEvent *event){
         str = actionToString(key_left);
         socket->write(str);
 
-        if(x() > -player_x)
+        if(x() > -m_x)
         {
             setPos(x()-5, y());
         }
@@ -39,7 +55,7 @@ void Player::keyPressEvent(QKeyEvent *event){
         str = actionToString(key_right);
         socket->write(str);
 
-        if(x() < 960-player_x)
+        if(x() < 960-m_x)
         {
             setPos(x()+5, y());
         }
@@ -48,7 +64,7 @@ void Player::keyPressEvent(QKeyEvent *event){
         str = actionToString(key_up);
         socket->write(str);
 
-        if(y() > -player_y)
+        if(y() > -m_y)
         {
             setPos(x(), y()-5);
         }
@@ -57,7 +73,7 @@ void Player::keyPressEvent(QKeyEvent *event){
         str = actionToString(key_down);
         socket->write(str);
 
-        if(y() < 460-player_y)
+        if(y() < 460-m_y)
         {
             setPos(x(), y()+5);
         }
@@ -68,12 +84,14 @@ void Player::keyPressEvent(QKeyEvent *event){
     }
     emit socket->bytesWritten(sizeof (str));
     socket->flush();
+
 }
 
 Player* Player::drawPlayer(int x, int y)
 {
-    set_playerX(x);
-    set_playerY(y);
+
+    setX(x);
+    setY(y);
     player->setRect(x, y, 40, 40);
     player->setStartAngle(0);
     player->setSpanAngle(360*16);
@@ -82,14 +100,7 @@ Player* Player::drawPlayer(int x, int y)
     pen.setWidth(2);
     player->setPen(pen);
     return player;
+
 }
 
-void Player::set_playerX(int x)
-{
-    player_x = x;
-}
-
-void Player::set_playerY(int y)
-{
-    player_y = y;
-}
+*/

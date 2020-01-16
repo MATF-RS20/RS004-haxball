@@ -1,6 +1,6 @@
-#include "game.h"
+#include "game.hpp"
 #include "ui_game.h"
-#include "player.h"
+#include "player.hpp"
 #include <QApplication>
 #include <QGraphicsScene>
 #include <QKeyEvent>
@@ -20,18 +20,31 @@ Game::Game(QWidget *parent) :
     ui->setupUi(this);
     scene = new QGraphicsScene();
 
+
     // iscrtavanje terena
     scene = drawField();
-    // iscrtavanje igraca
-    scene = drawPlayers();
-    // iscrtavanje lopte
-    scene = drawBall();
 
     ui->view->setScene(scene);
     setWindowState(Qt::WindowFullScreen);
     this->installEventFilter(this);
 
+/*
+    // iscrtavanje igraca
+    scene = drawPlayers();
+    // iscrtavanje lopte
+    scene = drawBall();
+
+
+
+*/
+
     setUpListener();
+
+    // HARDCODE!
+    m_players.insert(123, std::make_shared<Player>(100, 100));
+    m_players.insert(124, std::make_shared<Player>(150, 150));
+    m_players.insert(125, std::make_shared<Player>(200, 200));
+    drawAllPlayers();
 }
 
 Game::~Game()
@@ -44,20 +57,6 @@ QGraphicsScene *Game::getScene() const
     return scene;
 }
 
-bool Game::eventFilter(QObject * , QEvent * event){
-    if(event->type() == QEvent::KeyPress){
-        pressedKeys += static_cast<QKeyEvent *>(event)->key();
-        //qDebug() << "Key press!";
-    }
-    else if(event->type() == QEvent::KeyRelease){
-         pressedKeys -= static_cast<QKeyEvent *>(event)->key();
-         //qDebug() << "Key relase!";
-    }
-
-    //qDebug() << pressedKeys.size(); beskonacne petlje komsine 0 ...
-
-    return false;
-}
 
 void Game::on_exit_button_clicked()
 {
@@ -66,41 +65,61 @@ void Game::on_exit_button_clicked()
 
 // Slot coordsReady se izvrsava kada se sa servera posalju koordinate.
 // Koordinate se dobijaju u formatu: x_ball y_ball id_player1 x1 y1 id_player2 x2 y2 ...
-void Game::coordsReady(QStringList coords)
+void Game::coordsReadReady(QStringList coords)
 {
     //Citaju se koordinate lopte.
-    m_ballCord.first = coords.takeLast().toInt();
-    m_ballCord.second = coords.takeFirst().toInt();
+    m_ball.setX(coords.takeLast().toDouble());
+    m_ball.setY(coords.takeLast().toDouble());
 
     // Citaju se koordinate svih igraca i azuriraju se ili dodaju novi u hes mapu.
     for(QStringList::iterator iter = coords.begin(); iter != coords.end(); iter += 3){
         int playerId = iter->toInt();
-        QPair<int, int> coord((iter + 1)->toInt(), (iter + 2)->toInt());
-        m_playerCoords.insert(playerId, coord);
+
+        qreal x = (iter + 1)->toDouble();
+        qreal y = (iter + 2)->toDouble();
+
+        auto player_it = m_players.find(playerId);
+        if(player_it != m_players.end()){
+            (*player_it)->setX(x);
+            (*player_it)->setY(y);
+        }
+        else{
+            m_players.insert(playerId, std::make_shared<Player>(x, y));
+        }
     }
 
-    // TODO Komsa: Izmeniti funkciju drawBall tako da koristi koordinate iz clanske promenljive m_ballCord.
-    drawBall();
     drawAllPlayers();
+}
+
+void Game::coordsWriteReady()
+{
+ return;
 }
 
 // Metoda setUpListener registruje signale i njima odgovarajuce slotove.
 void Game::setUpListener()
 {
     // Objekat klase clientsocket emituje signal onCoords(QStringList) kada od servera dobije koordinate igraca.
-    connect(m_clientsocket.get(), SIGNAL(onCoords(QStringList)), this, SLOT(coordsReady(QStringList)));
+    connect(m_clientsocket.get(), SIGNAL(onCoords(QStringList)), this, SLOT(coordsReadReady(QStringList)));
 }
 
 // Metoda drawAllPlayers prolazi kroz celu hes mapu i za svaki par koordinata poziva funkciju za iscrtavanje igraca.
 void Game::drawAllPlayers()
 {
-    QHash<int, QPair<int, int>>::const_iterator i = m_playerCoords.constBegin();
-    while(i != m_playerCoords.constEnd()){
-        QPair<int, int> coord = i.value();
-        // TODO Komsa: Izmeniti funkciju tako da prima koordinate i na osnovu njih iscrtava igrace.
-        //drawPlayer(coord.first, coord.second)
+    QHash<int, std::shared_ptr<Player>>::iterator i = m_players.begin();
+    while(i != m_players.end()){
+        (*i)->draw(scene);
+        ++i;
     }
 }
+
+void Game::setSocket(std::shared_ptr<ClientSocket> sock)
+{
+    m_clientsocket = sock;
+}
+
+
+
 
 QGraphicsScene* Game::drawField()
 {
@@ -128,6 +147,8 @@ QGraphicsScene* Game::drawField()
     scene->addEllipse(990, 315, 20, 20,pen, QBrush(Qt::white));
     return scene;
 }
+
+/* ============================= KOMSA =============================
 
 QGraphicsScene* Game::drawPlayers()
 {
@@ -165,7 +186,4 @@ QGraphicsScene* Game::drawBall()
     return scene;
 }
 
-void Game::setSocket(std::shared_ptr<ClientSocket> sock)
-{
-    m_clientsocket = sock;
-}
+*/
