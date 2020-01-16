@@ -13,11 +13,15 @@
 #include "clientsocket.hpp"
 #include <QStringList>
 
+const qreal MOVE_STEP = 5.0;
+
 Game::Game(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Game)
 {
     ui->setupUi(this);
+    setFocusPolicy(Qt::FocusPolicy::StrongFocus);
+
     scene = new QGraphicsScene();
 
 
@@ -41,6 +45,7 @@ Game::Game(QWidget *parent) :
     setUpListener();
 
     // HARDCODE!
+    m_me = std::make_shared<Player>(200, 270);
     m_players.insert(123, std::make_shared<Player>(100, 100));
     m_players.insert(124, std::make_shared<Player>(150, 150));
     m_players.insert(125, std::make_shared<Player>(200, 200));
@@ -93,7 +98,18 @@ void Game::coordsReadReady(QStringList coords)
 
 void Game::coordsWriteReady()
 {
- return;
+    /*
+    QByteArray serverRequest;
+    const QString protocol = "createGame";
+
+    serverRequest.append(protocol + " ")
+                 .append(m_playerId + " ")
+                 .append(m_playerName + " ")
+                 .append(m_gameName + " ")
+                 .append(QString::number(m_playerNumber) + "\n");
+
+    m_clientsocket->getSocket()->write(serverRequest);
+    */
 }
 
 // Metoda setUpListener registruje signale i njima odgovarajuce slotove.
@@ -101,11 +117,15 @@ void Game::setUpListener()
 {
     // Objekat klase clientsocket emituje signal onCoords(QStringList) kada od servera dobije koordinate igraca.
     connect(m_clientsocket.get(), SIGNAL(onCoords(QStringList)), this, SLOT(coordsReadReady(QStringList)));
+
+    connect(this, SIGNAL(onPlayerAction()), this, SLOT(coordsWriteReady()));
 }
 
 // Metoda drawAllPlayers prolazi kroz celu hes mapu i za svaki par koordinata poziva funkciju za iscrtavanje igraca.
 void Game::drawAllPlayers()
 {
+    m_me->draw(scene);
+
     QHash<int, std::shared_ptr<Player>>::iterator i = m_players.begin();
     while(i != m_players.end()){
         (*i)->draw(scene);
@@ -116,6 +136,24 @@ void Game::drawAllPlayers()
 void Game::setSocket(std::shared_ptr<ClientSocket> sock)
 {
     m_clientsocket = sock;
+}
+
+// TODO: Resiti ukoso kretanje
+void Game::keyPressEvent(QKeyEvent *event)
+{
+    int key = event->key();
+
+    switch(key){
+        case Qt::Key_Up: m_me->setY(m_me->y() - MOVE_STEP); break;
+        case Qt::Key_Down: m_me->setY(m_me->y() + MOVE_STEP); break;
+        case Qt::Key_Left: m_me->setX(m_me->x() - MOVE_STEP); break;
+        case Qt::Key_Right: m_me->setX(m_me->x() + MOVE_STEP); break;
+    }
+}
+
+void Game::keyReleaseEvent(QKeyEvent *event)
+{
+
 }
 
 

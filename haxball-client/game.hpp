@@ -31,6 +31,11 @@ public:
 
     QGraphicsScene* drawPlayer(int x, int y);
 
+    void keyPressEvent(QKeyEvent* event);
+    void keyReleaseEvent(QKeyEvent* event);
+
+signals:
+    void onPlayerAction();
 
 private slots:
     void on_exit_button_clicked();
@@ -46,11 +51,10 @@ private:
 
     Ui::Game *ui;
     QGraphicsScene* scene;
-    QSet<int> pressedKeys;
 
     QHash<int, std::shared_ptr<Player>> m_players;
     Ball m_ball;
-    //Player m_me;
+    std::shared_ptr<Player> m_me;
 
     std::shared_ptr<ClientSocket> m_clientsocket;
 

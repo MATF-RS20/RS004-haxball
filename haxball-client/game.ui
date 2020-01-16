@@ -52,6 +52,9 @@
           <bold>false</bold>
          </font>
         </property>
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
         <property name="styleSheet">
          <string notr="true">background-color: rgb(85, 255, 127);
 color: rgb(255, 0, 0);</string>
@@ -103,6 +106,9 @@ color: rgb(255, 0, 0);</string>
            <bold>true</bold>
           </font>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
          </property>
@@ -135,6 +141,9 @@ color: rgb(255, 0, 0);</string>
          <width>16777</width>
          <height>16777215</height>
         </size>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
        </property>
        <property name="styleSheet">
         <string notr="true">background-image: url(:/img/img/bg.png);</string>
