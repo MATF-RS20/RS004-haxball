@@ -45,11 +45,8 @@ Game::Game(QWidget *parent) :
     setUpListener();
 
     // HARDCODE!
-    m_me = std::make_shared<Player>(200, 270);
-    m_players.insert(123, std::make_shared<Player>(100, 100));
-    m_players.insert(124, std::make_shared<Player>(150, 150));
-    m_players.insert(125, std::make_shared<Player>(200, 200));
-    drawAllPlayers();
+    m_me = std::make_shared<Player>(0, 0);
+    scene->addItem(m_me.get());
 }
 
 Game::~Game()
@@ -72,9 +69,10 @@ void Game::on_exit_button_clicked()
 // Koordinate se dobijaju u formatu: x_ball y_ball id_player1 x1 y1 id_player2 x2 y2 ...
 void Game::coordsReadReady(QStringList coords)
 {
+    qDebug() << "[coordsReadReady]";
     //Citaju se koordinate lopte.
-    m_ball.setX(coords.takeLast().toDouble());
-    m_ball.setY(coords.takeLast().toDouble());
+    //m_ball.setX(coords.takeLast().toDouble());
+    //m_ball.setY(coords.takeLast().toDouble());
 
     // Citaju se koordinate svih igraca i azuriraju se ili dodaju novi u hes mapu.
     for(QStringList::iterator iter = coords.begin(); iter != coords.end(); iter += 3){
@@ -83,54 +81,49 @@ void Game::coordsReadReady(QStringList coords)
         qreal x = (iter + 1)->toDouble();
         qreal y = (iter + 2)->toDouble();
 
+        qDebug() << "x: " << x << "  y: " << y;
+
         auto player_it = m_players.find(playerId);
         if(player_it != m_players.end()){
             (*player_it)->setX(x);
             (*player_it)->setY(y);
         }
         else{
-            m_players.insert(playerId, std::make_shared<Player>(x, y));
+            std::shared_ptr<Player> player = std::make_shared<Player>(0, 0);
+            player->setX(x);
+            player->setY(y);
+            scene->addItem(player.get());
+            m_players.insert(playerId, player);
         }
     }
-
-    drawAllPlayers();
 }
 
 void Game::coordsWriteReady()
 {
-    /*
+    qDebug() << "coordsWriteReady";
+
     QByteArray serverRequest;
-    const QString protocol = "createGame";
+    const QString protocol = "coords";
 
     serverRequest.append(protocol + " ")
-                 .append(m_playerId + " ")
-                 .append(m_playerName + " ")
-                 .append(m_gameName + " ")
-                 .append(QString::number(m_playerNumber) + "\n");
+                 .append(QString::number(m_me->getId()) + " ")
+                 .append(QString::number(m_me->x()) + " ")
+                 .append(QString::number(m_me->y()) + " ");
 
     m_clientsocket->getSocket()->write(serverRequest);
-    */
+
 }
 
 // Metoda setUpListener registruje signale i njima odgovarajuce slotove.
 void Game::setUpListener()
 {
-    // Objekat klase clientsocket emituje signal onCoords(QStringList) kada od servera dobije koordinate igraca.
-    connect(m_clientsocket.get(), SIGNAL(onCoords(QStringList)), this, SLOT(coordsReadReady(QStringList)));
-
     connect(this, SIGNAL(onPlayerAction()), this, SLOT(coordsWriteReady()));
 }
 
-// Metoda drawAllPlayers prolazi kroz celu hes mapu i za svaki par koordinata poziva funkciju za iscrtavanje igraca.
-void Game::drawAllPlayers()
-{
-    m_me->draw(scene);
 
-    QHash<int, std::shared_ptr<Player>>::iterator i = m_players.begin();
-    while(i != m_players.end()){
-        (*i)->draw(scene);
-        ++i;
-    }
+std::shared_ptr<Player> Game::getMe() const
+{
+    return m_me;
 }
 
 void Game::setSocket(std::shared_ptr<ClientSocket> sock)
@@ -149,6 +142,8 @@ void Game::keyPressEvent(QKeyEvent *event)
         case Qt::Key_Left: m_me->setX(m_me->x() - MOVE_STEP); break;
         case Qt::Key_Right: m_me->setX(m_me->x() + MOVE_STEP); break;
     }
+
+    emit onPlayerAction();
 }
 
 void Game::keyReleaseEvent(QKeyEvent *event)

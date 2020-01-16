@@ -122,6 +122,8 @@ void MainWindow::setUpListener()
     connect(ui->PlayerNumberSpinBox, SIGNAL(valueChanged(int)), this, SLOT(enableCreateGameButton()));
 
     connect(ui->gamesListWidget, SIGNAL(itemSelectionChanged()), this, SLOT(enableJoinGameButton()));
+
+     connect(m_clientsocket.get(), SIGNAL(onCoords(QStringList)), m_game, SLOT(coordsReadReady(QStringList)));
 }
 
 bool MainWindow::checkCreateGame()
@@ -180,6 +182,7 @@ bool MainWindow::checkJoinGame()
 void MainWindow::playerIdReady(QString id)
 {
     m_playerId = id;
+    m_game->getMe()->setId(id.toInt());
     qDebug() << "playerId: " << id;
 }
 

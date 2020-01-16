@@ -34,6 +34,8 @@ public:
     void keyPressEvent(QKeyEvent* event);
     void keyReleaseEvent(QKeyEvent* event);
 
+    std::shared_ptr<Player> getMe() const;
+
 signals:
     void onPlayerAction();
 
@@ -47,7 +49,6 @@ private slots:
 private:
 
     void setUpListener();
-    void drawAllPlayers();
 
     Ui::Game *ui;
     QGraphicsScene* scene;

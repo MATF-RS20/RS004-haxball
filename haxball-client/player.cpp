@@ -8,13 +8,17 @@ Player::Player(const qreal x, const qreal y, const qreal diameter, const QColor&
 {
     setBrush(circleColor);
     setPen(QPen(circularColor, circularWidth, Qt::SolidLine));
+
 }
 
-
-
-void Player::draw(QGraphicsScene *scene)
+int Player::getId() const
 {
-    scene->addItem(this);
+    return id;
+}
+
+void Player::setId(int value)
+{
+    id = value;
 }
 
 

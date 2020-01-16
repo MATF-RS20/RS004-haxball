@@ -29,17 +29,17 @@ public:
            const QColor& circularColor = QColor(Qt::white),
            const int circularWidth = 5);
 
-
-    void draw(QGraphicsScene* scene);
-
 /* ============================= KOMSA =============================
     void keyPressEvent(QKeyEvent * event);
     Player* drawPlayer(int x, int y);
     const char* actionToString(Actions a);
 */
 
-private:
+    int getId() const;
+    void setId(int value);
 
+private:
+    int id;
 };
 
 #endif // PLAYER
