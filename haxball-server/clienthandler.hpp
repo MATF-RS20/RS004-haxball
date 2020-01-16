@@ -23,19 +23,24 @@ public:
 //  bool checkIsPlayerRegistred(qintptr id);
   QByteArray data();
 
-  void joinGame(qintptr clientId, std::string playerName, std::string gameId);
-  void createGame(qintptr clientId, std::string playerName, std::string gameName, unsigned playerNumber);
+  bool joinGame(qintptr clientId, std::string playerName, std::string gameId);
+  bool createGame(qintptr clientId, std::string playerName, std::string gameName, unsigned playerNumber);
 
 
 signals:
     void error(QTcpSocket::SocketError socketerror);
+    void handlePlayerCoords(qintptr clientId, long X_coord, long Y_coord);
+    void sendNewPlayerData();
+    void registerPegister();
 
 public slots:
     void onReadyRead();
     void onConnected();
     void onDisconnected();
+    void onHandlePlayerCoords(qintptr clientId, long X_coord, long Y_coord);
+    void onSendNewPlayerData();
+    void onPlayerRegistered();
 
-public slots:
 
 private:
     QTcpSocket *m_socket;

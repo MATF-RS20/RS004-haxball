@@ -40,9 +40,7 @@ void PlayerHandler::run()
     auto l = "[run] Socket descriptor: " +  std::to_string(m_socket_descriptor) + " is connected to server...";
     m_server_ptr->log_data(l.c_str());
 
-
     auto player_game_data = m_server_ptr->player_game_data();
-
 
     if(!isRegistred)
     {
@@ -56,35 +54,13 @@ void PlayerHandler::run()
 
       m_socket->write(data_str.c_str());
 
-      }
+      emit registerPegister();
+
+    }
     else
     {
-        qDebug() << "[checkIsPlayerRegistred]: true";
 
-          //TODO: start sending coords to client
-
-        auto client_game = m_server_ptr->player_game_data();
-        auto res = client_game.find(m_socket_descriptor);
-
-        auto res_game = m_server_ptr->findGameById(res->second->gameId());
-
-        if(!res_game.first)
-          {
-            qDebug() << "Error getting created game!";
-            exit(1);
-          }
-
-        auto teammates = res_game.second->players();
-
-        qDebug() << "coords";
-        m_socket->write("coords");
-
-        for(auto iter = std::begin(teammates) ; iter != std::end(teammates) ; iter++)
-          {
-            qDebug() << iter->toString().c_str();
-            m_socket->write(iter->toString().c_str());
-          }
-     }
+    }
 
 
     exec();
@@ -104,11 +80,17 @@ void PlayerHandler::onReadyRead()
 
     qDebug() << str_r_data;
 
-    if(ql[0] == "action")
+    if(ql[0] == "coord")
       {
-        // PROTOCOL:   "action xxx xxx ..."
-        qDebug() << "action";
-//        emit handleAction();
+        // PROTOCOL:   "coord player_id x y"
+        qDebug() << "coord";
+
+        auto clientId = ql[1].toLong();
+        auto X_coord = ql[2].toLong();
+        auto Y_coord = ql[3].toLong();
+
+        emit handlePlayerCoords(clientId, X_coord, Y_coord);
+
       }
 
      else if(ql[0] == "joinGame")
@@ -125,7 +107,9 @@ void PlayerHandler::onReadyRead()
         joinGame(clientId, playerName, gameId);
 
         qDebug() << "[joinGame]";
-        isRegistred = true;
+
+//        isRegistred = true;
+        emit registerPegister();
 
       }
 
@@ -143,7 +127,10 @@ void PlayerHandler::onReadyRead()
         createGame(clientId, playerName, gameName, playerNumber);
 
         qDebug() << "[createGame]";
-        isRegistred = true;
+//        isRegistred = true;
+
+        //user is registered
+        emit registerPegister();
 
       }
 
@@ -163,11 +150,10 @@ void PlayerHandler::onReadyRead()
         //write game data to socket
         m_socket->write(games_str.c_str());
 
-        emit m_socket->bytesWritten(games_str.length());
+        emit m_socket->bytesWritten(static_cast<int>(games_str.length()));
 
-        qDebug() << "[refresh]";
-        isRegistred = false;
-
+//        isRegistred = false;
+        emit registerPegister();
       }
 
     //write data to socket
@@ -193,12 +179,61 @@ void PlayerHandler::onDisconnected()
     exit(0);
 }
 
-////FIXME: ...
-//bool PlayerHandler::checkIsPlayerRegistred(qintptr id)
-//{
-//  auto player_game_data = m_server_ptr->player_game_data();
-//  return player_game_data.find(id) != player_game_data.end();
-//}
+void PlayerHandler::onHandlePlayerCoords(qintptr clientId, long X_coord, long Y_coord)
+{
+
+  auto data = m_server_ptr->player_game_data();
+  auto res =  data.find(clientId);
+  if(res != data.end())
+  {
+    auto players = res->second->players();
+    for(auto iter = std::begin(players) ; iter != std::end(players); iter++)
+      {
+          if(iter->id() == clientId)
+            {
+              iter->x_y(X_coord, Y_coord);
+            }
+      }
+  }
+
+  emit sendNewPlayerData();
+
+}
+
+void PlayerHandler::onSendNewPlayerData()
+{
+    //write data to sock
+
+      auto client_game = m_server_ptr->player_game_data();
+
+      auto res = client_game.find(m_socket_descriptor);
+
+      auto res_game = m_server_ptr->findGameById(res->second->gameId());
+
+      if(!res_game.first)
+        {
+          qDebug() << "Error getting created game!";
+          exit(1);
+        }
+
+      auto teammates = res_game.second->players();
+
+      qDebug() << "coords";
+      m_socket->write("coords");
+
+      for(auto iter = std::begin(teammates) ; iter != std::end(teammates) ; iter++)
+        {
+          qDebug() << iter->toString().c_str();
+          m_socket->write(iter->toString().c_str());
+        }
+
+}
+
+void PlayerHandler::onPlayerRegistered()
+{
+  isRegistred = true;
+}
+
 
 QByteArray PlayerHandler::data()
 {
@@ -211,24 +246,38 @@ void PlayerHandler::setUpListeners()
   connect(m_socket, SIGNAL(readyRead()), this, SLOT(onReadyRead()), Qt::DirectConnection);
   connect(m_socket, SIGNAL(disconnected()), this, SLOT(onDisconnected()), Qt::DirectConnection);
   connect(m_socket, SIGNAL(connected()), this, SLOT(onReadyRead()), Qt::DirectConnection);
+
+  //update/send player data
+  connect(this, SIGNAL(handlePlayerCoords(qintptr, long, long)), this, SLOT(onHandlePlayerCoords(qintptr, long, long)));
+  connect(this, SIGNAL(registerPegister()), this, SLOT(onPlayerRegistered()));
 }
 
 
-void PlayerHandler::joinGame(qintptr clientId, std::string playerName, std::string gameId)
+bool PlayerHandler::joinGame(qintptr clientId, std::string playerName, std::string gameId)
 {
   if(m_server_ptr->joinGame(clientId, playerName, gameId))
     {
-      qDebug() <<"Game is starting!";
+      qDebug() <<"Game is joined!";
+      return true;
     }
   else
     {
       qDebug() <<"Game could not start!";
+      return false;
     }
 }
 
-void PlayerHandler::createGame(qintptr clientId, std::string playerName, std::string gameName, unsigned playerNumber)
+bool PlayerHandler::createGame(qintptr clientId, std::string playerName, std::string gameName, unsigned playerNumber)
 {
-  m_server_ptr->createGame(clientId, playerName, gameName, playerNumber);
+  if(m_server_ptr->createGame(clientId, playerName, gameName, playerNumber))
+    {
+      qDebug() <<"Game is created!";
+      return true;
+    }
+  else
+    {
+      qDebug() <<"Game could not start!";
+      return false;
+    }
 }
-
 
