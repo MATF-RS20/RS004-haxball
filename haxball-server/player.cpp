@@ -23,13 +23,6 @@ void Player::x_y(long x, long y)
 
 std::string Player::toString() const
 {
-//  std::string s =  std::to_string(m_id)
-//                  + " " + m_name
-//                  + " " + std::to_string(x0)
-//                  + " " + std::to_string(y0)
-//                  + " " + std::to_string(x1)
-//                  + " " + std::to_string(y1);
-
 
   std::string s =  " " + std::to_string(m_id)
                   + " " + std::to_string(m_x0)

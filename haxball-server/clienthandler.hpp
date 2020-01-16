@@ -31,7 +31,7 @@ signals:
     void error(QTcpSocket::SocketError socketerror);
     void handlePlayerCoords(qintptr clientId, long X_coord, long Y_coord);
     void sendNewPlayerData();
-    void registerPegister();
+    void registerPlayer();
 
 public slots:
     void onReadyRead();
