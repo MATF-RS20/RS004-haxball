@@ -18,6 +18,7 @@ PlayerHandler::PlayerHandler(qintptr id, QObject *parent)
     isRegistred = false;
 }
 
+
 void PlayerHandler::run()
 {
 
@@ -53,15 +54,18 @@ void PlayerHandler::run()
       data_str.append(std::to_string(m_socket_descriptor));
 
       m_socket->write(data_str.c_str());
-
-//      emit registerPegister();
+      emit m_socket->bytesWritten(static_cast<int>(data_str.length()));
 
     }
     else
     {
         qDebug() << "[run & registerPlayer]";
 
-        emit registerPlayer();
+        //emit registerPlayer();
+
+        //send data to client again
+        emit sendNewPlayerData();
+
     }
 
 
@@ -82,10 +86,10 @@ void PlayerHandler::onReadyRead()
 
     qDebug() << str_r_data;
 
-    if(ql[0] == "coord")
+    if(ql[0] == "coords")
       {
         // PROTOCOL:   "coord player_id x y"
-        qDebug() << "[coord]";
+        qDebug() << "[coords]";
 
         auto clientId = ql[1].toLong();
         auto X_coord = ql[2].toLong();
@@ -93,6 +97,9 @@ void PlayerHandler::onReadyRead()
 
         //save new data to server
         emit handlePlayerCoords(clientId, X_coord, Y_coord);
+
+        //send data to client again
+        emit sendNewPlayerData();
 
       }
 
@@ -111,12 +118,12 @@ void PlayerHandler::onReadyRead()
 
         if(joinGame(clientId, playerName, gameId))
           {
-//            qDebug() << "[joinGame & registerPlayer]";
-//            emit registerPlayer();
+            qDebug() << "[joinGame & registerPlayer]";
+            emit registerPlayer();
 
             //send new data to client
             qDebug() << "[joinGame & onSendNewPlayerData]";
-            emit onSendNewPlayerData();
+            emit sendNewPlayerData();
           }
 
       }
@@ -137,13 +144,12 @@ void PlayerHandler::onReadyRead()
 
         if(createGame(clientId, playerName, gameName, playerNumber))
           {
-//            qDebug() << "[createGame & registerPlayer]";
-//            emit registerPlayer();
-
+            qDebug() << "[createGame & registerPlayer]";
+            emit registerPlayer();
 
             //send new data to client
             qDebug() << "[createGame & onSendNewPlayerData]";
-            emit onSendNewPlayerData();
+            emit sendNewPlayerData();
           }
 
       }
@@ -166,12 +172,14 @@ void PlayerHandler::onReadyRead()
         //write game data to socket
 
         m_socket->write(games_str.c_str());
-        //emit m_socket->bytesWritten(static_cast<int>(games_str.length()));
+        emit m_socket->bytesWritten(static_cast<int>(games_str.length()));
 
       }
 
+
     //write data to socket
     m_socket->readLine();
+
 
     }
 
@@ -219,7 +227,7 @@ void PlayerHandler::onHandlePlayerCoords(qintptr clientId, long X_coord, long Y_
 void PlayerHandler::onSendNewPlayerData()
 {
 
-    qDebug() << "[onSendNewPlayerData]";
+    qDebug() << "[onSendNewPlayerData]: ";
 
     //write data to sock
 
@@ -235,30 +243,32 @@ void PlayerHandler::onSendNewPlayerData()
           exit(1);
         }
 
-      auto teammates = res_game.second->players();
-
+      std::vector<Player> & teammates = res_game.second->players();
 
       std::string data_str("coords ");
 
       for(auto iter = std::begin(teammates) ; iter != std::end(teammates) ; iter++)
         {
-          qDebug() << iter->toString().c_str();
-          data_str.append(iter->toString());
+          if(iter->id() == m_socket_descriptor)
+            {
+              qDebug() << iter->toString().c_str();
+              data_str.append(iter->toString());
+            }
         }
 
-      m_socket->write(data_str.c_str());
+      qDebug() << "[onSendNewPlayerData] Data written to client: " << data_str.c_str();
 
+      m_socket->write(data_str.c_str());
       emit m_socket->bytesWritten(static_cast<int>(data_str.length()));
 
-      qDebug() << "DATA to SCLIENT: " << data_str.c_str();
 }
 
 void PlayerHandler::onPlayerRegistered()
 {
   qDebug() << "[onPlayerRegistered]";
-
   isRegistred = true;
-  emit sendNewPlayerData();
+
+//  emit sendNewPlayerData();
 }
 
 
