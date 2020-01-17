@@ -38,8 +38,23 @@ public:
     int getId() const;
     void setId(int value);
 
+    qreal getSpeedX() const;
+    qreal getSpeedY() const;
+
+    void accelerateX(qreal acc);
+    void accelerateY(qreal acc);
+    void slow(qreal s);
+
+    static const qreal MAX_SPEED;
+    static const qreal ACCELERATION;
+    static const qreal SLOWING;
+
+
+
 private:
-    int id;
+    int m_id;
+    qreal m_speedX = 0;
+    qreal m_speedY = 0;
 };
 
 #endif // PLAYER

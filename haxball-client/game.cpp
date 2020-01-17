@@ -13,8 +13,6 @@
 #include "clientsocket.hpp"
 #include <QStringList>
 
-const qreal MOVE_STEP = 5.0;
-
 Game::Game(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Game)
@@ -23,6 +21,8 @@ Game::Game(QWidget *parent) :
     setFocusPolicy(Qt::FocusPolicy::StrongFocus);
 
     scene = new QGraphicsScene();
+
+    startTimer(1000/60);
 
 
     // iscrtavanje terena
@@ -118,6 +118,7 @@ void Game::coordsWriteReady()
 void Game::setUpListener()
 {
     connect(this, SIGNAL(onPlayerAction()), this, SLOT(coordsWriteReady()));
+    installEventFilter(this);
 }
 
 
@@ -131,24 +132,44 @@ void Game::setSocket(std::shared_ptr<ClientSocket> sock)
     m_clientsocket = sock;
 }
 
-// TODO: Resiti ukoso kretanje
-void Game::keyPressEvent(QKeyEvent *event)
+bool Game::eventFilter(QObject *obj, QEvent *event)
 {
-    int key = event->key();
-
-    switch(key){
-        case Qt::Key_Up: m_me->setY(m_me->y() - MOVE_STEP); break;
-        case Qt::Key_Down: m_me->setY(m_me->y() + MOVE_STEP); break;
-        case Qt::Key_Left: m_me->setX(m_me->x() - MOVE_STEP); break;
-        case Qt::Key_Right: m_me->setX(m_me->x() + MOVE_STEP); break;
+    if(event->type()==QEvent::KeyPress) {
+        pressedKeys += (static_cast<QKeyEvent*>(event))->key();
+    }
+    else if(event->type()==QEvent::KeyRelease){
+        pressedKeys -= (static_cast<QKeyEvent*>(event))->key();
     }
 
-    emit onPlayerAction();
+    return false;
 }
 
-void Game::keyReleaseEvent(QKeyEvent *event)
+
+void Game::timerEvent(QTimerEvent *event)
 {
 
+    if(pressedKeys.contains(Qt::Key_Left)){
+        m_me->accelerateX(-Player::ACCELERATION);
+    }
+    if(pressedKeys.contains(Qt::Key_Right)){
+        m_me->accelerateX(Player::ACCELERATION);
+    }
+    if(pressedKeys.contains(Qt::Key_Up)){
+        m_me->accelerateY(-Player::ACCELERATION);
+    }
+    if(pressedKeys.contains(Qt::Key_Down)){
+        m_me->accelerateY(Player::ACCELERATION);
+    }
+    if(pressedKeys.contains(Qt::Key_Space)){
+        m_me->setPen(QPen(Qt::yellow, 5, Qt::SolidLine));
+    }
+    else{
+        m_me->setPen(QPen(Qt::white, 5, Qt::SolidLine));
+    }
+
+    m_me->moveBy(m_me->getSpeedX(), m_me->getSpeedY());
+
+    m_me->slow(Player::SLOWING);
 }
 
 
