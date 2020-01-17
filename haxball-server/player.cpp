@@ -1,6 +1,6 @@
 #include "player.hpp"
 
-Player::Player(qintptr id, std::string name, long x0, long y0)
+Player::Player(qintptr id, std::string name, double x0, double y0)
   : m_id(id),m_x0(x0), m_y0(y0), m_name(name)
 { }
 

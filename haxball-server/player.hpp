@@ -11,7 +11,7 @@ public:
 
   Player() = default;
 
-  explicit Player(qintptr id, std::string name, long x0 = 0, long y0 = 0);
+  explicit Player(qintptr id, std::string name, double x0 = 0, double y0 = 0);
 
   std::string toString() const;
 
@@ -24,7 +24,7 @@ public:
 
 private:
   qintptr m_id;
-  long m_x0, m_y0;
+  double m_x0, m_y0;
 
   std::string  m_name;
 

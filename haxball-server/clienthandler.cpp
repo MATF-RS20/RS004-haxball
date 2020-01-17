@@ -87,9 +87,9 @@ void PlayerHandler::onReadyRead()
       {
         // PROTOCOL:   "coord player_id x y"
 
-        auto clientId = ql[1].toLong();
-        auto X_coord = ql[2].toLong();
-        auto Y_coord = ql[3].toLong();
+        auto clientId = ql[1].toDouble();
+        auto X_coord = ql[2].toDouble();
+        auto Y_coord = ql[3].toDouble();
 
         qDebug() << "[coords]: clientId: " << clientId << " X: " << X_coord << " Y: " << Y_coord;
 
@@ -193,7 +193,7 @@ void PlayerHandler::onDisconnected()
     exit(0);
 }
 
-void PlayerHandler::onHandlePlayerCoords(long clientId, long X_coord, long Y_coord)
+void PlayerHandler::onHandlePlayerCoords(long clientId, double X_coord, double Y_coord)
 {
 
   auto data = m_server_ptr->player_game_data();
