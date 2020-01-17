@@ -147,7 +147,7 @@ void Server::initData()
 bool Server::joinGame(qintptr clientId, std::string playerName, std::string gameId)
 {
 
-  //Player player(clientId, playerName);
+  Player player(clientId, playerName);
 
   auto result = findGameById(gameId);
 
@@ -171,6 +171,9 @@ bool Server::joinGame(qintptr clientId, std::string playerName, std::string game
 
    m_player_game_data.insert(std::pair<qintptr, std::shared_ptr<Game>>(clientId, tmp));
 
+  //add player to game...
+   tmp->addPlayer(player);
+
   return true;
 }
 
@@ -184,8 +187,6 @@ bool Server::createGame(qintptr clientId, std::string playerName, std::string ga
   Player player(clientId, playerName);
 
   auto game_ptr = std::make_shared<Game>(gameName, playerNumber);
-
-
 
   //add to vector
   createdGames().push_back(game_ptr);

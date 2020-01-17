@@ -13,6 +13,11 @@ public:
 
   explicit Player(qintptr id, std::string name, double x0 = 0, double y0 = 0);
 
+  Player(const Player & other);
+
+  Player & operator= (const Player & other);
+
+
   QString toString() const;
 
   std::string name() const;

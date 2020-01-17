@@ -96,8 +96,8 @@ void PlayerHandler::onReadyRead()
         //save new data to server
         emit handlePlayerCoords(clientId, X_coord, Y_coord);
 
-        //send data to client again
-        emit sendNewPlayerData();
+//        //send data to client again
+//        emit sendNewPlayerData();
 
       }
 
@@ -115,8 +115,8 @@ void PlayerHandler::onReadyRead()
         if(joinGame(clientId, playerName, gameId))
           {
             qDebug() << "[joinGame & registerPlayer]";
-            emit registerPlayer();
-
+//            emit registerPlayer();
+              isRegistred  = true;
 
             //send new data to client
             qDebug() << "[joinGame & onSendNewPlayerData]";
@@ -139,7 +139,9 @@ void PlayerHandler::onReadyRead()
         if(createGame(clientId, playerName, gameName, playerNumber))
           {
             qDebug() << "[createGame] -> registerPlayer";
-            emit registerPlayer();
+//            emit registerPlayer();
+            isRegistred  = true;
+
 
             //send new data to client
             qDebug() << "[createGame] -> onSendNewPlayerData";
@@ -219,8 +221,8 @@ void PlayerHandler::onHandlePlayerCoords(long clientId, double X_coord, double Y
             }
       }
 
-//    for(auto & x : players)
-//      qDebug() << "P: " << x.toString().c_str();
+    for(auto & x : players)
+      qDebug() << "[onHandlePlayerCoords] Player coords: " << x.toString();
 
   }
 
