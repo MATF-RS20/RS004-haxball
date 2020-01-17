@@ -18,6 +18,7 @@ Game::Game(QWidget *parent) :
     ui(new Ui::Game)
 {
     ui->setupUi(this);
+
     setUp();
 
     // HARDCODE!
@@ -170,17 +171,16 @@ QGraphicsScene* Game::drawField()
     pen.setColor(Qt::black);
     pen.setWidth(5);
 
-    // teren i golovi
+    // the stadium and goals
     scene->addRect(-50, 175, 50, 150, pen);
-    scene->addRect(1000, 175, 50, 15
-                   , pen);
+    scene->addRect(1000, 175, 50, 150, pen);
     pen.setColor(Qt::white);
     scene->addRect(0, 0, 1000, 500, pen);
     scene->addLine(500, 0, 500, 500,pen);
 
-    // centar
+    // center
     scene->addEllipse(400, 150, 200, 200,pen);
-    // stative
+    // goalpost
     pen.setColor(Qt::black);
     pen.setWidth(2);
     scene->addEllipse(-10, 165 , 20, 20,pen, QBrush(Qt::white));
