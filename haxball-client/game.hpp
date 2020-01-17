@@ -48,7 +48,7 @@ private slots:
 
 private:
 
-    void setUpListener();
+    void setUp();
 
     Ui::Game *ui;
     QGraphicsScene* scene;

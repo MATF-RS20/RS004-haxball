@@ -18,31 +18,7 @@ Game::Game(QWidget *parent) :
     ui(new Ui::Game)
 {
     ui->setupUi(this);
-    setFocusPolicy(Qt::FocusPolicy::StrongFocus);
-
-    scene = new QGraphicsScene();
-
-    startTimer(1000/60);
-
-
-    // iscrtavanje terena
-    scene = drawField();
-
-    ui->view->setScene(scene);
-    setWindowState(Qt::WindowFullScreen);
-    this->installEventFilter(this);
-
-/*
-    // iscrtavanje igraca
-    scene = drawPlayers();
-    // iscrtavanje lopte
-    scene = drawBall();
-
-
-
-*/
-
-    setUpListener();
+    setUp();
 
     // HARDCODE!
     m_me = std::make_shared<Player>(0, 0);
@@ -69,7 +45,7 @@ void Game::on_exit_button_clicked()
 // Koordinate se dobijaju u formatu: x_ball y_ball id_player1 x1 y1 id_player2 x2 y2 ...
 void Game::coordsReadReady(QStringList coords)
 {
-    qDebug() << "[coordsReadReady]";
+    qDebug() << "[coordsReadReady]: Sa servera je stigla poruka: " << coords;
     //Citaju se koordinate lopte.
     //m_ball.setX(coords.takeLast().toDouble());
     //m_ball.setY(coords.takeLast().toDouble());
@@ -81,12 +57,12 @@ void Game::coordsReadReady(QStringList coords)
         qreal x = (iter + 1)->toDouble();
         qreal y = (iter + 2)->toDouble();
 
-        qDebug() << "x: " << x << "  y: " << y;
-
         auto player_it = m_players.find(playerId);
         if(player_it != m_players.end()){
             (*player_it)->setX(x);
             (*player_it)->setY(y);
+
+            qDebug() << "[coordsReadReady]: Azuriran je postojeci igrac " << playerId << " na poziciju (" << x <<", " << y <<")";
         }
         else{
             std::shared_ptr<Player> player = std::make_shared<Player>(0, 0);
@@ -94,13 +70,15 @@ void Game::coordsReadReady(QStringList coords)
             player->setY(y);
             scene->addItem(player.get());
             m_players.insert(playerId, player);
+
+            qDebug() << "[coordsReadReady]: Dodat je novi igrac " << playerId << " na poziciju (" << x <<", " << y <<")";
         }
     }
 }
 
 void Game::coordsWriteReady()
 {
-    qDebug() << "coordsWriteReady";
+
 
     QByteArray serverRequest;
     const QString protocol = "coords";
@@ -112,12 +90,20 @@ void Game::coordsWriteReady()
 
     m_clientsocket->getSocket()->write(serverRequest);
 
+    qDebug() << "[coordsWriteReady]: Serveru je poslat zahtev: " << QString(serverRequest);
+
 }
 
-// Metoda setUpListener registruje signale i njima odgovarajuce slotove.
-void Game::setUpListener()
+// Metoda setUpListener registruje signale i njima odgovarajuce slotove i inicijalizuje potrebne komponente.
+void Game::setUp()
 {
     connect(this, SIGNAL(onPlayerAction()), this, SLOT(coordsWriteReady()));
+    setFocusPolicy(Qt::FocusPolicy::StrongFocus);
+    scene = new QGraphicsScene();
+    startTimer(1000/60);
+    scene = drawField();
+    ui->view->setScene(scene);
+    setWindowState(Qt::WindowFullScreen);
     installEventFilter(this);
 }
 
@@ -136,9 +122,11 @@ bool Game::eventFilter(QObject *obj, QEvent *event)
 {
     if(event->type()==QEvent::KeyPress) {
         pressedKeys += (static_cast<QKeyEvent*>(event))->key();
+        emit onPlayerAction();
     }
     else if(event->type()==QEvent::KeyRelease){
         pressedKeys -= (static_cast<QKeyEvent*>(event))->key();
+        emit onPlayerAction();
     }
 
     return false;
