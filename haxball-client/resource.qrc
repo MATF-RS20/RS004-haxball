@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/img">
+        <file>img/bg.png</file>
+        <file>img/create.png</file>
+        <file>img/exit.png</file>
+        <file>img/join.png</file>
+        <file>img/refresh.png</file>
+        <file>img/settings.png</file>
+        <file>img/trava_za_teren.png</file>
+        <file>img/logo.png</file>
+    </qresource>
+</RCC>
