@@ -29,11 +29,16 @@ public:
 
   unsigned playersNumber() ;
 
-  void addPlayer(Player & player);
+  void addPlayer(Player player);
 
   std::string toString() const;
 
    std::vector<Player> & players();
+
+
+   std::pair<long, long> randomPosition();
+
+   std::pair<std::pair<long, long>, std::pair<long, long>> mbbox {{0,0}, {10,10}};
 
 private:
   std::string m_name;
@@ -42,6 +47,8 @@ private:
   std::pair<unsigned, unsigned> m_result;
 
   std::vector<Player> m_players;
+
+
 };
 
 

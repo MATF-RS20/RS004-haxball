@@ -21,9 +21,23 @@ unsigned Game::playersNumber()
   return m_players_number;
 }
 
-void Game::addPlayer(Player & player)
+void Game::addPlayer(Player player)
 {
+  auto p = randomPosition();
+  player.x_y(p.first, p.second);
+
   m_players.push_back(player);
+}
+
+
+std::pair<long, long> Game::randomPosition()
+{
+    auto x0 = mbbox.first.first;
+    auto y0 = mbbox.first.second;
+    auto x1 = mbbox.second.first;
+    auto y1 = mbbox.second.second;
+
+    return { x0 + (random() % (x1 - x0)), y0 + (random() % (y1 - y0)) };
 }
 
 
@@ -34,15 +48,6 @@ std::string Game::toString() const
                     + " " + m_id
                     + " " + std::to_string(m_players_number)
                     + " " + std::to_string(m_result.first) + ":" + std::to_string(m_result.second);
-
-//  std::string players;
-//  for(auto iter = std::begin(m_players); iter != m_players.end(); iter++)
-//  {
-//    players.append(iter->toString());
-//    players.append(" ");
-//  }
-
-//  s.append(players);
 
   return s;
 }

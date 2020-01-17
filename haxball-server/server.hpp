@@ -55,7 +55,7 @@ public:
 
   std::map<qintptr, std::shared_ptr<Game>> & player_game_data();
 
-  void log_data(const std::string new_data);
+//  void log_data(const std::string new_data);
 
   bool joinGame(qintptr clientId, std::string playerName, std::string gameId);
   bool createGame(qintptr clientId, std::string playerName, std::string gameName, unsigned playerNumber);
@@ -71,14 +71,13 @@ protected:
 
 private:
   void setUpListeners();
-  bool registerPlayer(qintptr player_id);
+//  bool registerPlayer(qintptr player_id);
   void initData();
 
   QHostAddress m_host_address;
   quint16 m_port;
 
   std::vector<std::shared_ptr<Game>> m_created_games;
-
   std::map<qintptr, std::shared_ptr<Game>> m_player_game_data;
 
 };

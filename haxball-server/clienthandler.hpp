@@ -30,7 +30,7 @@ public:
 signals:
     void error(QTcpSocket::SocketError socketerror);
 
-    void handlePlayerCoords(qintptr clientId, long X_coord, long Y_coord);
+    void handlePlayerCoords(long clientId, long X_coord, long Y_coord);
     void sendNewPlayerData();
     void registerPlayer();
 
@@ -40,7 +40,7 @@ public slots:
     void onConnected();
     void onDisconnected();
 
-    void onHandlePlayerCoords(qintptr clientId, long X_coord, long Y_coord);
+    void onHandlePlayerCoords(long clientId, long X_coord, long Y_coord);
     void onSendNewPlayerData();
     void onPlayerRegistered();
 

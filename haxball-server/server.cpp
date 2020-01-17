@@ -16,35 +16,34 @@ Server::Server(QHostAddress address, quint16 port, QObject* parent)
 
 void Server::start()
 {
-  log_data("[start] Server is starting...");
+  qDebug() << "[start] Server is starting...";
 
   //all listeners will be connect
   setUpListeners();
 
   if(!this->listen(m_host_address, m_port))
     {
-      log_data("[start] Server could not be started...");
+      qDebug() << "[start] Server could not be started...";
     }
   else
     {
-      log_data("[start] Server is listening at...");
-//      qDebug()  << "[start] Server is listening at " << m_host_address << " : " << m_port << "...";
+      qDebug()  << "[start] Server is listening at " << m_host_address << " : " << m_port << "...";
     }
 
 }
 
 void Server::stop()
 {
-  log_data("[stop] Server is stopping...");
+  qDebug() << "[stop] Server is stopping...";
 
   this->close();
 
-  log_data("[stop] Server is stoped...");
+  qDebug() << "[stop] Server is stoped...";
 }
 
 void Server::restart()
 {
-  log_data("[restart] Server is restarting...");
+  qDebug() << "[restart] Server is restarting...";
 
   this->stop();
   this->start();
@@ -93,7 +92,7 @@ std::vector<std::shared_ptr<Game>> & Server::createdGames()
 void Server::incomingConnection(qintptr handle)
 {
 
-  log_data("[incomingConnection] Client  is connecting...");
+  qDebug() << "[incomingConnection] Client  is connecting...";
 
   PlayerHandler *thread = new PlayerHandler(handle, this);
   connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
@@ -119,11 +118,11 @@ void Server::setUpListeners()
 
 }
 
-bool Server::registerPlayer(qintptr player_id)
-{
-  m_player_game_data[player_id] = nullptr;
-  return true;
-}
+//bool Server::registerPlayer(qintptr player_id)
+//{
+//  m_player_game_data[player_id] = nullptr;
+//  return true;
+//}
 
 
 void Server::initData()
@@ -136,27 +135,24 @@ void Server::initData()
 
 }
 
-void Server::log_data(const std::string new_data)
-{
-    std::string tmp(new_data);
-    qDebug() << QString::fromStdString(tmp);
+//void Server::log_data(const std::string new_data)
+//{
+//    std::string tmp(new_data);
+//    qDebug() << QString::fromStdString(tmp);
 
-    emit logServerData(tmp);
-}
+//    emit logServerData(tmp);
+//}
 
 
 bool Server::joinGame(qintptr clientId, std::string playerName, std::string gameId)
 {
 
-  log_data("[joinGame]");
-
-  Player player(clientId, playerName);
+  //Player player(clientId, playerName);
 
   auto result = findGameById(gameId);
 
   if(!result.first)
     {
-      log_data("Required game not found!");
       qDebug() <<  "Required game not found!";
 
       return false;
@@ -172,8 +168,7 @@ bool Server::joinGame(qintptr clientId, std::string playerName, std::string game
 bool Server::createGame(qintptr clientId, std::string playerName, std::string gameName, unsigned playerNumber)
 {
 
-  log_data("[createGame]");
-
+  //create new player
   Player player(clientId, playerName);
 
   auto game_ptr = std::make_shared<Game>(gameName, playerNumber);
@@ -207,8 +202,6 @@ bool Server::createGame(qintptr clientId, std::string playerName, std::string ga
 
 std::pair<bool, std::shared_ptr<Game>> Server::findGameById(std::string gameId)
 {
-
-    log_data("[findGameById]");
 
     for(auto g : m_created_games)
     {
