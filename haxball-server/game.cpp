@@ -37,7 +37,7 @@ std::pair<long, long> Game::randomPosition()
     auto x1 = mbbox.second.first;
     auto y1 = mbbox.second.second;
 
-    return { x0 + (random() % (x1 - x0)), y0 + (random() % (y1 - y0)) };
+    return { x0 + (rand() % (x1 - x0)), y0 + (rand() % (y1 - y0)) };
 }
 
 
