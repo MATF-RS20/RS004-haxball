@@ -3,6 +3,11 @@
 #include "clientsocket.hpp"
 #include <iostream>
 
+const qreal Player::MAX_SPEED = 5;
+const qreal Player::ACCELERATION = 0.5;
+const qreal Player::SLOWING = 0.1;
+
+
 Player::Player(const qreal x, const qreal y, const qreal diameter, const QColor& circleColor, const QColor& circularColor, const int circularWidth)
     : QGraphicsEllipseItem(x, y, diameter, diameter)
 {
@@ -13,13 +18,76 @@ Player::Player(const qreal x, const qreal y, const qreal diameter, const QColor&
 
 int Player::getId() const
 {
-    return id;
+    return m_id;
 }
 
 void Player::setId(int value)
 {
-    id = value;
+    m_id = value;
 }
+
+void Player::accelerateX(qreal acc)
+{
+    m_speedX += acc;
+
+    if(m_speedX > MAX_SPEED){
+        m_speedX = MAX_SPEED;
+    }
+    else if(m_speedX < -MAX_SPEED)
+        m_speedX = -MAX_SPEED;
+}
+
+void Player::accelerateY(qreal acc)
+{
+    m_speedY += acc;
+
+    if(m_speedY > MAX_SPEED){
+        m_speedY = MAX_SPEED;
+    }
+    else if(m_speedY < -MAX_SPEED)
+        m_speedY = -MAX_SPEED;
+}
+
+void Player::slow(qreal s)
+{
+    if(m_speedX < -s){
+        m_speedX += s;
+    }
+    else if(m_speedX < 0){
+        m_speedX = 0;
+    }
+    else if(m_speedX > s){
+        m_speedX -= s;
+    }
+    else if(m_speedX < s){
+        m_speedX = 0;
+    }
+
+
+    if(m_speedY < -s){
+        m_speedY += s;
+    }
+    else if(m_speedY < 0){
+        m_speedY = 0;
+    }
+    else if(m_speedY > s){
+        m_speedY -= s;
+    }
+    else if(m_speedY < s){
+        m_speedY = 0;
+    }
+}
+
+qreal Player::getSpeedY() const
+{
+    return m_speedY;
+}
+
+qreal Player::getSpeedX() const
+{
+    return m_speedX;
+}
+
 
 
 

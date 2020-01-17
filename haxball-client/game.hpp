@@ -31,8 +31,8 @@ public:
 
     QGraphicsScene* drawPlayer(int x, int y);
 
-    void keyPressEvent(QKeyEvent* event);
-    void keyReleaseEvent(QKeyEvent* event);
+    bool eventFilter(QObject * obj, QEvent * event);
+    void timerEvent(QTimerEvent* event);
 
     std::shared_ptr<Player> getMe() const;
 
@@ -56,6 +56,7 @@ private:
     QHash<int, std::shared_ptr<Player>> m_players;
     Ball m_ball;
     std::shared_ptr<Player> m_me;
+    QSet<int> pressedKeys;
 
     std::shared_ptr<ClientSocket> m_clientsocket;
 
