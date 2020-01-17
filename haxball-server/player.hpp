@@ -13,13 +13,13 @@ public:
 
   explicit Player(qintptr id, std::string name, double x0 = 0, double y0 = 0);
 
-  std::string toString() const;
+  QString toString() const;
 
   std::string name() const;
 
   qintptr id() const;
 
-  void x_y(long x, long y);
+  void x_y(double x, double y);
 
 
 private:

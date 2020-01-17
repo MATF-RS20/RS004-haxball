@@ -158,7 +158,18 @@ bool Server::joinGame(qintptr clientId, std::string playerName, std::string game
       return false;
     }
 
-   m_player_game_data.insert(std::pair<qintptr, std::shared_ptr<Game>>(clientId, result.second));
+  std::shared_ptr<Game> tmp;
+
+  for(auto iter = std::begin(m_created_games) ; iter != std::end(m_created_games) ; iter++ )
+    {
+        if(gameId == (*iter)->gameId())
+          {
+              tmp = *iter;
+              qDebug() << "[joinGame]: Id igre "<< (*iter)->gameId().c_str() << " klijenta " << clientId;
+          }
+    }
+
+   m_player_game_data.insert(std::pair<qintptr, std::shared_ptr<Game>>(clientId, tmp));
 
   return true;
 }
@@ -168,18 +179,25 @@ bool Server::joinGame(qintptr clientId, std::string playerName, std::string game
 bool Server::createGame(qintptr clientId, std::string playerName, std::string gameName, unsigned playerNumber)
 {
 
+  qDebug() << "[createGame]";
   //create new player
   Player player(clientId, playerName);
 
   auto game_ptr = std::make_shared<Game>(gameName, playerNumber);
 
+
+
   //add to vector
   createdGames().push_back(game_ptr);
+
+  qDebug() << "[createGame]: Dodato u vektor igara: " << game_ptr->gameId().c_str();
 
 //   qDebug() << "game_ptr: name: " << QString::fromStdString(game_ptr->name())
 //            << "playerNumber: " << QString::number(game_ptr->playersNumber());
 
    m_player_game_data.insert(std::pair<qintptr, std::shared_ptr<Game>>(clientId, game_ptr));
+   qDebug() << "[createGame]: Dodato u hes: " << clientId << ", " << game_ptr->gameId().c_str();
+
 
 
   auto iter = m_player_game_data.find(clientId);

@@ -88,6 +88,9 @@ void MainWindow::on_joinButton_clicked()
                      .append(m_playerName + " ");
 
         m_clientsocket->getSocket()->write(serverRequest);
+
+        hide();
+        m_game->show();
     }
 }
 

@@ -31,7 +31,9 @@ public:
 
   void addPlayer(Player player);
 
-  std::string toString() const;
+  QString toString() const;
+
+   QString print_game();
 
    std::vector<Player> & players();
 

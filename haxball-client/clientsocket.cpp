@@ -75,7 +75,7 @@ void ClientSocket::onReadyRead()
 {
     m_data = m_socket->readLine();
 
-    m_optData = QString(m_data).split(MainWindow::regex);
+    m_optData = QString(m_data).trimmed().split(MainWindow::regex);
 
     qDebug() << "PRIMLJENO: " << m_optData;
 

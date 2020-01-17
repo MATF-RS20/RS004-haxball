@@ -1,10 +1,11 @@
 #include "game.hpp"
 
 #include <ctime>
+#include <QString>
 
 Game::Game(std::string name, unsigned players_number, std::string id,  std::pair<unsigned, unsigned> result)
   :m_name(name), m_id(id), m_players_number(players_number), m_result(result)
-  {}
+  { }
 
 std::string & Game::gameId()
 {
@@ -41,13 +42,28 @@ std::pair<long, long> Game::randomPosition()
 }
 
 
-std::string Game::toString() const
+QString Game::toString() const
 {
+    QString s =   " " + QString::fromStdString(m_name)
+                    + " " + QString::fromStdString(m_id)
+                    + " " + QString::number(m_players_number)
+                    + " " + QString::number(m_result.first) + ":" + QString::number(m_result.second);
 
-    std::string s =   " " + m_name
-                    + " " + m_id
-                    + " " + std::to_string(m_players_number)
-                    + " " + std::to_string(m_result.first) + ":" + std::to_string(m_result.second);
+  return s;
+}
+
+QString Game::print_game()
+{
+  QString s =   " " + QString::fromStdString(m_name)
+                  + " " + QString::fromStdString(m_id)
+                  + " " + QString::number(m_players_number)
+                  + " " + QString::number(m_result.first) + ":" + QString::number(m_result.second);
+
+    for(auto iter  = m_players.begin() ; iter != m_players.end() ; iter++)
+      {
+        s += iter->toString();
+        s += " ";
+      }
 
   return s;
 }

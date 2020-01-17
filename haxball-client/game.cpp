@@ -62,7 +62,6 @@ void Game::coordsReadReady(QStringList coords)
         if(player_it != m_players.end()){
             (*player_it)->setX(x);
             (*player_it)->setY(y);
-
             qDebug() << "[coordsReadReady]: Azuriran je postojeci igrac " << playerId << " na poziciju (" << x <<", " << y <<")";
         }
         else{
@@ -74,6 +73,7 @@ void Game::coordsReadReady(QStringList coords)
 
             qDebug() << "[coordsReadReady]: Dodat je novi igrac " << playerId << " na poziciju (" << x <<", " << y <<")";
         }
+
     }
 }
 

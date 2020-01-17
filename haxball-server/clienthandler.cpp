@@ -87,11 +87,11 @@ void PlayerHandler::onReadyRead()
       {
         // PROTOCOL:   "coord player_id x y"
 
-        auto clientId = ql[1].toDouble();
-        auto X_coord = ql[2].toDouble();
-        auto Y_coord = ql[3].toDouble();
+        long clientId = ql[1].toLong();
+        double X_coord = ql[2].toDouble();
+        double Y_coord = ql[3].toDouble();
 
-        qDebug() << "[coords]: clientId: " << clientId << " X: " << X_coord << " Y: " << Y_coord;
+        qDebug() << "[coords]: Reading data: clientId: " << clientId << " X: " << X_coord << " Y: " << Y_coord;
 
         //save new data to server
         emit handlePlayerCoords(clientId, X_coord, Y_coord);
@@ -110,12 +110,13 @@ void PlayerHandler::onReadyRead()
         auto gameId = ql[2].toStdString();
         auto playerName = ql[3].toStdString();
 
-        qDebug() << "[joinGame] " << " clienId: " << ql[1] << " gameId: " << ql[2] <<  " playerName: " <<  ql[3] ;
+        qDebug() << "[joinGame]: Primljeno od klijenta: " << " clienId:" << ql[1] << " gameId:" << ql[2] <<  " playerName:" <<  ql[3] ;
 
         if(joinGame(clientId, playerName, gameId))
           {
             qDebug() << "[joinGame & registerPlayer]";
             emit registerPlayer();
+
 
             //send new data to client
             qDebug() << "[joinGame & onSendNewPlayerData]";
@@ -153,7 +154,7 @@ void PlayerHandler::onReadyRead()
 
         qDebug() << "[refresh]";
 
-        std::string games_str("gameNames ");
+        QString games_str("gameNames ");
 
         auto games = m_server_ptr->createdGames();
 
@@ -163,9 +164,13 @@ void PlayerHandler::onReadyRead()
         }
 
         //write game data to socket
+        QByteArray buffer;
+        buffer.append(games_str);
+        m_socket->write(buffer);
 
-        m_socket->write(games_str.c_str());
-        emit m_socket->bytesWritten(static_cast<int>(games_str.length()));
+        m_socket->flush();
+
+        emit m_socket->bytesWritten(static_cast<int>(buffer.length()));
 
       }
 
@@ -202,14 +207,21 @@ void PlayerHandler::onHandlePlayerCoords(long clientId, double X_coord, double Y
   if(res != data.end())
   {
     auto players = res->second->players();
+
+    qDebug() << "Size of players: " << players.size();
+
     for(auto iter = std::begin(players) ; iter != std::end(players); iter++)
       {
           if(iter->id() == clientId)
             {
               iter->x_y(X_coord, Y_coord);
-              qDebug() << "[onHandlePlayerCoords] " << " clientId: " << clientId << " X_w: " << X_coord<< " Y_w: " << Y_coord;
+              qDebug() << "[onHandlePlayerCoords] " << " Writting data: clientId: " << clientId << " X_w: " << X_coord<< " Y_w: " << Y_coord;
             }
       }
+
+//    for(auto & x : players)
+//      qDebug() << "P: " << x.toString().c_str();
+
   }
 
   emit sendNewPlayerData();
@@ -225,27 +237,47 @@ void PlayerHandler::onSendNewPlayerData()
 
       auto res = client_game.find(m_socket_descriptor);
 
-      auto cliendId = res->first;
-      auto game_ptr = res->second;
-
-      std::vector<Player> & teammates = game_ptr->players();
-
-
-      std::string data_str("coords ");
-
-      for(auto iter = std::begin(teammates) ; iter != std::end(teammates) ; iter++)
+      if(res != client_game.end())
         {
-          if(iter->id() == m_socket_descriptor)
-            {
-//              qDebug() << iter->toString().c_str();
-              data_str.append(iter->toString());
+          qDebug() << "[onSendNewPlayerData]: Nadjen je igrac u hes mapi" << m_socket_descriptor;
+
+          auto cliendId = res->first;
+          auto game_ptr = res->second;
+          qDebug() << "[onSendNewPlayerData]: Id igre je " << QString::fromStdString(game_ptr->gameId());
+
+          std::vector<Player> & teammates = game_ptr->players();
+
+          qDebug() << "[onSendNewPlayerData]: Igra sadrzi sledecih " << teammates.size() <<" igraca: ";
+
+          for(auto& p : teammates){
+              qDebug() << "\t" << p.id();
             }
+
+          QString data_str("coords");
+
+          for(auto iter = std::begin(teammates) ; iter != std::end(teammates) ; iter++)
+            {
+              if(iter->id() != cliendId)
+                {
+                  data_str.append(iter->toString());
+                }
+            }
+
+
+          qDebug() << "[onSendNewPlayerData]: Klijentu se salje " << data_str;
+          QByteArray buffer;
+          buffer.append(data_str);
+          m_socket->write(buffer);
+
+          m_socket->flush();
         }
+      else {
+          qDebug() << "[onSendNewPlayerData]: Igrac nije pronadjen u hes mapi" << m_socket_descriptor;
+      }
 
-      qDebug() << "[onSendNewPlayerData] Data to Client: " << data_str.c_str();
 
-      m_socket->write(data_str.c_str());
-      emit m_socket->bytesWritten(static_cast<int>(data_str.length()));
+
+//      emit m_socket->bytesWritten(static_cast<int>(data_str.length()));
 
 }
 
@@ -271,7 +303,7 @@ void PlayerHandler::setUpListeners()
   connect(m_socket, SIGNAL(connected()), this, SLOT(onReadyRead()), Qt::DirectConnection);
 
   //update/send player data
-  connect(this, SIGNAL(handlePlayerCoords(long, long, long)), this, SLOT(onHandlePlayerCoords(long, long, long)));
+  connect(this, SIGNAL(handlePlayerCoords(long, double, double)), this, SLOT(onHandlePlayerCoords(long, double, double)));
   connect(this, SIGNAL(registerPlayer()), this, SLOT(onPlayerRegistered()));
 
   connect(this, SIGNAL(sendNewPlayerData()), this, SLOT(onSendNewPlayerData()));
