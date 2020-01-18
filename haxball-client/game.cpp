@@ -24,6 +24,7 @@ Game::Game(QWidget *parent) :
     // HARDCODE!
     m_me = std::make_shared<Player>(0, 0);
     scene->addItem(m_me.get());
+    scene->addItem(new Ball(485,235));
 }
 
 Game::~Game()
@@ -73,14 +74,11 @@ void Game::coordsReadReady(QStringList coords)
 
             qDebug() << "[coordsReadReady]: Dodat je novi igrac " << playerId << " na poziciju (" << x <<", " << y <<")";
         }
-
     }
 }
 
 void Game::coordsWriteReady()
 {
-
-
     QByteArray serverRequest;
     const QString protocol = "coords";
 
@@ -95,10 +93,40 @@ void Game::coordsWriteReady()
 
 }
 
+
+void Game::checkGoal() {
+    if(m_me->x() < -20 || m_me->x() > 980) {
+       emit onGoal();
+       m_me->setX(480);
+       m_me->setY(230);
+    }
+    // m_ball.x() < 20 za loptu(desni gol)
+}
+
+void Game::goalWrite() {
+    QByteArray serverRequest;
+    const QString protocol = "goal";
+
+    // m_ball.x() < 20 za loptu(levi gol)
+    if(m_me->x() < -20) {
+        serverRequest.append(protocol + " Crveni tim " + " ");
+    }
+    // m_ball.x() < 20 za loptu(desni gol)
+    else if(m_me->x() > 980) {
+        serverRequest.append(protocol + " Plavi tim " + " ");
+    }
+     m_clientsocket->getSocket()->write(serverRequest);
+
+    qDebug() << "[goalWrite]: Serveru je poslat zahtev: " << QString(serverRequest);
+
+}
+
 // Metoda setUpListener registruje signale i njima odgovarajuce slotove i inicijalizuje potrebne komponente.
 void Game::setUp()
 {
     connect(this, SIGNAL(onPlayerAction()), this, SLOT(coordsWriteReady()));
+    connect(this, SIGNAL(onGoal()), this, SLOT(goalWrite()));
+
     setFocusPolicy(Qt::FocusPolicy::StrongFocus);
     scene = new QGraphicsScene();
     startTimer(1000/60);
@@ -136,7 +164,6 @@ bool Game::eventFilter(QObject *obj, QEvent *event)
 
 void Game::timerEvent(QTimerEvent *event)
 {
-
     if(pressedKeys.contains(Qt::Key_Left)){
         m_me->accelerateX(-Player::ACCELERATION);
     }
@@ -159,9 +186,8 @@ void Game::timerEvent(QTimerEvent *event)
     m_me->moveBy(m_me->getSpeedX(), m_me->getSpeedY());
 
     m_me->slow(Player::SLOWING);
+    checkGoal();
 }
-
-
 
 
 QGraphicsScene* Game::drawField()
