@@ -25,8 +25,7 @@ class Server : public QTcpServer
 
 public:
 
-  //constructors
-  explicit Server(const QHostAddress address, const quint16 port, QObject* parent = nullptr);
+  Server(const QHostAddress address, const quint16 port, QObject* parent = nullptr);
 
   //sigleton class method
   static std::shared_ptr<Server> instance(QHostAddress address, quint16 port, QObject* parent = nullptr)
@@ -62,6 +61,8 @@ public:
 
 
   std::pair<bool, std::shared_ptr<Game>>  findGameById(std::string gameId);
+
+  void printServerContent() const;
 
 signals:
   void logServerData(const std::string new_data);

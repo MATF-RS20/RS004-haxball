@@ -96,15 +96,6 @@ void Server::incomingConnection(qintptr handle)
 
   PlayerHandler *thread = new PlayerHandler(handle, this);
   connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-
-//  Worker* worker = new Worker();
-//  worker->moveToThread(thread);
-//  connect(worker, SIGNAL(error(QString)), this, SLOT(errorString(QString)));
-//  connect(thread, SIGNAL(started()), worker, SLOT(process()));
-//  connect(worker, SIGNAL(finished()), thread, SLOT(quit()));
-//  connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
-//  connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-
   thread->start();
 
   return;
@@ -118,20 +109,14 @@ void Server::setUpListeners()
 
 }
 
-//bool Server::registerPlayer(qintptr player_id)
-//{
-//  m_player_game_data[player_id] = nullptr;
-//  return true;
-//}
-
 
 void Server::initData()
 {
   //init players-games hash map
   for(auto iter = std::begin(m_player_game_data); iter != m_player_game_data.end(); iter++)
-  {
-     iter->second = nullptr;
-  }
+    {
+      iter->second = nullptr;
+    }
 
 }
 
@@ -147,32 +132,21 @@ void Server::initData()
 bool Server::joinGame(qintptr clientId, std::string playerName, std::string gameId)
 {
 
-  Player player(clientId, playerName);
+  //create new player
+  std::unique_ptr<Player> && player_ptr = std::make_unique<Player>(clientId, playerName);
 
-  auto result = findGameById(gameId);
+  //find player game
 
-  if(!result.first)
+  std::shared_ptr<Game> tmp_ptr;
+  for(auto game_ptr : m_created_games)
     {
-      qDebug() <<  "Required game not found!";
-
-      return false;
+      if(gameId == game_ptr->gameId())
+        {
+          game_ptr->addPlayer(std::move(player_ptr));
+          m_player_game_data.insert(std::pair<qintptr, std::shared_ptr<Game>>(clientId, game_ptr));
+          break;
+        }
     }
-
-  std::shared_ptr<Game> tmp;
-
-  for(auto iter = std::begin(m_created_games) ; iter != std::end(m_created_games) ; iter++ )
-    {
-        if(gameId == (*iter)->gameId())
-          {
-              tmp = *iter;
-              qDebug() << "[joinGame]: Id igre "<< (*iter)->gameId().c_str() << " klijenta " << clientId;
-          }
-    }
-
-   m_player_game_data.insert(std::pair<qintptr, std::shared_ptr<Game>>(clientId, tmp));
-
-  //add player to game...
-   tmp->addPlayer(player);
 
   return true;
 }
@@ -183,36 +157,22 @@ bool Server::createGame(qintptr clientId, std::string playerName, std::string ga
 {
 
   qDebug() << "[createGame]";
-  //create new player
-  Player player(clientId, playerName);
 
+  //create new game
   auto game_ptr = std::make_shared<Game>(gameName, playerNumber);
 
-  //add to vector
-  createdGames().push_back(game_ptr);
+  //create new player
+  auto player_ptr = std::make_unique<Player>(clientId, playerName);
 
-  qDebug() << "[createGame]: Dodato u vektor igara: " << game_ptr->gameId().c_str();
+  //add player to game
+  game_ptr->addPlayer(std::move(player_ptr));
 
-//   qDebug() << "game_ptr: name: " << QString::fromStdString(game_ptr->name())
-//            << "playerNumber: " << QString::number(game_ptr->playersNumber());
+  //add game to created games
+  m_created_games.push_back(game_ptr);
 
-   m_player_game_data.insert(std::pair<qintptr, std::shared_ptr<Game>>(clientId, game_ptr));
-   qDebug() << "[createGame]: Dodato u hes: " << clientId << ", " << game_ptr->gameId().c_str();
+  //add game to player-game data
+  m_player_game_data.insert(std::pair<qintptr, std::shared_ptr<Game>>(clientId, game_ptr));
 
-
-
-  auto iter = m_player_game_data.find(clientId);
-  if(iter != m_player_game_data.end())
-    {
-      iter->second->addPlayer(player);
-    }
-  else
-    {
-      qDebug() << "Something wrong with add player to created game!";
-      return false;
-    }
-
-//  qDebug() << "iter: first: " << iter->first << "game name: " << QString::fromStdString(iter->second->name());
   return true;
 }
 
@@ -222,16 +182,34 @@ bool Server::createGame(qintptr clientId, std::string playerName, std::string ga
 std::pair<bool, std::shared_ptr<Game>> Server::findGameById(std::string gameId)
 {
 
-    for(auto g : m_created_games)
+  for(auto g : m_created_games)
     {
-        if(g->gameId() == gameId)
-          {
-            return { true, g };
-          }
+      if(g->gameId() == gameId)
+        {
+          return { true, g };
+        }
     }
-    return { false, nullptr };
+  return { false, nullptr };
 
 }
+
+void Server::printServerContent() const
+{
+  qDebug() << "[printServerContent] START ***************************************";
+  qDebug() << "[printServerContent] ************* GAME - PLAYER data ************* ";
+  for(auto iter = std::cbegin(m_player_game_data) ; iter != std::cend(m_player_game_data) ;iter++)
+    {
+      qDebug() << "[printServerContent] playerId: " << iter->first << " game: " << iter->second->toString();
+    }
+
+  qDebug() << "************* CRATED GAMES data ************* ";
+  for(auto iter = std::cbegin(m_created_games) ; iter != std::cend(m_created_games) ;iter++)
+    {
+      qDebug() << "[printServerContent] game: "<< (*iter)->toString();
+    }
+  qDebug() << "[printServerContent] END ***************************************";
+}
+
 
 
 

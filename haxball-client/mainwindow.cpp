@@ -46,6 +46,8 @@ void MainWindow::on_createButton_clicked()
                      .append(m_gameName + " ")
                      .append(QString::number(m_playerNumber) + "\n");
 
+        qDebug() << "[on_createButton_clicked]: Serveru je poslato " << serverRequest;
+
         m_clientsocket->getSocket()->write(serverRequest);
     }
 

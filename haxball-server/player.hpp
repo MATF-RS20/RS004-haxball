@@ -2,6 +2,7 @@
 #define PLAYER_HPP
 
 #include <QObject>
+#include <memory>
 
 
 class Player
@@ -9,29 +10,36 @@ class Player
 
 public:
 
-  Player() = default;
+Player() = default;
 
-  explicit Player(qintptr id, std::string name, double x0 = 0, double y0 = 0);
+~Player() = default;
 
-  Player(const Player & other);
+explicit Player(qintptr id, std::string name, double x0 = 0, double y0 = 0);
 
-  Player & operator= (const Player & other);
+Player(const Player & other);
 
+Player(const std::shared_ptr<Player>& other);
 
-  QString toString() const;
+Player & operator= (const Player & other);
 
-  std::string name() const;
+Player(Player && other) noexcept;
 
-  qintptr id() const;
+Player & operator= (Player && other) noexcept;
 
-  void x_y(double x, double y);
+QString toString() const;
+
+std::string name() const;
+
+qintptr id() const;
+
+void setXY(double x, double y);
 
 
 private:
-  qintptr m_id;
-  double m_x0, m_y0;
 
-  std::string  m_name;
+qintptr m_id;
+double m_x0, m_y0;
+std::string  m_name;
 
 };
 

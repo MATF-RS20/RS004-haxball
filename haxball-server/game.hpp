@@ -6,41 +6,50 @@
 #include <utility>
 #include <map>
 #include <vector>
-
 #include <ctime>
-
 #include <iostream>
+#include <memory>
 
 #include "player.hpp"
 
 class Game
+
 {
 
 public:
 
-  Game() = default;
+  Game() = default ;
 
-  explicit Game(std::string name, unsigned players_number = 10, std::string id = std::to_string(time(nullptr)),
-                std::pair<unsigned, unsigned> result = std::make_pair<unsigned, unsigned>(0,0));
+  Game(std::string name, unsigned players_number = 4, std::string id = std::to_string(time(nullptr)),
+       std::pair<unsigned, unsigned> result = std::make_pair<unsigned, unsigned>(0,0));
 
-  std::string & gameId() ;
+  ~Game() = default;
 
-  std::string & name() ;
+  Game(const Game & other);
 
-  unsigned playersNumber() ;
+  Game & operator=(const Game & other);
 
-  void addPlayer(Player player);
+  Game(Game && other) noexcept;
+
+  Game & operator=(Game && other) noexcept;
+
+  std::string  gameId() const;
+
+  std::string name() const;
+
+  unsigned playersNumber() const;
+
+  void addPlayer(std::unique_ptr<Player> && player_ptr);
+
+//  std::pair<long, long> randomPosition() const;
+
+  QString toSocketString() const;
 
   QString toString() const;
 
-   QString print_game();
+  std::vector<std::shared_ptr<Player>> & players();
 
-   std::vector<Player> & players();
-
-
-   std::pair<long, long> randomPosition();
-
-   std::pair<std::pair<long, long>, std::pair<long, long>> mbbox {{0,0}, {10,10}};
+  std::pair<std::pair<long, long>, std::pair<long, long>> mbbox {{0,0}, {10,10}};
 
 private:
   std::string m_name;
@@ -48,10 +57,8 @@ private:
   unsigned m_players_number;
   std::pair<unsigned, unsigned> m_result;
 
-  std::vector<Player> m_players;
-
+  std::vector<std::shared_ptr<Player>> m_players;
 
 };
-
 
 #endif // GAME_HPP

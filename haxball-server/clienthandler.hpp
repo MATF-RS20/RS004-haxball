@@ -16,11 +16,12 @@ class PlayerHandler : public QThread
 
 public:
 
-  explicit PlayerHandler(qintptr id, QObject* parent = nullptr);
+  PlayerHandler() = delete;
+
+  PlayerHandler(qintptr id, QObject* parent = nullptr);
 
   void run();
 
-//  bool checkIsPlayerRegistred(qintptr id);
   QByteArray data();
 
   bool joinGame(qintptr clientId, std::string playerName, std::string gameId);
@@ -28,28 +29,28 @@ public:
 
 
 signals:
+
     void error(QTcpSocket::SocketError socketerror);
 
-    void handlePlayerCoords(long clientId, double X_coord, double Y_coord);
-    void sendNewPlayerData();
-    void registerPlayer();
+    void saveToServerPlayerData(long clientId, double X_coord, double Y_coord);
+    void sendToClientPlayerData();
 
 
 public slots:
+
     void onReadyRead();
     void onConnected();
     void onDisconnected();
 
-    void onHandlePlayerCoords(long clientId, double X_coord, double Y_coord);
-    void onSendNewPlayerData();
-    void onPlayerRegistered();
+    void onSaveToServerPlayerData(long clientId, double X_coord, double Y_coord);
+    void onSendToClientPlayerData();
 
 
 private:
+
     QTcpSocket *m_socket;
-    qintptr m_socket_descriptor;
+    qintptr m_playerId;
     std::shared_ptr<Server> m_server_ptr;
-    QByteArray m_data;
     bool isRegistred;
 
     void setUpListeners();
