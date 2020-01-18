@@ -5,7 +5,7 @@
 
 #include <QPen>
 #include <QGraphicsScene>
-
+#include <clientsocket.hpp>
 #include <QTcpSocket>
 
 /* ============================= KOMSA =============================
@@ -48,7 +48,6 @@ public:
     static const qreal MAX_SPEED;
     static const qreal ACCELERATION;
     static const qreal SLOWING;
-
 
 
 private:

@@ -33,18 +33,19 @@ public:
 
     bool eventFilter(QObject * obj, QEvent * event);
     void timerEvent(QTimerEvent* event);
-
+    void checkGoal();
     std::shared_ptr<Player> getMe() const;
 
 signals:
     void onPlayerAction();
+    void onGoal();
 
 private slots:
     void on_exit_button_clicked();
     // Slot coordsReady se izvrsava kada se sa servera posalju koordinate svih igraca.
     void coordsReadReady(QStringList coords);
     void coordsWriteReady();
-
+    void goalWrite();
 
 private:
 
