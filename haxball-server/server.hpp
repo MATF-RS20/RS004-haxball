@@ -81,6 +81,7 @@ private:
   std::vector<std::shared_ptr<Game>> m_created_games;
   std::map<qintptr, std::shared_ptr<Game>> m_player_game_data;
 
+
 };
 
 
