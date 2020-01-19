@@ -144,7 +144,7 @@ void Game::setUp()
 {
     connect(this, SIGNAL(playerAction()), this, SLOT(coordsWrite()));
     connect(this, SIGNAL(onGoal()), this, SLOT(goalWrite()));
-    connect(this, SIGNAL(ballCollisionDetect()), this, SLOT(ballCoordsWrite()));
+    connect(this, SIGNAL(ballCollisionDetected()), this, SLOT(ballCoordsWrite()));
 
     setFocusPolicy(Qt::FocusPolicy::StrongFocus);
     scene = new QGraphicsScene();
@@ -360,7 +360,7 @@ if(m_me.get()->collidesWithItem(m_ball.get())){
         m_ball->slow(Ball::SLOWING);
     }
     //kraj kolizije sa loptom
-    emit ballCollisionDetect();
+    emit ballCollisionDetected();
     checkGoal();
 
 }

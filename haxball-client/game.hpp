@@ -41,7 +41,7 @@ public:
 
 signals:
     void playerAction();
-    void ballCollisionDetect();
+    void ballCollisionDetected();
     void onGoal();
 
 private slots:
