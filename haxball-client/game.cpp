@@ -1,6 +1,12 @@
 #include "game.hpp"
 #include "ui_game.h"
 #include "player.hpp"
+#include "clientsocket.hpp"
+
+#include <iostream>
+#include <vector>
+#include <utility>
+
 #include <QApplication>
 #include <QGraphicsScene>
 #include <QKeyEvent>
@@ -8,12 +14,11 @@
 #include <QPen>
 #include <QTimer>
 #include <QObject>
-#include <vector>
-#include <utility>
-#include "clientsocket.hpp"
 #include <QStringList>
-#include <iostream>
 #include <QtMath>
+
+
+#define UNUSED(expr) do { (void)(expr); } while (0)
 
 Game::Game(QWidget *parent) :
     QDialog(parent),
@@ -22,14 +27,6 @@ Game::Game(QWidget *parent) :
     ui->setupUi(this);
 
     setUp();
-
-    // HARDCODE!
-    m_me = std::make_shared<Player>(0, 0);
-    m_b = std::make_shared<Ball>(0, 0);
-    m_b->setX(480);
-    m_b->setY(230);
-    scene->addItem(m_me.get());
-    scene->addItem(m_b.get());
 }
 
 Game::~Game()
@@ -48,16 +45,14 @@ void Game::on_exit_button_clicked()
     QApplication::exit();
 }
 
-// Slot coordsReady se izvrsava kada se sa servera posalju koordinate.
-// Koordinate se dobijaju u formatu: x_ball y_ball id_player1 x1 y1 id_player2 x2 y2 ...
-void Game::coordsReadReady(QStringList coords)
+void Game::coordsRead(QStringList coords)
 {
     qDebug() << "[coordsReadReady]: Sa servera je stigla poruka: " << coords;
-    //Citaju se koordinate lopte.
-    //m_ball.setX(coords.takeLast().toDouble());
-    //m_ball.setY(coords.takeLast().toDouble());
 
-    // Citaju se koordinate svih igraca i azuriraju se ili dodaju novi u hes mapu.
+    m_ball->setX(coords.takeLast().toDouble());
+    m_ball->setY(coords.takeLast().toDouble());
+
+
     for(QStringList::iterator iter = coords.begin(); iter != coords.end(); iter += 3){
         int playerId = iter->toInt();
 
@@ -82,7 +77,7 @@ void Game::coordsReadReady(QStringList coords)
     }
 }
 
-void Game::coordsWriteReady()
+void Game::coordsWrite()
 {
     QByteArray serverRequest;
     const QString protocol = "coords";
@@ -90,21 +85,39 @@ void Game::coordsWriteReady()
     serverRequest.append(protocol + " ")
                  .append(QString::number(m_me->getId()) + " ")
                  .append(QString::number(m_me->x()) + " ")
-                 .append(QString::number(m_me->y()) + " ");
+                 .append(QString::number(m_me->y()) + "\n");
 
     m_clientsocket->getSocket()->write(serverRequest);
+    m_clientsocket->getSocket()->flush();
 
-    qDebug() << "[coordsWriteReady]: Serveru je poslat zahtev: " << QString(serverRequest);
+    qDebug() << "[coordsWrite]: Serveru je poslat zahtev: " << QString(serverRequest);
+
+}
+
+void Game::ballCoordsWrite()
+{
+    QByteArray serverRequest;
+    const QString protocol = "ballCoords";
+
+    serverRequest.append(protocol + " ")
+                 .append(QString::number(m_ball->x()) + " ")
+                 .append(QString::number(m_ball->y()) + " ")
+                 .append(QString::number(getId()) + "\n");
+
+    m_clientsocket->getSocket()->write(serverRequest);
+    m_clientsocket->getSocket()->flush();
+
+    qDebug() << "[ballCoords]: Serveru je poslat zahtev: " << QString(serverRequest);
 
 }
 
 
 void Game::checkGoal() {
     ui->showResult->setText(m_clientsocket->getResult());
-    if(m_b->x() < -20 || m_b->x() > 980) {
+    if(m_ball->x() < -20 || m_ball->x() > 980) {
        emit onGoal();
-       m_b->setX(480);
-       m_b->setY(230);
+       m_ball->setX(480);
+       m_ball->setY(230);
     }
 }
 
@@ -112,14 +125,15 @@ void Game::goalWrite() {
     QByteArray serverRequest;
     const QString protocol = "goal";
 
-    if(m_b->x() < -20) {
+    if(m_ball->x() < -20) {
         serverRequest.append(protocol + " Crveni tim " + " ");
     }
     // m_ball.x() < 20 za loptu(desni gol)
-    else if(m_b->x() > 980) {
+    else if(m_ball->x() > 980) {
         serverRequest.append(protocol + " Plavi tim " + " ");
     }
      m_clientsocket->getSocket()->write(serverRequest);
+     m_clientsocket->getSocket()->flush();
 
     qDebug() << "[goalWrite]: Serveru je poslat zahtev: " << QString(serverRequest);
 
@@ -128,8 +142,9 @@ void Game::goalWrite() {
 // Metoda setUpListener registruje signale i njima odgovarajuce slotove i inicijalizuje potrebne komponente.
 void Game::setUp()
 {
-    connect(this, SIGNAL(onPlayerAction()), this, SLOT(coordsWriteReady()));
+    connect(this, SIGNAL(playerAction()), this, SLOT(coordsWrite()));
     connect(this, SIGNAL(onGoal()), this, SLOT(goalWrite()));
+    connect(this, SIGNAL(ballCollisionDetect()), this, SLOT(ballCoordsWrite()));
 
     setFocusPolicy(Qt::FocusPolicy::StrongFocus);
     scene = new QGraphicsScene();
@@ -138,6 +153,20 @@ void Game::setUp()
     ui->view->setScene(scene);
     setWindowState(Qt::WindowFullScreen);
     installEventFilter(this);
+    m_me = std::make_shared<Player>(0, 0);
+    m_ball = std::make_shared<Ball>(0, 0);
+    scene->addItem(m_me.get());
+    scene->addItem(m_ball.get());
+}
+
+void Game::setId(int value)
+{
+    id = value;
+}
+
+int Game::getId() const
+{
+    return id;
 }
 
 std::shared_ptr<Player> Game::getMe() const
@@ -152,13 +181,15 @@ void Game::setSocket(std::shared_ptr<ClientSocket> sock)
 
 bool Game::eventFilter(QObject *obj, QEvent *event)
 {
+    UNUSED(obj);
+
     if(event->type()==QEvent::KeyPress) {
         pressedKeys += (static_cast<QKeyEvent*>(event))->key();
-        emit onPlayerAction();
+        emit playerAction();
     }
     else if(event->type()==QEvent::KeyRelease){
         pressedKeys -= (static_cast<QKeyEvent*>(event))->key();
-        emit onPlayerAction();
+        emit playerAction();
     }
 
     return false;
@@ -167,6 +198,8 @@ bool Game::eventFilter(QObject *obj, QEvent *event)
 
 void Game::timerEvent(QTimerEvent *event)
 {
+    UNUSED(event);
+
     if(pressedKeys.contains(Qt::Key_Left)){
         m_me->accelerateX(-Player::ACCELERATION);
     }
@@ -186,7 +219,7 @@ void Game::timerEvent(QTimerEvent *event)
         m_me->setPen(QPen(Qt::white, 5, Qt::SolidLine));
     }
 
-    emit onPlayerAction();
+    emit playerAction();
 
 /*
     for(auto iter = m_players.begin(); iter != m_players.end(); iter++) {
@@ -266,12 +299,12 @@ void Game::timerEvent(QTimerEvent *event)
 
     //if(m_me.get()->collidesWithItem(m_b.get())) {
 
-if(m_me.get()->collidesWithItem(m_b.get())){
+if(m_me.get()->collidesWithItem(m_ball.get())){
 
         qreal px_cord = m_me.get()->x() + 20;
         qreal py_cord = m_me.get()->y() + 20;
-        qreal bx_cord = m_b.get()->x() + 20;
-        qreal by_cord = m_b.get()->y() + 20;
+        qreal bx_cord = m_ball.get()->x() + 20;
+        qreal by_cord = m_ball.get()->y() + 20;
 
         qreal rastojanje = qSqrt((px_cord - bx_cord)*(px_cord - bx_cord) + (py_cord - by_cord)*(py_cord - by_cord));
 
@@ -291,23 +324,23 @@ if(m_me.get()->collidesWithItem(m_b.get())){
         qreal ty = ny;
 
         qreal dpTan1 = m_me->getSpeedX() * tx + m_me->getSpeedY() * ty;
-        qreal dpTan2 = m_b->getSpeedX() * tx + m_b->getSpeedY() * ty;
+        qreal dpTan2 = m_ball->getSpeedX() * tx + m_ball->getSpeedY() * ty;
 
         qreal dpNorm1 = m_me->getSpeedX() * nx + m_me->getSpeedY() * ny;
-        qreal dpNorm2 = m_b->getSpeedX() * nx + m_b->getSpeedY() * ny;
+        qreal dpNorm2 = m_ball->getSpeedX() * nx + m_ball->getSpeedY() * ny;
 
         qreal m1 = (2* 200*dpNorm2) / 400;
         qreal m2 = (2* 200*dpNorm1) / 400;
 
         if(pressedKeys.contains(Qt::Key_Space)) {
-            m_b->accelerateX(Ball::ACCELERATION);
-            m_b->accelerateY(Ball::ACCELERATION);
-            m_b->moveBy(m_b->getSpeedX(), m_b->getSpeedY());
+            m_ball->accelerateX(Ball::ACCELERATION);
+            m_ball->accelerateY(Ball::ACCELERATION);
+            m_ball->moveBy(m_ball->getSpeedX(), m_ball->getSpeedY());
         }
         else {
-            m_b->accelerateX((tx * dpTan2 + nx * m2));
-            m_b->accelerateY((ty * dpTan2 + ny * m2));
-            m_b->moveBy(m_me->getSpeedX(), m_me->getSpeedY());
+            m_ball->accelerateX((tx * dpTan2 + nx * m2));
+            m_ball->accelerateY((ty * dpTan2 + ny * m2));
+            m_ball->moveBy(m_me->getSpeedX(), m_me->getSpeedY());
         }
 
         // kretanje igraca
@@ -317,16 +350,17 @@ if(m_me.get()->collidesWithItem(m_b.get())){
         m_me->moveBy(m_me->getSpeedX(), m_me->getSpeedY());
 
         m_me->slow(Player::SLOWING);
-        m_b->slow(Ball::SLOWING);
+        m_ball->slow(Ball::SLOWING);
     }
 
     else {
         m_me->moveBy(m_me->getSpeedX(), m_me->getSpeedY());
-        m_b->moveBy(m_b->getSpeedX(), m_b->getSpeedY());
+        m_ball->moveBy(m_ball->getSpeedX(), m_ball->getSpeedY());
         m_me->slow(Player::SLOWING);
-        m_b->slow(Ball::SLOWING);
+        m_ball->slow(Ball::SLOWING);
     }
     //kraj kolizije sa loptom
+    emit ballCollisionDetect();
     checkGoal();
 
 }

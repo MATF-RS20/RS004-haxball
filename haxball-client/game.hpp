@@ -36,15 +36,21 @@ public:
     void checkGoal();
     std::shared_ptr<Player> getMe() const;
 
+    int getId() const;
+    void setId(int value);
+
 signals:
-    void onPlayerAction();
+    void playerAction();
+    void ballCollisionDetect();
     void onGoal();
 
 private slots:
     void on_exit_button_clicked();
-    // Slot coordsReady se izvrsava kada se sa servera posalju koordinate svih igraca.
-    void coordsReadReady(QStringList coords);
-    void coordsWriteReady();
+
+    void coordsRead(QStringList coords);
+    void coordsWrite();
+    void ballCoordsWrite();
+
     void goalWrite();
 
 private:
@@ -54,10 +60,11 @@ private:
     Ui::Game *ui;
     QGraphicsScene* scene;
 
+    int id;
     QHash<int, std::shared_ptr<Player>> m_players;
     //Ball m_ball;
     std::shared_ptr<Player> m_me;
-    std::shared_ptr<Ball> m_b;
+    std::shared_ptr<Ball> m_ball;
     QSet<int> pressedKeys;
 
     std::shared_ptr<ClientSocket> m_clientsocket;
