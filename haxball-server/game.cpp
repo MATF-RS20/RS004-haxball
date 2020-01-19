@@ -148,4 +148,15 @@ std::vector<std::shared_ptr<Player>> & Game::players()
   return m_players;
 }
 
+std::pair<double, double> Game::getBallXY() const
+{
+  return m_ball;
+}
+
+void Game::setBallXY(double x, double y)
+{
+  m_ball.first = x;
+  m_ball.second = y;
+}
+
 
