@@ -49,6 +49,7 @@ void MainWindow::on_createButton_clicked()
         qDebug() << "[on_createButton_clicked]: Serveru je poslato " << serverRequest;
 
         m_clientsocket->getSocket()->write(serverRequest);
+        m_clientsocket->getSocket()->flush();
     }
 
     this->hide();
@@ -69,6 +70,7 @@ void MainWindow::on_refreshButton_clicked()
     serverRequest.append(protocol);
 
     m_clientsocket->getSocket()->write(serverRequest);
+    m_clientsocket->getSocket()->flush();
 }
 
 void MainWindow::on_joinButton_clicked()
@@ -85,7 +87,9 @@ void MainWindow::on_joinButton_clicked()
                      .append(m_playerName + " ");
 
         m_clientsocket->getSocket()->write(serverRequest);
+        m_clientsocket->getSocket()->flush();
 
+        m_game->setId(gameId.trimmed().toDouble());
         hide();
         m_game->show();
     }
@@ -123,7 +127,7 @@ void MainWindow::setUpListener()
 
     connect(ui->gamesListWidget, SIGNAL(itemSelectionChanged()), this, SLOT(enableJoinGameButton()));
 
-     connect(m_clientsocket.get(), SIGNAL(onCoords(QStringList)), m_game, SLOT(coordsReadReady(QStringList)));
+     connect(m_clientsocket.get(), SIGNAL(onCoords(QStringList)), m_game, SLOT(coordsRead(QStringList)));
 }
 
 bool MainWindow::checkCreateGame()

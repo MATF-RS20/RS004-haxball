@@ -51,13 +51,21 @@ public:
 
   std::pair<std::pair<long, long>, std::pair<long, long>> mbbox {{0,0}, {10,10}};
 
+  std::pair<double, double> & getBallXY() const;
+
+  void setBallXY(double x, double y);
+
 private:
   std::string m_name;
   std::string m_id;
   unsigned m_players_number;
   std::pair<unsigned, unsigned> m_result;
 
+  std::pair<double, double> m_ball = {400, 150};
+
   std::vector<std::shared_ptr<Player>> m_players;
+
+
 
 };
 
