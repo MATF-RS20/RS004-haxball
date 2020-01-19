@@ -44,6 +44,7 @@ Game::Game(Game && other) noexcept
   , m_players_number(other.m_players_number)
   , m_result(other.m_result)
 {
+
   for(auto iter = std::begin(other.m_players) ; iter != std::end(other.m_players) ; iter++)
     {
       auto player_ptr = std::make_unique<Player>(*iter);

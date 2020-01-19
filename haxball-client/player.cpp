@@ -4,7 +4,7 @@
 #include <iostream>
 
 const qreal Player::MAX_SPEED = 5;
-const qreal Player::ACCELERATION = 0.5;
+const qreal Player::ACCELERATION = 0.3;
 const qreal Player::SLOWING = 0.1;
 
 

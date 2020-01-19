@@ -29,7 +29,6 @@ public:
 private:
     qreal m_speedX = 0;
     qreal m_speedY = 0;
-
 };
 
 #endif // BALL_H

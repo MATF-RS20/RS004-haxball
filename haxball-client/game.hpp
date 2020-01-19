@@ -55,8 +55,9 @@ private:
     QGraphicsScene* scene;
 
     QHash<int, std::shared_ptr<Player>> m_players;
-    Ball m_ball;
+    //Ball m_ball;
     std::shared_ptr<Player> m_me;
+    std::shared_ptr<Ball> m_b;
     QSet<int> pressedKeys;
 
     std::shared_ptr<ClientSocket> m_clientsocket;

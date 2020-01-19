@@ -24,6 +24,7 @@ public:
     bool connectToServer();
     void setHost(QHostAddress host);
     void setPort(quint16 port);
+    QString getResult() const;
     QTcpSocket* getSocket();
     QStringList getGames();
 
@@ -56,7 +57,7 @@ private:
 
   QString m_playerID;
   QStringList m_games;
-
+  QString m_result;
 };
 
 #endif // CLIENTSOCKET_HPP

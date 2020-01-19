@@ -51,13 +51,8 @@ void MainWindow::on_createButton_clicked()
         m_clientsocket->getSocket()->write(serverRequest);
     }
 
-
-
-
     this->hide();
     m_game->show();
-
-
 }
 
 void MainWindow::on_settingsButton_clicked()

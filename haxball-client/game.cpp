@@ -12,6 +12,8 @@
 #include <utility>
 #include "clientsocket.hpp"
 #include <QStringList>
+#include <iostream>
+#include <QtMath>
 
 Game::Game(QWidget *parent) :
     QDialog(parent),
@@ -23,8 +25,11 @@ Game::Game(QWidget *parent) :
 
     // HARDCODE!
     m_me = std::make_shared<Player>(0, 0);
+    m_b = std::make_shared<Ball>(0, 0);
+    m_b->setX(480);
+    m_b->setY(230);
     scene->addItem(m_me.get());
-    scene->addItem(new Ball(485,235));
+    scene->addItem(m_b.get());
 }
 
 Game::~Game()
@@ -95,24 +100,23 @@ void Game::coordsWriteReady()
 
 
 void Game::checkGoal() {
-    if(m_me->x() < -20 || m_me->x() > 980) {
+    ui->showResult->setText(m_clientsocket->getResult());
+    if(m_b->x() < -20 || m_b->x() > 980) {
        emit onGoal();
-       m_me->setX(480);
-       m_me->setY(230);
+       m_b->setX(480);
+       m_b->setY(230);
     }
-    // m_ball.x() < 20 za loptu(desni gol)
 }
 
 void Game::goalWrite() {
     QByteArray serverRequest;
     const QString protocol = "goal";
 
-    // m_ball.x() < 20 za loptu(levi gol)
-    if(m_me->x() < -20) {
+    if(m_b->x() < -20) {
         serverRequest.append(protocol + " Crveni tim " + " ");
     }
     // m_ball.x() < 20 za loptu(desni gol)
-    else if(m_me->x() > 980) {
+    else if(m_b->x() > 980) {
         serverRequest.append(protocol + " Plavi tim " + " ");
     }
      m_clientsocket->getSocket()->write(serverRequest);
@@ -135,7 +139,6 @@ void Game::setUp()
     setWindowState(Qt::WindowFullScreen);
     installEventFilter(this);
 }
-
 
 std::shared_ptr<Player> Game::getMe() const
 {
@@ -182,13 +185,148 @@ void Game::timerEvent(QTimerEvent *event)
     else{
         m_me->setPen(QPen(Qt::white, 5, Qt::SolidLine));
     }
+/*
+    for(auto iter = m_players.begin(); iter != m_players.end(); iter++) {
 
-    m_me->moveBy(m_me->getSpeedX(), m_me->getSpeedY());
+        std::shared_ptr<Player> p = iter.value();
 
-    m_me->slow(Player::SLOWING);
+        if(m_me.get()->getId() != p.get()->getId() && m_me.get()->collidesWithItem(p.get())) {
+
+            qreal px_cord = m_me.get()->x() + 20;
+            qreal py_cord = m_me.get()->y() + 20;
+            qreal bx_cord = p.get()->x() + 20;
+            qreal by_cord = p.get()->y() + 20;
+
+            qreal rastojanje = qSqrt((px_cord - bx_cord)*(px_cord - bx_cord) + (py_cord - by_cord)*(py_cord - by_cord));
+
+            qreal pomeraj = 0.5 * (rastojanje - 20 - 20);
+            px_cord -= pomeraj * (px_cord - bx_cord) / rastojanje;
+            py_cord -= pomeraj * (py_cord - by_cord) / rastojanje;
+
+            bx_cord += pomeraj * (bx_cord - px_cord) / rastojanje;
+            by_cord += pomeraj * (by_cord - py_cord) / rastojanje;
+
+            rastojanje = qSqrt((px_cord - bx_cord)*(px_cord - bx_cord) + (py_cord - by_cord)*(py_cord - by_cord));
+
+            qreal nx = (bx_cord - px_cord) / rastojanje;
+            qreal ny = (by_cord - py_cord) / rastojanje;
+            // if (idlopte = p.getid) tx = nx, ty = ny
+            qreal tx = -ny;
+            qreal ty = nx;
+
+            qreal dpTan1 = m_me->getSpeedX() * tx + m_me->getSpeedY() * ty;
+            qreal dpTan2 = p->getSpeedX() * tx + p->getSpeedY() * ty;
+
+            qreal dpNorm1 = m_me->getSpeedX() * nx + m_me->getSpeedY() * ny;
+            qreal dpNorm2 = p->getSpeedX() * nx + p->getSpeedY() * ny;
+
+            qreal m1 = (2* 200*dpNorm2) / 400;
+            qreal m2 = (2* 200*dpNorm1) / 400;
+
+         //if(idlopte = lopta)
+
+//            if(pressedKeys.contains(Qt::Key_Space)) {
+//                p->accelerateX(Ball::ACCELERATION);
+//                p->accelerateY(Ball::ACCELERATION);
+//                p->moveBy(p->getSpeedX(), p->getSpeedY());
+//            }
+//            else {
+//                p->accelerateX((tx * dpTan2 + nx * m2));
+//                p->accelerateY((ty * dpTan2 + ny * m2));
+//                p->moveBy(m_me->getSpeedX(), m_me->getSpeedY());
+//            }
+            //m_me->moveBy(m_me->getSpeedX(), m_me->getSpeedY());
+
+        //else{
+            p->accelerateX((tx * dpTan2 + nx * m2));
+            p->accelerateY((ty * dpTan2 + ny * m2));
+            p->moveBy(p->getSpeedX(), p->getSpeedY());
+            m_me->accelerateX(-(tx * dpTan1 + nx * m1));
+            m_me->accelerateY(-(ty * dpTan1 + ny * m1));
+
+//}
+            m_me->moveBy(m_me->getSpeedX(), m_me->getSpeedY());
+
+            m_me->slow(Player::SLOWING);
+            p->slow(Player::SLOWING);
+        }
+        else {//else ako nije kolizija
+            m_me->moveBy(m_me->getSpeedX(), m_me->getSpeedY());
+            p->moveBy(p->getSpeedX(), p->getSpeedY());
+            m_me->slow(Player::SLOWING);
+            p->slow(Ball::SLOWING);
+        }
+
+ }*/
+
+    //kolizija sa loptom
+
+    //if(m_me.get()->collidesWithItem(m_b.get())) {
+
+if(m_me.get()->collidesWithItem(m_b.get())){
+
+        qreal px_cord = m_me.get()->x() + 20;
+        qreal py_cord = m_me.get()->y() + 20;
+        qreal bx_cord = m_b.get()->x() + 20;
+        qreal by_cord = m_b.get()->y() + 20;
+
+        qreal rastojanje = qSqrt((px_cord - bx_cord)*(px_cord - bx_cord) + (py_cord - by_cord)*(py_cord - by_cord));
+
+        qreal pomeraj = 0.5 * (rastojanje - 20 - 20);
+        px_cord -= pomeraj * (px_cord - bx_cord) / rastojanje;
+        py_cord -= pomeraj * (py_cord - by_cord) / rastojanje;
+
+        bx_cord += pomeraj * (bx_cord - px_cord) / rastojanje;
+        by_cord += pomeraj * (by_cord - py_cord) / rastojanje;
+
+        rastojanje = qSqrt((px_cord - bx_cord)*(px_cord - bx_cord) + (py_cord - by_cord)*(py_cord - by_cord));
+
+        qreal nx = (bx_cord - px_cord) / rastojanje;
+        qreal ny = (by_cord - py_cord) / rastojanje;
+
+        qreal tx = nx;
+        qreal ty = ny;
+
+        qreal dpTan1 = m_me->getSpeedX() * tx + m_me->getSpeedY() * ty;
+        qreal dpTan2 = m_b->getSpeedX() * tx + m_b->getSpeedY() * ty;
+
+        qreal dpNorm1 = m_me->getSpeedX() * nx + m_me->getSpeedY() * ny;
+        qreal dpNorm2 = m_b->getSpeedX() * nx + m_b->getSpeedY() * ny;
+
+        qreal m1 = (2* 200*dpNorm2) / 400;
+        qreal m2 = (2* 200*dpNorm1) / 400;
+
+        if(pressedKeys.contains(Qt::Key_Space)) {
+            m_b->accelerateX(Ball::ACCELERATION);
+            m_b->accelerateY(Ball::ACCELERATION);
+            m_b->moveBy(m_b->getSpeedX(), m_b->getSpeedY());
+        }
+        else {
+            m_b->accelerateX((tx * dpTan2 + nx * m2));
+            m_b->accelerateY((ty * dpTan2 + ny * m2));
+            m_b->moveBy(m_me->getSpeedX(), m_me->getSpeedY());
+        }
+
+        // kretanje igraca
+        //m_me->accelerateX((tx * dpTan1 + nx * m1));
+        //m_me->accelerateY((ty * dpTan1 + ny * m1));
+
+        m_me->moveBy(m_me->getSpeedX(), m_me->getSpeedY());
+
+        m_me->slow(Player::SLOWING);
+        m_b->slow(Ball::SLOWING);
+    }
+
+    else {
+        m_me->moveBy(m_me->getSpeedX(), m_me->getSpeedY());
+        m_b->moveBy(m_b->getSpeedX(), m_b->getSpeedY());
+        m_me->slow(Player::SLOWING);
+        m_b->slow(Ball::SLOWING);
+    }
+    //kraj kolizije sa loptom
     checkGoal();
-}
 
+}
 
 QGraphicsScene* Game::drawField()
 {

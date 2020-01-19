@@ -3,6 +3,7 @@
 #include <QString>
 #include <iostream>
 #include "mainwindow.hpp"
+#include <iostream>
 
 ClientSocket::ClientSocket(QHostAddress host, quint16 port, QObject* parent)
   : m_host(host), m_port(port), QObject(parent)
@@ -47,6 +48,11 @@ void ClientSocket::setPort(quint16 port)
     m_port = port;
 }
 
+QString ClientSocket::getResult() const
+{
+    return m_result;
+}
+
 void ClientSocket::onConnected()
 {
   qDebug() << "Connected to server! Getting all created games...";
@@ -81,13 +87,13 @@ void ClientSocket::onReadyRead()
 
     QString opt = m_optData.takeFirst();
 
-
     if(!opt.compare("playerId")){
         emit onPlayerId(m_optData.first());
     }
     else if(!opt.compare("gameNames")){
         qDebug() << "emit onGameNames: " << m_optData;
         emit onGameNames(QStringList(m_optData));
+        m_result = m_optData.takeLast();
     }
     else if(!opt.compare("coords")){
         emit onCoords(QStringList(m_optData));
@@ -95,10 +101,6 @@ void ClientSocket::onReadyRead()
     else{
         qDebug() << "Primljena poruka ne podrzava poznate protokole";
     }
-
-
-
-
 
 }
 

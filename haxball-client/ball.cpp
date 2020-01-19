@@ -16,12 +16,21 @@ void Ball::accelerateX(qreal acc)
 {
     m_speedX += acc;
 
-    if(this->x() < 0) {
-        m_speedX = MAX_SPEED;
+    if(this->y() > 175 && this->y() < 285) {
+        if(this->x() < -50){
+            m_speedX = MAX_SPEED;
+        }
+        if(this->x() > 1000) {
+            m_speedX = -MAX_SPEED;
+        }
     }
-
-    if(this->x() > 960) {
-        m_speedX = -MAX_SPEED;
+    else {
+        if(this->x() < 0) {
+            m_speedX = MAX_SPEED;
+        }
+        if(this->x() > 960) {
+            m_speedX = -MAX_SPEED;
+        }
     }
 
     if(m_speedX > MAX_SPEED)
@@ -34,6 +43,15 @@ void Ball::accelerateX(qreal acc)
 void Ball::accelerateY(qreal acc)
 {
     m_speedY += acc;
+
+    if(this->x() < 0 || this->x() > 1000){
+        if(this->y() < 175) {
+            m_speedY = MAX_SPEED;
+        }
+        if (this->y() > 285) {
+            m_speedY = -MAX_SPEED;
+        }
+    }
 
     if(this->y() < 0) {
         m_speedY = MAX_SPEED;
@@ -53,14 +71,6 @@ void Ball::accelerateY(qreal acc)
 void Ball::slow(qreal s)
 {
 
-    if(this->x() < 0) {
-        m_speedX = 0;
-    }
-
-    if(this->x() > 960) {
-        m_speedX = 0;
-    }
-
     if(m_speedX < -s){
         m_speedX += s;
     }
@@ -74,11 +84,8 @@ void Ball::slow(qreal s)
         m_speedX = 0;
     }
 
-    if(this->y() < 0) {
-        m_speedY = 0;
-    }
 
-    if(this->y()  > 460) {
+    if(this->y() < 0 || this->y()  > 460) {
         m_speedY = 0;
     }
 
@@ -94,12 +101,25 @@ void Ball::slow(qreal s)
     else if(m_speedY < s){
         m_speedY = 0;
     }
+
+    if(this->y() > 175 && this->y() < 285) {
+        if(this->x() < -50 || this->x() > 1000){
+            m_speedX = 0;
+        }
+    }
+    else {
+            if(this->x() < 0 || this->x() > 960) {
+                m_speedX = 0;
+            }
+    }
+
 }
 
 qreal Ball::getSpeedY() const
 {
     return m_speedY;
 }
+
 
 qreal Ball::getSpeedX() const
 {

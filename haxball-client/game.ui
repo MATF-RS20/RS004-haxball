@@ -91,23 +91,16 @@ color: rgb(255, 0, 0);</string>
         </widget>
        </item>
        <item>
-        <widget class="QTimeEdit" name="timeEdit">
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>1677</height>
-          </size>
-         </property>
+        <widget class="QLabel" name="showResult">
          <property name="font">
           <font>
            <pointsize>20</pointsize>
            <weight>75</weight>
-           <italic>false</italic>
            <bold>true</bold>
           </font>
          </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
+         <property name="text">
+          <string>TextLabel</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
