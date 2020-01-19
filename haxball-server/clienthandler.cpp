@@ -145,6 +145,11 @@ void PlayerHandler::onReadyRead()
 
               //send new data to client
               //              qDebug() << "[createGame] -> onSendNewPlayerData";
+
+              //send game ID
+              emit sendGameId();
+
+              //send data back
               emit sendToClientPlayerData();
             }
           else
@@ -304,6 +309,33 @@ void PlayerHandler::onSendToClientPlayerData()
 
 }
 
+void PlayerHandler::onSendGameId()
+{
+
+
+  auto player_game_data = m_server_ptr->player_game_data();
+
+  auto res_iter = player_game_data.find(m_playerId);
+
+  if(res_iter != player_game_data.end())
+    {
+
+      auto game_id = res_iter->second->gameId();
+
+      QString data_str("gameId ");
+      data_str.append(QString::fromStdString(game_id));
+
+      QByteArray buffer;
+      buffer.append(data_str);
+      m_socket->write(buffer);
+
+      m_socket->flush();
+
+    }
+
+
+}
+
 
 void PlayerHandler::setUpListeners()
 {
@@ -314,6 +346,8 @@ void PlayerHandler::setUpListeners()
   // update/send player data
   connect(this, SIGNAL(saveToServerPlayerData(long, double, double)), this, SLOT(onSaveToServerPlayerData(long, double, double)));
   connect(this, SIGNAL(sendToClientPlayerData()), this, SLOT(onSendToClientPlayerData()));
+  connect(this, SIGNAL(sendGameId()), this, SLOT(onSendGameId()));
+
 }
 
 

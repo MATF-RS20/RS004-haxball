@@ -34,7 +34,7 @@ signals:
 
     void saveToServerPlayerData(long clientId, double X_coord, double Y_coord);
     void sendToClientPlayerData();
-
+    void sendGameId();
 
 public slots:
 
@@ -44,7 +44,7 @@ public slots:
 
     void onSaveToServerPlayerData(long clientId, double X_coord, double Y_coord);
     void onSendToClientPlayerData();
-
+    void onSendGameId();
 
 private:
 
