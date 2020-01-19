@@ -38,6 +38,7 @@ private slots:
 
 
     void playerIdReady(QString id);
+    void gameIdReady(QString id);
     void gameNamesReady(QStringList games);
 
     void on_gamesListWidget_itemSelectionChanged();

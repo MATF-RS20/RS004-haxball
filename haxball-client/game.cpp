@@ -49,30 +49,37 @@ void Game::coordsRead(QStringList coords)
 {
     qDebug() << "[coordsReadReady]: Sa servera je stigla poruka: " << coords;
 
-    m_ball->setX(coords.takeLast().toDouble());
-    m_ball->setY(coords.takeLast().toDouble());
+    qreal xBall = coords.takeFirst().trimmed().toDouble();
+    qreal yBall = coords.takeFirst().trimmed().toDouble();
+
+    m_ball->setX(xBall);
+    m_ball->setY(yBall);
+    qDebug() << "[coordsRead]: Azurirana je lopta na poziciju (" << m_ball->x() <<", " << m_ball->y() <<")";
 
 
-    for(QStringList::iterator iter = coords.begin(); iter != coords.end(); iter += 3){
-        int playerId = iter->toInt();
+    if(coords.size() != 0){
 
-        qreal x = (iter + 1)->toDouble();
-        qreal y = (iter + 2)->toDouble();
+        for(QStringList::iterator iter = coords.begin(); iter != coords.end(); iter += 3){
+            int playerId = iter->toInt();
 
-        auto player_it = m_players.find(playerId);
-        if(player_it != m_players.end()){
-            (*player_it)->setX(x);
-            (*player_it)->setY(y);
-            qDebug() << "[coordsReadReady]: Azuriran je postojeci igrac " << playerId << " na poziciju (" << x <<", " << y <<")";
-        }
-        else{
-            std::shared_ptr<Player> player = std::make_shared<Player>(0, 0);
-            player->setX(x);
-            player->setY(y);
-            scene->addItem(player.get());
-            m_players.insert(playerId, player);
+            qreal x = (iter + 1)->toDouble();
+            qreal y = (iter + 2)->toDouble();
 
-            qDebug() << "[coordsReadReady]: Dodat je novi igrac " << playerId << " na poziciju (" << x <<", " << y <<")";
+            auto player_it = m_players.find(playerId);
+            if(player_it != m_players.end()){
+                (*player_it)->setX(x);
+                (*player_it)->setY(y);
+                qDebug() << "[coordsRead]: Azuriran je postojeci igrac " << playerId << " na poziciju (" << x <<", " << y <<")";
+            }
+            else{
+                std::shared_ptr<Player> player = std::make_shared<Player>(0, 0);
+                player->setX(x);
+                player->setY(y);
+                scene->addItem(player.get());
+                m_players.insert(playerId, player);
+
+                qDebug() << "[coordsRead]: Dodat je novi igrac " << playerId << " na poziciju (" << x <<", " << y <<")";
+            }
         }
     }
 }
