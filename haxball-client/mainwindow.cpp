@@ -89,7 +89,7 @@ void MainWindow::on_joinButton_clicked()
         m_clientsocket->getSocket()->write(serverRequest);
         m_clientsocket->getSocket()->flush();
 
-        m_game->setId(gameId.trimmed().toDouble());
+        m_game->setId(gameId.trimmed().toInt());
         hide();
         m_game->show();
     }
@@ -118,8 +118,9 @@ void MainWindow::enableJoinGameButton()
 void MainWindow::setUpListener()
 {
 
-    connect(m_clientsocket.get(), SIGNAL(onPlayerId(QString)), this, SLOT(playerIdReady(QString)));
-    connect(m_clientsocket.get(), SIGNAL(onGameNames(QStringList)), this, SLOT(gameNamesReady(QStringList)));
+    connect(m_clientsocket.get(), SIGNAL(playerId(QString)), this, SLOT(playerIdReady(QString)));
+    connect(m_clientsocket.get(), SIGNAL(gameId(QString)), this, SLOT(gameIdReady(QString)));
+    connect(m_clientsocket.get(), SIGNAL(gameNames(QStringList)), this, SLOT(gameNamesReady(QStringList)));
 
     connect(ui->playerNameTextEdit, SIGNAL(textChanged()), this, SLOT(enableCreateGameButton()));
     connect(ui->gameNameTextEdit, SIGNAL(textChanged()), this, SLOT(enableCreateGameButton()));
@@ -127,7 +128,7 @@ void MainWindow::setUpListener()
 
     connect(ui->gamesListWidget, SIGNAL(itemSelectionChanged()), this, SLOT(enableJoinGameButton()));
 
-     connect(m_clientsocket.get(), SIGNAL(onCoords(QStringList)), m_game, SLOT(coordsRead(QStringList)));
+     connect(m_clientsocket.get(), SIGNAL(coords(QStringList)), m_game, SLOT(coordsRead(QStringList)));
 }
 
 bool MainWindow::checkCreateGame()
@@ -188,6 +189,11 @@ void MainWindow::playerIdReady(QString id)
     m_playerId = id;
     m_game->getMe()->setId(id.toInt());
     qDebug() << "playerId: " << id;
+}
+
+void MainWindow::gameIdReady(QString id)
+{
+    m_game->setId(id.trimmed().toInt());
 }
 
 void MainWindow::gameNamesReady(QStringList games)

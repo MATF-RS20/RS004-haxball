@@ -36,9 +36,10 @@ public:
     }
 
 signals:
-    void onPlayerId(QString id);
-    void onGameNames(QStringList games);
-    void onCoords(QStringList coords);
+    void playerId(QString id);
+    void gameId(QString id);
+    void gameNames(QStringList games);
+    void coords(QStringList coords);
 
 public slots:
 

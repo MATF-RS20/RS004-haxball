@@ -87,16 +87,19 @@ void ClientSocket::onReadyRead()
 
     QString opt = m_optData.takeFirst();
 
-    if(!opt.compare("playerId")){
-        emit onPlayerId(m_optData.first());
+    if(!opt.compare("coords")) {
+        emit coords(QStringList(m_optData));
     }
     else if(!opt.compare("gameNames")){
         qDebug() << "emit onGameNames: " << m_optData;
-        emit onGameNames(QStringList(m_optData));
+        emit gameNames(QStringList(m_optData));
         m_result = m_optData.takeLast();
     }
-    else if(!opt.compare("coords")){
-        emit onCoords(QStringList(m_optData));
+    else if(!opt.compare("playerId")){
+        emit playerId(m_optData.first());
+    }
+    else if(!opt.compare("gameId")){
+        emit gameId(m_optData.first());
     }
     else{
         qDebug() << "Primljena poruka ne podrzava poznate protokole";
