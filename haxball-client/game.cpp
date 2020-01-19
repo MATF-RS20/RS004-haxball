@@ -185,6 +185,9 @@ void Game::timerEvent(QTimerEvent *event)
     else{
         m_me->setPen(QPen(Qt::white, 5, Qt::SolidLine));
     }
+
+    emit onPlayerAction();
+
 /*
     for(auto iter = m_players.begin(); iter != m_players.end(); iter++) {
 
