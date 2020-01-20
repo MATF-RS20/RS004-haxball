@@ -18,6 +18,9 @@ public:
     qreal getSpeedX() const;
     qreal getSpeedY() const;
 
+   // qreal setSpeedX(qreal x);
+   // qreal setSpeedY(qreal y);
+
     void accelerateX(qreal acc);
     void accelerateY(qreal acc);
     void slow(qreal s);

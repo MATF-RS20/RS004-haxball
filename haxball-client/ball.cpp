@@ -130,6 +130,15 @@ qreal Ball::getSpeedY() const
     return m_speedY;
 }
 
+/*qreal Ball::setSpeedX(qreal x)
+{
+    m_speedX = x;
+}
+
+qreal Ball::setSpeedY(qreal y)
+{
+    m_speedY = y;
+}*/
 
 qreal Ball::getSpeedX() const
 {

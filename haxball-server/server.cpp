@@ -120,15 +120,6 @@ void Server::initData()
 
 }
 
-//void Server::log_data(const std::string new_data)
-//{
-//    std::string tmp(new_data);
-//    qDebug() << QString::fromStdString(tmp);
-
-//    emit logServerData(tmp);
-//}
-
-
 bool Server::joinGame(qintptr clientId, std::string playerName, std::string gameId)
 {
 
@@ -175,7 +166,6 @@ bool Server::createGame(qintptr clientId, std::string playerName, std::string ga
 
   return true;
 }
-
 
 
 

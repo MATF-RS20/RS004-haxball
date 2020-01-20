@@ -21,7 +21,6 @@ Game::Game(const Game & other)
   this->m_id = other.m_id;
   this->m_result = other.m_result;
 
-  //   std::vector<std::unique_ptr<Player>> m_players;
   for(auto iter = std::begin(other.m_players) ; iter != std::end(other.m_players) ; iter++)
     {
       auto player_ptr = std::make_unique<Player>(**iter);
@@ -111,17 +110,6 @@ void Game::addPlayer(std::shared_ptr<Player> & player_ptr)
 
   m_players.push_back(player_ptr);
 }
-
-
-//std::pair<long, long> Game::randomPosition() const
-//{
-//    auto x0 = mbbox.first.first;
-//    auto y0 = mbbox.first.second;
-//    auto x1 = mbbox.second.first;
-//    auto y1 = mbbox.second.second;
-
-//    return { x0 + (rand() % (x1 - x0)), y0 + (rand() % (y1 - y0)) };
-//}
 
 
 QString Game::toSocketString() const

@@ -43,8 +43,6 @@ public:
 
   void addPlayer(std::shared_ptr<Player> & player_ptr);
 
-  //  std::pair<long, long> randomPosition() const;
-
   QString toSocketString() const;
 
   QString toString() const;

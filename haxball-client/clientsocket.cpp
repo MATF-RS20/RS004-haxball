@@ -57,9 +57,6 @@ void ClientSocket::onConnected()
 {
   qDebug() << "Connected to server! Getting all created games...";
 
-  //m_data = m_socket->readAll();
-  //qDebug() << m_data;
-
 }
 
 void ClientSocket::onDisconnected()
@@ -74,7 +71,6 @@ void ClientSocket::onBytesWritten(qint64 bytes)
   qDebug() << "Written data: " << bytes;
 
 }
-
 
 
 void ClientSocket::onReadyRead()

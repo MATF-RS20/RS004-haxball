@@ -35,7 +35,7 @@ void MainWindow::on_actionSettings_triggered()
 
 void MainWindow::previewLoggedServerData(std::string new_data)
 {
-  ui->logTextEdit->append(QString::fromStdString(new_data));
+  //ui->logTextEdit->append(QString::fromStdString(new_data));
   return;
 }
 
@@ -62,9 +62,9 @@ void MainWindow::on_exitButton_clicked()
 
 void MainWindow::setUpLoggingPreview()
 {
-  ui->logTextEdit->setReadOnly(true);
-  QPalette p = ui->logTextEdit->palette();
-  p.setColor(QPalette::Base, Qt::black);
-  p.setColor(QPalette::Text, Qt::white);
-  ui->logTextEdit->setPalette(p);
+ // ui->logTextEdit->setReadOnly(true);
+  //QPalette p = ui->logTextEdit->palette();
+ // p.setColor(QPalette::Base, Qt::black);
+  //p.setColor(QPalette::Text, Qt::white);
+ // ui->logTextEdit->setPalette(p);
 }
