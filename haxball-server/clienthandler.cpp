@@ -183,26 +183,6 @@ void PlayerHandler::onReadyRead()
 
         }
 
-      else if(ql[0] == "ballCoords")
-        {
-          // PROTOCOL:   "ballCoords ballX ballY gameId"
-
-          auto ballCoordsX = ql[1].toDouble();
-          auto ballCoordsY = ql[2].toDouble();
-          auto gameId = ql[3].toStdString();
-
-          auto created_games = m_server_ptr->createdGames();
-
-          for(auto iter = std::begin(created_games); iter != created_games.end(); iter++)
-            {
-              if((*iter)->gameId() != gameId)
-                continue;
-
-              (*iter)->setBallXY(ballCoordsX, ballCoordsY);
-            }
-
-        }
-
       else
         {
           qDebug() << "[UNKNOWN PROTOCOL]";
@@ -282,8 +262,8 @@ void PlayerHandler::onSendToClientPlayerData()
       QString data_str("coords ");
 
       //get ball coordinates
-      auto ballX = game_ptr->getBallXY().first;
-      auto ballY = game_ptr->getBallXY().second;
+      auto ballX = game_ptr->ball().x();
+      auto ballY = game_ptr->ball().y();
 
       data_str.append(QString::number(ballX)).append(" ");
       data_str.append(QString::number(ballY)).append(" ");

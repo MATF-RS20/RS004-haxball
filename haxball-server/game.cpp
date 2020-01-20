@@ -1,8 +1,10 @@
 #include "game.hpp"
+#include "ball.hpp"
 
 #include <ctime>
 #include <QString>
 #include <memory>
+#include <QtMath>
 
 Game::Game(std::string name, unsigned players_number, std::string id,  std::pair<unsigned, unsigned> result)
   :m_name(name), m_id(id), m_players_number(players_number), m_result(result)
@@ -148,15 +150,60 @@ std::vector<std::shared_ptr<Player>> & Game::players()
   return m_players;
 }
 
-std::pair<double, double> & Game::getBallXY()
+
+
+void Game::onResolveColision(double playerX, double playerY, double playerSpeedX, double playerSpeedY, bool isSpacedPressed)
+{
+
+  // PROTOCOL:  collision  playerX  playerY  playerSpeedX  playerSpeedY  isSpacedPressed
+
+  qreal px_cord = playerX + 20 * sqrt(2);
+  qreal py_cord = playerY + 20 * sqrt(2);
+  qreal bx_cord = m_ball.x() + 20 * sqrt(2);
+  qreal by_cord = m_ball.y() + 20 * sqrt(2);
+
+  qreal rastojanje = qSqrt((px_cord - bx_cord)*(px_cord - bx_cord) + (py_cord - by_cord)*(py_cord - by_cord));
+
+  qreal pomeraj = 0.5 * (rastojanje - 20 - 20);
+  px_cord -= pomeraj * (px_cord - bx_cord) / rastojanje;
+  py_cord -= pomeraj * (py_cord - by_cord) / rastojanje;
+
+  bx_cord += pomeraj * (bx_cord - px_cord) / rastojanje;
+  by_cord += pomeraj * (by_cord - py_cord) / rastojanje;
+
+  rastojanje = qSqrt((px_cord - bx_cord)*(px_cord - bx_cord) + (py_cord - by_cord)*(py_cord - by_cord));
+
+  qreal nx = (bx_cord - px_cord) / rastojanje;
+  qreal ny = (by_cord - py_cord) / rastojanje;
+
+  qreal tx = nx;
+  qreal ty = ny;
+
+  qreal dpTan1 = playerSpeedX * tx + playerSpeedY * ty;
+  qreal dpTan2 = m_ball.getSpeedX() * tx + m_ball.getSpeedY() * ty;
+
+  qreal dpNorm1 = playerSpeedX * nx + playerSpeedY * ny;
+  qreal dpNorm2 = playerSpeedX * nx + playerSpeedY * ny;
+
+  qreal m1 = (2 * 200 * dpNorm2) / 400;
+  qreal m2 = (2 * 200 * dpNorm1) / 400;
+
+  if(isSpacedPressed) {
+      m_ball.accelerateX(Ball::ACCELERATION);
+      m_ball.accelerateY(Ball::ACCELERATION);
+      m_ball.moveBy(m_ball.getSpeedX(), m_ball.getSpeedY());
+    }
+  else {
+      m_ball.accelerateX((tx * dpTan2 + nx * m2));
+      m_ball.accelerateY((ty * dpTan2 + ny * m2));
+      m_ball.moveBy(playerSpeedX, playerSpeedY);
+    }
+
+  m_ball.slow(Ball::SLOWING);
+}
+
+Ball & Game::ball()
 {
   return m_ball;
 }
-
-void Game::setBallXY(double x, double y)
-{
-  m_ball.first = x;
-  m_ball.second = y;
-}
-
 

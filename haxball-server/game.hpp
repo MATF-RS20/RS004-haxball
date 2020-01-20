@@ -11,6 +11,8 @@
 #include <memory>
 
 #include "player.hpp"
+#include "ball.hpp"
+
 
 class Game
 
@@ -41,7 +43,7 @@ public:
 
   void addPlayer(std::unique_ptr<Player> && player_ptr);
 
-//  std::pair<long, long> randomPosition() const;
+  //  std::pair<long, long> randomPosition() const;
 
   QString toSocketString() const;
 
@@ -51,9 +53,9 @@ public:
 
   std::pair<std::pair<long, long>, std::pair<long, long>> mbbox {{0,0}, {10,10}};
 
-  std::pair<double, double> & getBallXY();
+  void onResolveColision(double playerX, double playerY, double playerSpeedX, double playerSpeedY, bool isSpacedPressed);
 
-  void setBallXY(double x, double y);
+  Ball & ball();
 
 private:
   std::string m_name;
@@ -61,7 +63,7 @@ private:
   unsigned m_players_number;
   std::pair<unsigned, unsigned> m_result;
 
-  std::pair<double, double> m_ball = {400, 150};
+  Ball m_ball;
 
   std::vector<std::shared_ptr<Player>> m_players;
 
