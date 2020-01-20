@@ -152,7 +152,7 @@ std::vector<std::shared_ptr<Player>> & Game::players()
 
 
 
-void Game::onResolveColision(double playerX, double playerY, double playerSpeedX, double playerSpeedY, bool isSpacedPressed)
+void Game::resolveColision(std::string gameId, double playerX, double playerY, double playerSpeedX, double playerSpeedY, bool isSpacedPressed)
 {
 
   // PROTOCOL:  collision  playerX  playerY  playerSpeedX  playerSpeedY  isSpacedPressed
@@ -201,6 +201,7 @@ void Game::onResolveColision(double playerX, double playerY, double playerSpeedX
 
   m_ball.slow(Ball::SLOWING);
 }
+
 
 Ball & Game::ball()
 {

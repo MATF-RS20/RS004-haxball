@@ -53,7 +53,7 @@ public:
 
   std::pair<std::pair<long, long>, std::pair<long, long>> mbbox {{0,0}, {10,10}};
 
-  void onResolveColision(double playerX, double playerY, double playerSpeedX, double playerSpeedY, bool isSpacedPressed);
+  void resolveColision(std::string gameId, double playerX, double playerY, double playerSpeedX, double playerSpeedY, bool isSpacedPressed);
 
   Ball & ball();
 

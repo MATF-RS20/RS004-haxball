@@ -140,17 +140,10 @@ void PlayerHandler::onReadyRead()
             {
               qDebug() << "[createGame]: Game: " << QString::fromStdString(gameName) << " is created by playerId :" << clientId;
 
-              //              qDebug() << "[createGame] -> registerPlayer";
               isRegistred  = true;
-
-              //send new data to client
-              //              qDebug() << "[createGame] -> onSendNewPlayerData";
 
               //send game ID
               emit sendGameId();
-
-              //send data back
-              //emit sendToClientPlayerData();
             }
           else
             {
@@ -180,6 +173,38 @@ void PlayerHandler::onReadyRead()
           m_socket->write(buffer);
 
           m_socket->flush();
+
+        }
+
+      else if(ql[0] == "collision")
+        {
+
+          // collision  gameId  playerX  playerY  playerSpeedX  playerSpeedY  isSpacedPressed
+
+          auto gameId = ql[1].toStdString();
+          auto playerX = ql[2].toDouble();
+          auto playerY = ql[3].toDouble();
+          auto playerSpeedX = ql[4].toDouble();
+          auto playerSpeedY = ql[5].toDouble();
+          auto isSpacedPressed = ql[6].toInt();
+
+
+          auto created_games = m_server_ptr->createdGames();
+
+          std::shared_ptr<Game> game_ptr = nullptr;
+
+          for(auto g : created_games)
+            {
+              if(gameId == g->gameId()) { game_ptr = g; }
+            }
+
+          bool spacePressed = false;
+          if(1 == isSpacedPressed)
+            {
+              spacePressed = true;
+            }
+
+          game_ptr->resolveColision(gameId, playerX, playerY, playerSpeedX, playerSpeedY, isSpacedPressed);
 
         }
 
