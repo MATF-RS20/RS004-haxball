@@ -61,11 +61,8 @@ void Game::coordsRead(QStringList coords)
         qreal yBall = coords.takeFirst().trimmed().toDouble();
 
 
-         m_ball->setX(static_cast<int>(xBall));
-         m_ball->setY(static_cast<int>(yBall));
-
-
-
+        m_ball->setX(xBall);
+        m_ball->setY(yBall);
     }
     qDebug() << "[coordsRead]: Azurirana je lopta na poziciju (" << m_ball->x() <<", " << m_ball->y() <<")";
 
@@ -119,15 +116,19 @@ void Game::coordsWrite()
 
 }
 
-void Game::ballCoordsWrite()
+void Game::ballCollisionWrite()
 {
     QByteArray serverRequest;
-    const QString protocol = "ballCoords";
+    const QString protocol = "collision";
 
     serverRequest.append(protocol + " ")
-                 .append(QString::number(m_ball->x()) + " ")
-                 .append(QString::number(m_ball->y()) + " ")
-                 .append(QString::number(getId()) + "\n");
+                 .append(QString::number(m_me->x()) + " ")
+                 .append(QString::number(m_me->y()) + " ")
+                 .append(QString::number(m_me->getSpeedX()) + " ")
+                 .append(QString::number(m_me->getSpeedY()) + " ");
+
+    int isSpace = pressedKeys.contains(Qt::Key_Space) ? 1 : 0;
+    serverRequest.append(QString::number(isSpace));
 
     m_clientsocket->getSocket()->write(serverRequest);
     m_clientsocket->getSocket()->flush();
@@ -170,7 +171,7 @@ void Game::setUp()
     connect(m_clientsocket.get(), SIGNAL(coords(QStringList)), this, SLOT(coordsRead(QStringList)));
     connect(this, SIGNAL(playerAction()), this, SLOT(coordsWrite()));
     connect(this, SIGNAL(onGoal()), this, SLOT(goalWrite()));
-    connect(this, SIGNAL(ballCollisionDetected()), this, SLOT(ballCoordsWrite()));
+    connect(this, SIGNAL(ballCollisionDetected()), this, SLOT(ballCollisionWrite()));
 
     setFocusPolicy(Qt::FocusPolicy::StrongFocus);
     scene = new QGraphicsScene();
@@ -326,6 +327,8 @@ void Game::timerEvent(QTimerEvent *event)
 
 if(m_me.get()->collidesWithItem(m_ball.get())){
 
+
+    /*
         qreal px_cord = m_me.get()->x() + 20*sqrt(2);
         qreal py_cord = m_me.get()->y() + 20*sqrt(2);
         qreal bx_cord = m_ball.get()->x() + 20*sqrt(2);
@@ -383,7 +386,14 @@ if(m_me.get()->collidesWithItem(m_ball.get())){
         m_ball->moveBy(m_ball->getSpeedX(), m_ball->getSpeedY());
         m_me->slow(Player::SLOWING);
         m_ball->slow(Ball::SLOWING);
+*/
     }
+
+
+    m_me->moveBy(m_me->getSpeedX(), m_me->getSpeedY());
+    m_me->slow(Player::SLOWING);
+
+
     //kraj kolizije sa loptom
     emit ballCollisionDetected();
     checkGoal();
@@ -415,43 +425,3 @@ QGraphicsScene* Game::drawField()
     scene->addEllipse(990, 315, 20, 20,pen, QBrush(Qt::white));
     return scene;
 }
-
-/* ============================= KOMSA =============================
-
-QGraphicsScene* Game::drawPlayers()
-{
-    scene = getScene();
-    std::vector<std::pair<int, int>> kordinate;
-    kordinate.push_back(std::make_pair(410,250));
-    kordinate.push_back(std::make_pair(320,125));
-    kordinate.push_back(std::make_pair(400,92));
-    for (auto &e : kordinate) {
-        Player* player = new Player();
-        player->drawPlayer(e.first, e.second);
-        scene->addItem(player);
-        //player->setFlag(QGraphicsItem::ItemIsFocusable);
-        //player->setFocus();
-    }
-    Player* player = new Player();
-    player->drawPlayer(300, 200);
-    scene->addItem(player);
-    player->setFlag(QGraphicsItem::ItemIsFocusable);
-    player->setFocus();
-
-    return scene;
-}
-
-
-QGraphicsScene* Game::drawBall()
-{
-    scene = getScene();
-    Player* player = new Player();
-    player->drawPlayer(480, 230);
-    player->setBrush(Qt::white);
-    scene->addItem(player);
-    //player->setFlag(QGraphicsItem::ItemIsFocusable);
-    // player->setFocus();
-    return scene;
-}
-
-*/
