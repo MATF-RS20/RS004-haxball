@@ -21,7 +21,7 @@ class Game : public QDialog
     Q_OBJECT
 
 public:
-    explicit Game(QWidget *parent = nullptr);
+    explicit Game(std::shared_ptr<ClientSocket> clientsocket, int playerId, int gameId, QWidget *parent = nullptr);
     ~Game();
     QGraphicsScene* getScene() const;
     QGraphicsScene* drawField();
@@ -60,12 +60,13 @@ private:
     Ui::Game *ui;
     QGraphicsScene* scene;
 
-    int id;
+    int m_id;
     QHash<int, std::shared_ptr<Player>> m_players;
     //Ball m_ball;
     std::shared_ptr<Player> m_me;
     std::shared_ptr<Ball> m_ball;
     QSet<int> pressedKeys;
+    bool isTimerStarted = false;
 
     std::shared_ptr<ClientSocket> m_clientsocket;
 

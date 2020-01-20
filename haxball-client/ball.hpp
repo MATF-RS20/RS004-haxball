@@ -26,6 +26,9 @@ public:
     static const qreal ACCELERATION;
     static const qreal SLOWING;
 
+    void setSpeedX(const qreal &speedX);
+    void setSpeedY(const qreal &speedY);
+
 private:
     qreal m_speedX = 0;
     qreal m_speedY = 0;

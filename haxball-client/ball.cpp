@@ -115,6 +115,16 @@ void Ball::slow(qreal s)
 
 }
 
+void Ball::setSpeedX(const qreal &speedX)
+{
+    m_speedX = speedX;
+}
+
+void Ball::setSpeedY(const qreal &speedY)
+{
+    m_speedY = speedY;
+}
+
 qreal Ball::getSpeedY() const
 {
     return m_speedY;

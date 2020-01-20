@@ -50,6 +50,7 @@ private:
 
     std::shared_ptr<ClientSocket> m_clientsocket;
     QString m_playerId;
+    QString m_gameId;
     QStringList m_games;
     QString m_playerName;
     QString m_gameName;
@@ -59,6 +60,7 @@ private:
     void setUpListener();
     bool checkCreateGame();
     bool checkJoinGame();
+    void startGame();
 
 };
 #endif // MAINWINDOW_HPP

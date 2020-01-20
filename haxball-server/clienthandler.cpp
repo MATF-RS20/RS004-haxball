@@ -150,7 +150,7 @@ void PlayerHandler::onReadyRead()
               emit sendGameId();
 
               //send data back
-              emit sendToClientPlayerData();
+              //emit sendToClientPlayerData();
             }
           else
             {
@@ -295,6 +295,7 @@ void PlayerHandler::onSendToClientPlayerData()
               data_str.append(iter->get()->toString());
             }
         }
+      data_str.append("\n");
 
       QByteArray buffer;
       buffer.append(data_str);
@@ -323,7 +324,7 @@ void PlayerHandler::onSendGameId()
       auto game_id = res_iter->second->gameId();
 
       QString data_str("gameId ");
-      data_str.append(QString::fromStdString(game_id));
+      data_str.append(QString::fromStdString(game_id + "\n"));
 
       QByteArray buffer;
       buffer.append(data_str);

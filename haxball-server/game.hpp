@@ -51,7 +51,7 @@ public:
 
   std::pair<std::pair<long, long>, std::pair<long, long>> mbbox {{0,0}, {10,10}};
 
-  std::pair<double, double> & getBallXY() const;
+  std::pair<double, double> & getBallXY();
 
   void setBallXY(double x, double y);
 

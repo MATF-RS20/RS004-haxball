@@ -20,10 +20,17 @@
 
 #define UNUSED(expr) do { (void)(expr); } while (0)
 
-Game::Game(QWidget *parent) :
+Game::Game(std::shared_ptr<ClientSocket> clientsocket, int playerId, int gameId, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::Game)
+    ui(new Ui::Game),
+    m_id(gameId),
+    m_clientsocket(clientsocket)
 {
+    m_me = std::make_shared<Player>(0, 0);
+    m_me->setId(playerId);
+
+    m_ball = std::make_shared<Ball>(0, 0);
+
     ui->setupUi(this);
 
     setUp();
@@ -49,11 +56,17 @@ void Game::coordsRead(QStringList coords)
 {
     qDebug() << "[coordsReadReady]: Sa servera je stigla poruka: " << coords;
 
-    qreal xBall = coords.takeFirst().trimmed().toDouble();
-    qreal yBall = coords.takeFirst().trimmed().toDouble();
+    if(coords.size() != 0){
+        qreal xBall = coords.takeFirst().trimmed().toDouble();
+        qreal yBall = coords.takeFirst().trimmed().toDouble();
 
-    m_ball->setX(xBall);
-    m_ball->setY(yBall);
+
+         m_ball->setX(static_cast<int>(xBall));
+         m_ball->setY(static_cast<int>(yBall));
+
+
+
+    }
     qDebug() << "[coordsRead]: Azurirana je lopta na poziciju (" << m_ball->x() <<", " << m_ball->y() <<")";
 
 
@@ -82,6 +95,11 @@ void Game::coordsRead(QStringList coords)
             }
         }
     }
+    if(!isTimerStarted){
+        startTimer(1000/60);
+        isTimerStarted = true;
+    }
+
 }
 
 void Game::coordsWrite()
@@ -149,31 +167,31 @@ void Game::goalWrite() {
 // Metoda setUpListener registruje signale i njima odgovarajuce slotove i inicijalizuje potrebne komponente.
 void Game::setUp()
 {
+    connect(m_clientsocket.get(), SIGNAL(coords(QStringList)), this, SLOT(coordsRead(QStringList)));
     connect(this, SIGNAL(playerAction()), this, SLOT(coordsWrite()));
     connect(this, SIGNAL(onGoal()), this, SLOT(goalWrite()));
     connect(this, SIGNAL(ballCollisionDetected()), this, SLOT(ballCoordsWrite()));
 
     setFocusPolicy(Qt::FocusPolicy::StrongFocus);
     scene = new QGraphicsScene();
-    startTimer(1000/60);
     scene = drawField();
     ui->view->setScene(scene);
     setWindowState(Qt::WindowFullScreen);
     installEventFilter(this);
-    m_me = std::make_shared<Player>(0, 0);
-    m_ball = std::make_shared<Ball>(0, 0);
     scene->addItem(m_me.get());
     scene->addItem(m_ball.get());
+
+    emit coordsWrite();
 }
 
 void Game::setId(int value)
 {
-    id = value;
+    m_id = value;
 }
 
 int Game::getId() const
 {
-    return id;
+    return m_id;
 }
 
 std::shared_ptr<Player> Game::getMe() const
@@ -308,10 +326,10 @@ void Game::timerEvent(QTimerEvent *event)
 
 if(m_me.get()->collidesWithItem(m_ball.get())){
 
-        qreal px_cord = m_me.get()->x() + 20;
-        qreal py_cord = m_me.get()->y() + 20;
-        qreal bx_cord = m_ball.get()->x() + 20;
-        qreal by_cord = m_ball.get()->y() + 20;
+        qreal px_cord = m_me.get()->x() + 20*sqrt(2);
+        qreal py_cord = m_me.get()->y() + 20*sqrt(2);
+        qreal bx_cord = m_ball.get()->x() + 20*sqrt(2);
+        qreal by_cord = m_ball.get()->y() + 20*sqrt(2);
 
         qreal rastojanje = qSqrt((px_cord - bx_cord)*(px_cord - bx_cord) + (py_cord - by_cord)*(py_cord - by_cord));
 

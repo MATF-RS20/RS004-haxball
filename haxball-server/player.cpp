@@ -92,7 +92,7 @@ QString Player::toString() const
 
   QString s =  " " + QString::number(m_id)
                   + " " + QString::number(m_x0)
-                  + " " + QString::number(m_y0) + "\n" ;
+                  + " " + QString::number(m_y0);
   return s;
 }
 

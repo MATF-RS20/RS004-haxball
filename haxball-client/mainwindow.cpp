@@ -11,7 +11,6 @@
 MainWindow::MainWindow(QWidget *parent)
   : QMainWindow(parent)
   , ui(new Ui::MainWindow)
-  , m_game(new Game(this))
 {
   ui->setupUi(this);
 
@@ -20,7 +19,6 @@ MainWindow::MainWindow(QWidget *parent)
 
   setUpListener();
 
-  m_game->setSocket(m_clientsocket);
 }
 
 MainWindow::~MainWindow()
@@ -52,8 +50,7 @@ void MainWindow::on_createButton_clicked()
         m_clientsocket->getSocket()->flush();
     }
 
-    this->hide();
-    m_game->show();
+
 }
 
 void MainWindow::on_settingsButton_clicked()
@@ -78,20 +75,19 @@ void MainWindow::on_joinButton_clicked()
     if(checkJoinGame()){
         QByteArray serverRequest;
         const QString protocol = "joinGame";
-        QString gameId = m_currentItem->text().split(MainWindow::regex)[1];
+        m_gameId = m_currentItem->text().split(MainWindow::regex)[1].trimmed();
 
 
         serverRequest.append(protocol + " ")
                      .append(m_playerId + " ")
-                     .append(gameId + " ")
+                     .append(m_gameId + " ")
                      .append(m_playerName + " ");
 
         m_clientsocket->getSocket()->write(serverRequest);
         m_clientsocket->getSocket()->flush();
 
-        m_game->setId(gameId.trimmed().toInt());
-        hide();
-        m_game->show();
+
+        startGame();
     }
 }
 
@@ -128,7 +124,7 @@ void MainWindow::setUpListener()
 
     connect(ui->gamesListWidget, SIGNAL(itemSelectionChanged()), this, SLOT(enableJoinGameButton()));
 
-     connect(m_clientsocket.get(), SIGNAL(coords(QStringList)), m_game, SLOT(coordsRead(QStringList)));
+    //connect(m_clientsocket.get(), SIGNAL(coords(QStringList)), m_game, SLOT(coordsRead(QStringList)));
 }
 
 bool MainWindow::checkCreateGame()
@@ -184,16 +180,25 @@ bool MainWindow::checkJoinGame()
     return flag;
 }
 
+void MainWindow::startGame()
+{
+    m_game = new Game(m_clientsocket, m_playerId.toInt(),  m_gameId.toInt(), this);
+    hide();
+    m_game->show();
+    //connect(m_clientsocket.get(), SIGNAL(coords(QStringList)), m_game, SLOT(coordsRead(QStringList)));
+}
+
 void MainWindow::playerIdReady(QString id)
 {
     m_playerId = id;
-    m_game->getMe()->setId(id.toInt());
     qDebug() << "playerId: " << id;
 }
 
 void MainWindow::gameIdReady(QString id)
 {
-    m_game->setId(id.trimmed().toInt());
+    m_gameId = id.trimmed();
+    startGame();
+
 }
 
 void MainWindow::gameNamesReady(QStringList games)
