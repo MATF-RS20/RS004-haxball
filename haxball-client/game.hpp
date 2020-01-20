@@ -49,7 +49,7 @@ private slots:
 
     void coordsRead(QStringList coords);
     void coordsWrite();
-    void ballCoordsWrite();
+    void ballCollisionWrite();
 
     void goalWrite();
 
