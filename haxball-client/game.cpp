@@ -122,6 +122,7 @@ void Game::ballCollisionWrite()
     const QString protocol = "collision";
 
     serverRequest.append(protocol + " ")
+                 .append(QString::number(m_id) + " ")
                  .append(QString::number(m_me->x()) + " ")
                  .append(QString::number(m_me->y()) + " ")
                  .append(QString::number(m_me->getSpeedX()) + " ")
