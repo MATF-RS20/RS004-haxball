@@ -34,12 +34,17 @@ qintptr id() const;
 
 void setXY(double x, double y);
 
+void setTeamNo(unsigned no);
+
+unsigned getTeamNo();
 
 private:
 
 qintptr m_id;
 double m_x0, m_y0;
 std::string  m_name;
+
+unsigned m_teamNo;
 
 };
 

@@ -108,7 +108,6 @@ void PlayerHandler::onReadyRead()
           auto gameId = ql[2].toStdString();
           auto playerName = ql[3].toStdString();
 
-          qDebug() << "[joinGame]: Primljeno od klijenta: " << " clienId:" << ql[1] << " gameId:" << ql[2] <<  " playerName:" <<  ql[3] ;
 
           if(joinGame(clientId, playerName, gameId))
             {

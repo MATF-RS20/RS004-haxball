@@ -69,7 +69,6 @@ Player & Player::operator= (Player && other) noexcept
 }
 
 
-
 std::string Player::name() const
 {
   return m_name;
@@ -86,13 +85,26 @@ void Player::setXY(double x, double y)
   m_y0 = y;
 }
 
+void Player::setTeamNo(unsigned no)
+{
+  m_teamNo = no;
+}
+
+unsigned Player::getTeamNo()
+{
+  return m_teamNo;
+}
+
+
 
 QString Player::toString() const
 {
 
   QString s =  " " + QString::number(m_id)
-                  + " " + QString::number(m_x0)
-                  + " " + QString::number(m_y0);
+      + " " + QString::number(m_x0)
+      + " " + QString::number(m_y0)
+      + " " + QString::number(m_teamNo);
+
   return s;
 }
 

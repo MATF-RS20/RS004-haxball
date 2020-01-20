@@ -26,7 +26,7 @@ Game::Game(std::shared_ptr<ClientSocket> clientsocket, int playerId, int gameId,
     m_id(gameId),
     m_clientsocket(clientsocket)
 {
-    m_me = std::make_shared<Player>(0, 0);
+    m_me = std::make_shared<Player>(0, 0, 0);
     m_me->setId(playerId);
 
     m_ball = std::make_shared<Ball>(0, 0);
@@ -69,11 +69,12 @@ void Game::coordsRead(QStringList coords)
 
     if(coords.size() != 0){
 
-        for(QStringList::iterator iter = coords.begin(); iter != coords.end(); iter += 3){
+        for(QStringList::iterator iter = coords.begin(); iter != coords.end(); iter += 4){
             int playerId = iter->toInt();
 
             qreal x = (iter + 1)->toDouble();
             qreal y = (iter + 2)->toDouble();
+            int team = (iter + 3)->toInt();
 
             auto player_it = m_players.find(playerId);
             if(player_it != m_players.end()){
@@ -82,7 +83,7 @@ void Game::coordsRead(QStringList coords)
                 qDebug() << "[coordsRead]: Azuriran je postojeci igrac " << playerId << " na poziciju (" << x <<", " << y <<")";
             }
             else{
-                std::shared_ptr<Player> player = std::make_shared<Player>(0, 0);
+                std::shared_ptr<Player> player = std::make_shared<Player>(0, 0, team);
                 player->setX(x);
                 player->setY(y);
                 scene->addItem(player.get());
@@ -388,7 +389,10 @@ if(m_me.get()->collidesWithItem(m_ball.get())){
         m_me->slow(Player::SLOWING);
         m_ball->slow(Ball::SLOWING);
 */
-    }
+
+    emit ballCollisionDetected();
+
+  }
 
 
     m_me->moveBy(m_me->getSpeedX(), m_me->getSpeedY());
@@ -396,7 +400,6 @@ if(m_me.get()->collidesWithItem(m_ball.get())){
 
 
     //kraj kolizije sa loptom
-    emit ballCollisionDetected();
     checkGoal();
 
 }

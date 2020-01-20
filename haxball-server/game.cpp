@@ -8,7 +8,10 @@
 
 Game::Game(std::string name, unsigned players_number, std::string id,  std::pair<unsigned, unsigned> result)
   :m_name(name), m_id(id), m_players_number(players_number), m_result(result)
-{ }
+{
+  m_ball.setX(480);
+  m_ball.setY(230);
+}
 
 Game::Game(const Game & other)
 {
@@ -102,6 +105,9 @@ void Game::addPlayer(std::unique_ptr<Player> && player_ptr)
 {
   //  auto p = randomPosition();
   //  player_ptr->setXY(p.first, p.second);
+
+  auto n = m_players.size();
+  player_ptr->setTeamNo(n % 2);
 
   m_players.push_back(std::move(player_ptr));
 }
