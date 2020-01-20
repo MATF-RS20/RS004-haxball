@@ -155,7 +155,7 @@ std::vector<std::shared_ptr<Player>> & Game::players()
 void Game::resolveColision(std::string gameId, double playerX, double playerY, double playerSpeedX, double playerSpeedY, bool isSpacedPressed)
 {
 
-  // PROTOCOL:  collision  playerX  playerY  playerSpeedX  playerSpeedY  isSpacedPressed
+  // PROTOCOL:  collision  gameId  playerX  playerY  playerSpeedX  playerSpeedY  isSpacedPressed
 
   qreal px_cord = playerX + 20 * sqrt(2);
   qreal py_cord = playerY + 20 * sqrt(2);
@@ -200,6 +200,7 @@ void Game::resolveColision(std::string gameId, double playerX, double playerY, d
     }
 
   m_ball.slow(Ball::SLOWING);
+
 }
 
 
