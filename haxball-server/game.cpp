@@ -101,7 +101,7 @@ unsigned Game::playersNumber() const
   return m_players_number;
 }
 
-void Game::addPlayer(std::unique_ptr<Player> && player_ptr)
+void Game::addPlayer(std::shared_ptr<Player> & player_ptr)
 {
   //  auto p = randomPosition();
   //  player_ptr->setXY(p.first, p.second);
@@ -109,7 +109,7 @@ void Game::addPlayer(std::unique_ptr<Player> && player_ptr)
   auto n = m_players.size();
   player_ptr->setTeamNo(n % 2);
 
-  m_players.push_back(std::move(player_ptr));
+  m_players.push_back(player_ptr);
 }
 
 

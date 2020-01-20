@@ -69,6 +69,7 @@ private:
     bool isTimerStarted = false;
 
     std::shared_ptr<ClientSocket> m_clientsocket;
+    bool isSetTeam = false;
 
 };
 

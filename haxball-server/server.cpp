@@ -133,7 +133,7 @@ bool Server::joinGame(qintptr clientId, std::string playerName, std::string game
 {
 
   //create new player
-  std::unique_ptr<Player> && player_ptr = std::make_unique<Player>(clientId, playerName);
+  std::shared_ptr<Player> player_ptr = std::make_shared<Player>(clientId, playerName);
 
   //find player game
 
@@ -142,7 +142,7 @@ bool Server::joinGame(qintptr clientId, std::string playerName, std::string game
     {
       if(gameId == game_ptr->gameId())
         {
-          game_ptr->addPlayer(std::move(player_ptr));
+          game_ptr->addPlayer(player_ptr);
           m_player_game_data.insert(std::pair<qintptr, std::shared_ptr<Game>>(clientId, game_ptr));
           break;
         }
@@ -162,10 +162,10 @@ bool Server::createGame(qintptr clientId, std::string playerName, std::string ga
   auto game_ptr = std::make_shared<Game>(gameName, playerNumber);
 
   //create new player
-  auto player_ptr = std::make_unique<Player>(clientId, playerName);
+  auto player_ptr = std::make_shared<Player>(clientId, playerName);
 
   //add player to game
-  game_ptr->addPlayer(std::move(player_ptr));
+  game_ptr->addPlayer(player_ptr);
 
   //add game to created games
   m_created_games.push_back(game_ptr);

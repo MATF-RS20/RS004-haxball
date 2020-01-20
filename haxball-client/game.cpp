@@ -89,8 +89,17 @@ void Game::coordsRead(QStringList coords)
                 scene->addItem(player.get());
                 m_players.insert(playerId, player);
 
-                qDebug() << "[coordsRead]: Dodat je novi igrac " << playerId << " na poziciju (" << x <<", " << y <<")";
+                qDebug() << "[coordsRead]: Dodat je novi igrac " << playerId << " na poziciju (" << x <<", " << y <<") za tim " << team;
             }
+            if(!isSetTeam){
+                if(m_players.size() % 2 == 0){
+                    m_me->setBrush(Qt::black);
+                  }
+                else{
+                    m_me->setBrush(Qt::red);
+                  }
+                isSetTeam = true;
+              }
         }
     }
     if(!isTimerStarted){

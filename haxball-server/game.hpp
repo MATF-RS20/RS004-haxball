@@ -41,7 +41,7 @@ public:
 
   unsigned playersNumber() const;
 
-  void addPlayer(std::unique_ptr<Player> && player_ptr);
+  void addPlayer(std::shared_ptr<Player> & player_ptr);
 
   //  std::pair<long, long> randomPosition() const;
 
